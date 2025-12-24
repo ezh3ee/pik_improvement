@@ -28,6 +28,9 @@ export const auth = betterAuth({
         default: false,
         input: false,
       },
+      surname: {
+        type: "string",
+      },
     },
   },
 });
