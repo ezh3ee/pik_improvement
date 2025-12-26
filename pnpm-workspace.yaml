@@ -7,3 +7,6 @@ ignoredBuiltDependencies:
   - prisma
   - sharp
   - unrs-resolver
+
+onlyBuiltDependencies:
+  - '@parcel/watcher'
