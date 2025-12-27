@@ -1,5 +1,6 @@
 "use server";
 import { auth } from "@/lib/auth";
+import { getAuthErrorMessage } from "@/lib/auth-errors-map";
 import { APIError } from "better-auth/api";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -34,60 +35,24 @@ export async function signinAction(
   }
 
   try {
-    const user = await auth.api.signInUsername({
+    await auth.api.signInUsername({
       body: {
         password: validatedFields.data.password,
         username: validatedFields.data.username,
       },
     });
-
-    console.log("from signin action ", user);
   } catch (error) {
-    // if (e instanceof Prisma.PrismaClientKnownRequestError) {
-    // console.error("Prisma Client Known Request Error: ", e.code);
-    // if (e.code === "P2002") {
-    //   // Unique constraint violation
-    //   console.error("Error: Email already exists.");
-    //   return {
-    //     errors: {},
-    //     message: "Email already exists.",
-    //     success: false,
-    //   };
-    // } else {
-    //   console.error("Prisma Client Known Request Error:", error.message);
-    //   return {
-    //     errors: {},
-    //     message: "Error creating user: " + error.message,
-    //     success: false,
-    //   };
-    // }
-    // }
-
     if (error instanceof APIError) {
       console.log("ERROR ", error.message, error.status);
 
-      if (error.status === "UNAUTHORIZED") {
-        return {
-          errors: {},
-          message: "Неверное имя пользователя или пароль",
-          success: false,
-        };
-      }
-
-      if (error.status === "UNPROCESSABLE_ENTITY") {
-        return {
-          errors: {},
-          message: "Недопустимое имя пользователя",
-          success: false,
-        };
-      }
-
       return {
         errors: {},
-        message: "Cannot sign in. Please try again later." + error,
+        message: getAuthErrorMessage(error),
         success: false,
       };
     }
+
+    throw error;
   }
 
   redirect("/");

@@ -33,6 +33,16 @@ const adminUserEnvSchema = z
   }));
 
 async function main() {
+  const adminUserExists = await prisma.user.findUnique({
+    where: {
+      email: adminUserEnvSchema.parse(process.env).email,
+    },
+  });
+
+  if (adminUserExists) {
+    return console.log("Admin user already exists");
+  }
+
   const adminData: IAdminUser = adminUserEnvSchema.parse(process.env);
 
   const adminUser = await auth.api.createUser({
