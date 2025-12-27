@@ -9,6 +9,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 import { useActionState } from "react";
 import { PIKLogo } from "../logo";
@@ -81,7 +82,9 @@ export function LoginForm({
                 )}
               </Field>
               <Field>
-                <Button type="submit">Войти</Button>
+                <Button type="submit" disabled={isPending}>
+                  {isPending ? <Spinner className="size-8" /> : "Войти"}
+                </Button>
                 <FieldDescription className="text-center">
                   Нет аккаута? <a href="#">Зарегистрируйтесь</a>
                 </FieldDescription>
