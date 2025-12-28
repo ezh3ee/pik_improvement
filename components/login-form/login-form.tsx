@@ -11,6 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 import { useActionState } from "react";
 import { PIKLogo } from "../logo";
 import "./login-form.scss";
@@ -86,7 +87,7 @@ export function LoginForm({
                   {isPending ? <Spinner className="size-8" /> : "Войти"}
                 </Button>
                 <FieldDescription className="text-center">
-                  Нет аккаута? <a href="#">Зарегистрируйтесь</a>
+                  Нет аккаута? <Link href="/signup">Зарегистрируйтесь</Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>

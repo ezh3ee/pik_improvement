@@ -35,9 +35,18 @@ model User {
   surname String
   patronymic String?
 
+  position UserPosition? @relation(fields: [positionId], references: [id])
+  positionId String?
+
   @@unique([email])
   @@map("user")
   @@unique([username])
+}
+
+model UserPosition {
+  id String @id @default(uuid())
+  name String
+  users User[]
 }
 
 model Session {
