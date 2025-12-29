@@ -22,6 +22,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 
+import { AnimatePresence, easeInOut, motion } from "framer-motion";
+
 export function LoginForm({
   className,
   ...props
@@ -53,6 +55,8 @@ export function LoginForm({
     });
   }
 
+  const MotionFieldError = motion(FieldError);
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -78,9 +82,27 @@ export function LoginForm({
                       aria-invalid={fieldState.invalid}
                       {...field}
                     />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
+
+                    <AnimatePresence mode="wait">
+                      {fieldState.invalid && (
+                        <MotionFieldError
+                          errors={[fieldState.error]}
+                          key="field-error"
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{
+                            type: "tween",
+                            duration: 0.3,
+                            stiffness: 100,
+                            damping: 20,
+                            ease: easeInOut,
+                          }}
+                          className="overflow-hidden"
+                        />
+                      )}
+                    </AnimatePresence>
+
                     {signinFormState.errors?.username && (
                       <p className="text-red-700">
                         {signinFormState.errors.username}
@@ -111,9 +133,27 @@ export function LoginForm({
                       aria-invalid={fieldState.invalid}
                       {...field}
                     />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
+
+                    <AnimatePresence mode="wait">
+                      {fieldState.invalid && (
+                        <MotionFieldError
+                          errors={[fieldState.error]}
+                          key="field-error"
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{
+                            type: "tween",
+                            duration: 0.3,
+                            stiffness: 100,
+                            damping: 20,
+                            ease: easeInOut,
+                          }}
+                          className="overflow-hidden"
+                        />
+                      )}
+                    </AnimatePresence>
+
                     {signinFormState.errors?.password && (
                       <p className="mt-2 text-sm text-red-500">
                         {signinFormState.errors.password}
@@ -131,17 +171,6 @@ export function LoginForm({
                 </FieldDescription>
               </Field>
             </FieldGroup>
-            {/* {Object.keys(signupState.errors).length > 0 && (
-              <p className="mt-2 text-sm text-red-500">
-                Ошибки при заполнении.
-              </p>
-            )} */}
-
-            {/* {signupState.message && signupState.success && (
-              <p className="mt-2 text-sm text-green-500">
-                {signupState.message}
-              </p>
-            )} */}
 
             {signinFormState.message && !signinFormState.success && (
               <p className="mt-2 text-sm text-red-500">
