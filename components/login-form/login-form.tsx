@@ -46,7 +46,7 @@ export function LoginForm({
       username: "",
       password: "",
     },
-    mode: "onBlur",
+    mode: "onChange",
   });
 
   function onSubmit(data: z.infer<typeof SigninSchema>) {
@@ -163,7 +163,10 @@ export function LoginForm({
                 )}
               />
               <Field>
-                <Button type="submit" disabled={isPending}>
+                <Button
+                  type="submit"
+                  disabled={isPending || !form.formState.isValid}
+                >
                   {isPending ? <Spinner className="size-8" /> : "Войти"}
                 </Button>
                 <FieldDescription className="text-center">
