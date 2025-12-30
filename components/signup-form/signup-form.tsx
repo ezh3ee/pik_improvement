@@ -1,3 +1,5 @@
+"use client";
+import { signupAction, SignupFormState } from "@/app/(public)/signup/action";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -21,9 +23,20 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Link from "next/link";
-import { PIKLogo } from "./logo";
+import { useActionState } from "react";
+import { PIKLogo } from "../logo";
 
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
+  const initialSignupState: SignupFormState = {
+    message: null,
+    errors: {},
+    success: false,
+  };
+  const [signupState, signupSubmit, isPending] = useActionState(
+    signupAction,
+    initialSignupState
+  );
+
   return (
     <Card {...props}>
       <div className="flex flex-row justify-center">
@@ -32,24 +45,18 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
       <CardHeader>
         <CardTitle>Регистрация пользователя</CardTitle>
         <CardDescription>
-          Внимание. После регистрации пользователя необходимо дождаться
-          одобрения со стороны администратора.
+          После регистрации пользователя необходимо дождаться одобрения со
+          стороны администратора.
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form>
+        <form action={signupSubmit}>
           <FieldGroup>
             <Field>
               <FieldLabel htmlFor="name">
                 Имя <span className="text-red-500">*</span>
               </FieldLabel>
-              <Input
-                id="name"
-                type="text"
-                name="name"
-                placeholder="Иван"
-                required
-              />
+              <Input id="name" type="text" name="name" placeholder="Иван" />
             </Field>
             <Field>
               <FieldLabel htmlFor="surname">
@@ -60,7 +67,6 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                 type="text"
                 name="surname"
                 placeholder="Иванов"
-                required
               />
             </Field>
             <Field>
@@ -78,10 +84,9 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
               </FieldLabel>
               <Input
                 id="email"
-                type="email"
+                type="text"
                 name="email"
                 placeholder="mail@yandex.ru"
-                required
               />
               <FieldDescription>
                 Почтовый ящик используется для восстановления пароля.
@@ -91,12 +96,14 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
               <FieldLabel>
                 Должность <span className="text-red-500">*</span>
               </FieldLabel>
-              <Select>
+              <Select name="position">
                 <SelectTrigger>
                   <SelectValue placeholder="Выберите должность" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="engineering">Инженер</SelectItem>
+                  <SelectItem value="64bc94f9-a913-40e4-9e57-2621dc702e19">
+                    Инженер
+                  </SelectItem>
                   <SelectItem value="design">Подрядчик</SelectItem>
                   <SelectItem value="worker">Рабочий</SelectItem>
                   <SelectItem value="office">Офис</SelectItem>
@@ -104,23 +111,36 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
               </Select>
             </Field>
             <Field>
-              <FieldLabel htmlFor="password">Пароль</FieldLabel>
-              <Input id="password" type="password" name="password" required />
+              <FieldLabel htmlFor="username">
+                Имя пользователя <span className="text-red-500">*</span>
+              </FieldLabel>
+              <Input
+                id="username"
+                type="text"
+                name="username"
+                placeholder="ivan_ivanov"
+              />
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="password">
+                Пароль <span className="text-red-500">*</span>
+              </FieldLabel>
+              <Input id="password" type="password" name="password" />
               <FieldDescription>
                 Пароль должен состоять не менее из 8 символов.
               </FieldDescription>
             </Field>
             <Field>
               <FieldLabel htmlFor="confirm-password">
-                Подтвердите пароль
+                Подтвердите пароль <span className="text-red-500">*</span>
               </FieldLabel>
-              <Input id="confirm-password" type="password" required />
+              <Input id="confirm-password" type="password" />
             </Field>
             <FieldGroup>
               <Field>
                 <Button type="submit">Регистрация</Button>
                 <FieldDescription className="px-6 text-center">
-                  Уже есть аккаунт? <Link href="#">Войдите</Link>
+                  Уже есть аккаунт? <Link href="/login">Войдите</Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>
