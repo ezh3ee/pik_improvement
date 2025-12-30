@@ -22,7 +22,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 
-import { AnimatePresence, easeInOut, motion } from "framer-motion";
+import { AnimatePresence, motion } from "motion/react";
 
 export function LoginForm({
   className,
@@ -55,7 +55,7 @@ export function LoginForm({
     });
   }
 
-  const MotionFieldError = motion(FieldError);
+  const MotionFieldError = motion.create(FieldError);
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -74,7 +74,7 @@ export function LoginForm({
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field>
-                    <FieldLabel htmlFor="username">Ипя пользователя</FieldLabel>
+                    <FieldLabel htmlFor="username">Имя пользователя</FieldLabel>
                     <Input
                       id="username"
                       type="text"
@@ -82,26 +82,32 @@ export function LoginForm({
                       aria-invalid={fieldState.invalid}
                       {...field}
                     />
-
-                    <AnimatePresence mode="wait">
-                      {fieldState.invalid && (
-                        <MotionFieldError
-                          errors={[fieldState.error]}
-                          key="field-error"
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: "auto" }}
-                          exit={{ opacity: 0, height: 0 }}
-                          transition={{
-                            type: "tween",
-                            duration: 0.3,
-                            stiffness: 100,
-                            damping: 20,
-                            ease: easeInOut,
-                          }}
-                          className="overflow-hidden"
-                        />
-                      )}
-                    </AnimatePresence>
+                    <div className="min-h-[1px] overflow-hidden">
+                      <AnimatePresence mode="wait">
+                        {fieldState.invalid && (
+                          <MotionFieldError
+                            errors={[fieldState.error]}
+                            key="field-error"
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{
+                              opacity: 0,
+                              height: 0,
+                              display: "none",
+                              visibility: "hidden",
+                            }}
+                            transition={{
+                              type: "tween",
+                              duration: 0.2,
+                              stiffness: 100,
+                              damping: 20,
+                              ease: "backOut",
+                            }}
+                            className="overflow-hidden"
+                          />
+                        )}
+                      </AnimatePresence>
+                    </div>
 
                     {signinFormState.errors?.username && (
                       <p className="text-red-700">
@@ -134,25 +140,32 @@ export function LoginForm({
                       {...field}
                     />
 
-                    <AnimatePresence mode="wait">
-                      {fieldState.invalid && (
-                        <MotionFieldError
-                          errors={[fieldState.error]}
-                          key="field-error"
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: "auto" }}
-                          exit={{ opacity: 0, height: 0 }}
-                          transition={{
-                            type: "tween",
-                            duration: 0.3,
-                            stiffness: 100,
-                            damping: 20,
-                            ease: easeInOut,
-                          }}
-                          className="overflow-hidden"
-                        />
-                      )}
-                    </AnimatePresence>
+                    <div className="min-h-[1px] overflow-hidden">
+                      <AnimatePresence mode="wait">
+                        {fieldState.invalid && (
+                          <MotionFieldError
+                            errors={[fieldState.error]}
+                            key="field-error"
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{
+                              opacity: 0,
+                              height: 0,
+                              display: "none",
+                              visibility: "hidden",
+                            }}
+                            transition={{
+                              type: "tween",
+                              duration: 0.2,
+                              stiffness: 100,
+                              damping: 20,
+                              ease: "backOut",
+                            }}
+                            className="overflow-hidden"
+                          />
+                        )}
+                      </AnimatePresence>
+                    </div>
 
                     {signinFormState.errors?.password && (
                       <p className="mt-2 text-sm text-red-500">
