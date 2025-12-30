@@ -4,13 +4,9 @@ import { getAuthErrorMessage } from "@/lib/auth-errors-map";
 import { APIError } from "better-auth/api";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { SigninSchema } from "./schema";
 
-const SigninSchema = z.object({
-  password: z.string().min(8, "Пароль должен содержать не менее 8 символов"),
-  username: z.string(),
-});
-
-export type SigninFormState = {
+export type signinFormState = {
   errors: {
     password?: string[];
     username?: string[];
@@ -20,9 +16,9 @@ export type SigninFormState = {
 };
 
 export async function signinAction(
-  state: SigninFormState,
+  state: signinFormState,
   formData: FormData
-): Promise<SigninFormState> {
+): Promise<signinFormState> {
   const rawFormData = Object.fromEntries(formData.entries());
   const validatedFields = SigninSchema.safeParse(rawFormData);
 
