@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { cn, dataObjectToFormData } from "@/lib/utils";
 import Link from "next/link";
-import { useActionState, useTransition } from "react";
+import { useActionState, useState, useTransition } from "react";
 import { PIKLogo } from "../logo";
 import "./login-form.scss";
 
@@ -21,6 +21,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 
+import { Eye, EyeOff } from "lucide-react";
 import { InputFieldError } from "../errors/input-field";
 
 export function LoginForm({
@@ -53,6 +54,8 @@ export function LoginForm({
       submitSignin(dataObjectToFormData(data));
     });
   }
+
+  const [showPassword, setShowPassword] = useState(false);
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -105,14 +108,28 @@ export function LoginForm({
                         Забыли пароль?
                       </a>
                     </div>
-                    <Input
-                      id="password"
-                      type="password"
-                      placeholder="Пароль"
-                      aria-invalid={fieldState.invalid}
-                      {...field}
-                    />
-
+                    <div className="relative">
+                      <Input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Пароль"
+                        aria-invalid={fieldState.invalid}
+                        {...field}
+                      />
+                      <Button
+                        className="absolute top-0 right-0 h-full px-3 hover:bg-transparent"
+                        onClick={() => setShowPassword(!showPassword)}
+                        size="icon"
+                        type="button"
+                        variant="ghost"
+                      >
+                        {showPassword ? (
+                          <EyeOff className="h-4 w-4 text-muted-foreground" />
+                        ) : (
+                          <Eye className="h-4 w-4 text-muted-foreground" />
+                        )}
+                      </Button>
+                    </div>
                     <InputFieldError fieldState={fieldState} />
 
                     {signinFormState.errors?.password && (

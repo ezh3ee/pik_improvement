@@ -1,6 +1,6 @@
 "use client";
 import { signupAction, SignupFormState } from "@/app/(public)/signup/action";
-import { SignupSchema } from "@/app/(public)/signup/schema";
+import { SignupSchemaRHF } from "@/app/(public)/signup/schema";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -25,8 +25,9 @@ import {
 } from "@/components/ui/select";
 import { dataObjectToFormData } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
-import { useActionState, useTransition } from "react";
+import { useActionState, useEffect, useState, useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
 import z from "zod";
 import { InputFieldError } from "../errors/input-field";
@@ -34,6 +35,9 @@ import { PIKLogo } from "../logo";
 import { Spinner } from "../ui/spinner";
 
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const initialSignupState: SignupFormState = {
     message: null,
     errors: {},
@@ -46,29 +50,17 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
 
   const [isPending, startTransition] = useTransition();
 
-  const SignupSchemaRHF = SignupSchema.extend({
-    confirmPassword: z
-      .string()
-      .min(8, "Пароль должен содержать не менее 8 символов")
-      .refine((s) => !s.includes(" "), "Пароль не может содержать пробелов")
-      .nonempty("Пароль не может быть пустым"),
-  }).superRefine((val, ctx) => {
-    console.log("superdefine is working ", val);
-    if (val.password !== val.confirmPassword) {
-      console.log("password and confirm password are not the same");
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Password is not the same as confirm password",
-        path: ["confirmPassword"],
-      });
-    }
-  });
-
   const form = useForm<z.infer<typeof SignupSchemaRHF>>({
     resolver: zodResolver(SignupSchemaRHF),
     defaultValues: {
       username: "",
       password: "",
+      confirmPassword: "",
+      name: "",
+      surname: "",
+      patronymic: "",
+      email: "",
+      positionId: "",
     },
     mode: "onChange",
   });
@@ -78,6 +70,15 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
       signupSubmit(dataObjectToFormData(data));
     });
   }
+
+  useEffect(() => {
+    const subscription = form.watch((value, { name }) => {
+      if (name === "password") {
+        form.trigger("confirmPassword");
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form]);
 
   return (
     <Card {...props}>
@@ -279,13 +280,28 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                   <FieldLabel htmlFor="password">
                     Пароль <span className="text-red-500">*</span>
                   </FieldLabel>
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder="Пароль"
-                    aria-invalid={fieldState.invalid}
-                    {...field}
-                  />
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Пароль"
+                      aria-invalid={fieldState.invalid}
+                      {...field}
+                    />
+                    <Button
+                      className="absolute top-0 right-0 h-full px-3 hover:bg-transparent"
+                      onClick={() => setShowPassword(!showPassword)}
+                      size="icon"
+                      type="button"
+                      variant="ghost"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4 text-muted-foreground" />
+                      ) : (
+                        <Eye className="h-4 w-4 text-muted-foreground" />
+                      )}
+                    </Button>
+                  </div>
 
                   <InputFieldError fieldState={fieldState} />
 
@@ -304,16 +320,34 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field>
-                  <FieldLabel htmlFor="confirm-password">
+                  <FieldLabel htmlFor="confirmPassword">
                     Подтвердите пароль <span className="text-red-500">*</span>
                   </FieldLabel>
-                  <Input
-                    id="confirm-password"
-                    type="password"
-                    placeholder="Пароль"
-                    aria-invalid={fieldState.invalid}
-                    {...field}
-                  />
+
+                  <div className="relative">
+                    <Input
+                      id="confirmPassword"
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="Пароль"
+                      aria-invalid={fieldState.invalid}
+                      {...field}
+                    />
+                    <Button
+                      className="absolute top-0 right-0 h-full px-3 hover:bg-transparent"
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                      size="icon"
+                      type="button"
+                      variant="ghost"
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOff className="h-4 w-4 text-muted-foreground" />
+                      ) : (
+                        <Eye className="h-4 w-4 text-muted-foreground" />
+                      )}
+                    </Button>
+                  </div>
 
                   <InputFieldError fieldState={fieldState} />
                 </Field>

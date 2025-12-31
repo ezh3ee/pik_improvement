@@ -5,7 +5,11 @@ export const SignupSchema = z.object({
     .string()
     .min(8, "Пароль должен содержать не менее 8 символов")
     .refine((s) => !s.includes(" "), "Пароль не может содержать пробелов")
-    .nonempty("Пароль не может быть пустым"),
+    .nonempty("Пароль не может быть пустым")
+    .regex(
+      /^[^А-Яа-яЁё\u0400-\u04FF]*$/,
+      "Допускается использование только латинских букв, цифр и символов подчеркивания"
+    ),
   username: z
     .string()
     .min(3, "Имя пользователя должно быть не менее 3 символов")
@@ -20,9 +24,43 @@ export const SignupSchema = z.object({
     ),
   email: z
     .email({ error: "Введите email в правильном формате" })
+    .regex(
+      /^[^А-Яа-яЁё\u0400-\u04FF]*$/,
+      "Допускается использование только латинских букв, цифр и символов подчеркивания"
+    )
     .nonempty("Email не может быть пустым"),
   positionId: z.string().nonempty("Выберите должность"),
   name: z.string().nonempty("Имя не может быть пустым"),
   surname: z.string().nonempty("Фамилия не может быть пустой"),
   patronymic: z.string().optional(),
 });
+
+export const SignupSchemaRHF = SignupSchema.extend({
+  confirmPassword: z
+    .string()
+    .min(8, "Пароль должен содержать не менее 8 символов")
+    .refine((s) => !s.includes(" "), "Пароль не может содержать пробелов")
+    .nonempty("Пароль не может быть пустым")
+    .regex(
+      /^[^А-Яа-яЁё\u0400-\u04FF]*$/,
+      "Допускается использование только латинских букв, цифр и символов подчеркивания"
+    ),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Пароли не совпадают",
+  path: ["confirmPassword"],
+});
+
+// .superRefine((val, ctx) => {
+//   console.log("superdefine is working ", val);
+//   if (val.password !== val.confirmPassword) {
+//     console.log("password and confirm password are not the same");
+//     ctx.addIssue({
+//       code: z.ZodIssueCode.custom,
+//       message: "Пароли не совпадают",
+//       path: ["confirmPassword"],
+//     });
+//   } else {
+//     console.log("!!!!!password and confirm password are the same!!!!");
+//     console.log(ctx.issues);
+//   }
+// });
