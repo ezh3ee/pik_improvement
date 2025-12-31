@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Field,
   FieldDescription,
-  FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
@@ -22,7 +21,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 
-import { AnimatePresence, motion } from "motion/react";
+import { InputFieldError } from "../errors/input-field";
 
 export function LoginForm({
   className,
@@ -55,8 +54,6 @@ export function LoginForm({
     });
   }
 
-  const MotionFieldError = motion.create(FieldError);
-
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -82,32 +79,8 @@ export function LoginForm({
                       aria-invalid={fieldState.invalid}
                       {...field}
                     />
-                    <div className="min-h-[1px] overflow-hidden">
-                      <AnimatePresence mode="wait">
-                        {fieldState.invalid && (
-                          <MotionFieldError
-                            errors={[fieldState.error]}
-                            key="field-error"
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: "auto" }}
-                            exit={{
-                              opacity: 0,
-                              height: 0,
-                              display: "none",
-                              visibility: "hidden",
-                            }}
-                            transition={{
-                              type: "tween",
-                              duration: 0.2,
-                              stiffness: 100,
-                              damping: 20,
-                              ease: "backOut",
-                            }}
-                            className="overflow-hidden"
-                          />
-                        )}
-                      </AnimatePresence>
-                    </div>
+
+                    <InputFieldError fieldState={fieldState} />
 
                     {signinFormState.errors?.username && (
                       <p className="text-red-700">
@@ -140,32 +113,7 @@ export function LoginForm({
                       {...field}
                     />
 
-                    <div className="min-h-[1px] overflow-hidden">
-                      <AnimatePresence mode="wait">
-                        {fieldState.invalid && (
-                          <MotionFieldError
-                            errors={[fieldState.error]}
-                            key="field-error"
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: "auto" }}
-                            exit={{
-                              opacity: 0,
-                              height: 0,
-                              display: "none",
-                              visibility: "hidden",
-                            }}
-                            transition={{
-                              type: "tween",
-                              duration: 0.2,
-                              stiffness: 100,
-                              damping: 20,
-                              ease: "backOut",
-                            }}
-                            className="overflow-hidden"
-                          />
-                        )}
-                      </AnimatePresence>
-                    </div>
+                    <InputFieldError fieldState={fieldState} />
 
                     {signinFormState.errors?.password && (
                       <p className="mt-2 text-sm text-red-500">

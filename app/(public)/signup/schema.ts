@@ -13,9 +13,15 @@ export const SignupSchema = z.object({
       (s) => !s.includes(" "),
       "Имя пользователя не может содержать пробелов"
     )
-    .nonempty(""),
-  email: z.email().nonempty("Email не может быть пустым"),
-  position: z.string().nonempty("Выберите должность"),
+    .nonempty("Имя пользователя не может быть пустым")
+    .regex(
+      /^[^А-Яа-яЁё\u0400-\u04FF]*$/,
+      "Допускается использование только латинских букв, цифр и символов подчеркивания"
+    ),
+  email: z
+    .email({ error: "Введите email в правильном формате" })
+    .nonempty("Email не может быть пустым"),
+  positionId: z.string().nonempty("Выберите должность"),
   name: z.string().nonempty("Имя не может быть пустым"),
   surname: z.string().nonempty("Фамилия не может быть пустой"),
   patronymic: z.string().optional(),

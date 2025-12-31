@@ -47,7 +47,7 @@ export async function signupAction(
         password: validatedFields.data.password,
         username: validatedFields.data.username,
         name: validatedFields.data.name,
-        positionId: validatedFields.data.position,
+        positionId: validatedFields.data.positionId,
         surname: validatedFields.data.surname,
         patronymic: validatedFields.data?.patronymic || "",
       },
