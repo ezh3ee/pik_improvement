@@ -28,7 +28,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useActionState, useEffect, useState, useTransition } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import z from "zod";
 import { InputFieldError } from "../errors/input-field";
 import { PIKLogo } from "../logo";
@@ -79,6 +79,22 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
     });
     return () => subscription.unsubscribe();
   }, [form]);
+
+  let fieldBellowSelectTouched = false;
+
+  const positionId = useWatch({
+    control: form.control,
+    name: "positionId",
+  });
+
+  if (
+    (form.formState.touchedFields.password ||
+      form.formState.touchedFields.confirmPassword ||
+      form.formState.touchedFields.username) &&
+    !positionId
+  ) {
+    fieldBellowSelectTouched = true;
+  }
 
   return (
     <Card {...props}>
@@ -211,7 +227,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field>
-                  <FieldLabel htmlFor="position">
+                  <FieldLabel htmlFor="positionId">
                     Должность <span className="text-red-500">*</span>
                   </FieldLabel>
                   <Select
@@ -219,7 +235,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                     value={field.value}
                     onValueChange={field.onChange}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger aria-invalid={fieldBellowSelectTouched}>
                       <SelectValue placeholder="Выберите должность" />
                     </SelectTrigger>
                     <SelectContent>
@@ -234,9 +250,9 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
 
                   <InputFieldError fieldState={fieldState} />
 
-                  {signupFormState.errors?.position && (
+                  {signupFormState.errors?.positionId && (
                     <p className="text-red-700">
-                      {signupFormState.errors.position}
+                      {signupFormState.errors.positionId}
                     </p>
                   )}
                 </Field>

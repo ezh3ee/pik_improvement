@@ -12,7 +12,7 @@ export type SignupFormState = {
     email?: string[];
     password?: string[];
     username?: string[];
-    position?: string[];
+    positionId?: string[];
     name?: string[];
     surname?: string[];
     patronymic?: string[];
