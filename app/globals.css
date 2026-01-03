@@ -127,3 +127,7 @@ button:hover {
     @apply bg-background text-foreground;
   }
 }
+
+*:focus-visible {
+  box-shadow: none;
+}

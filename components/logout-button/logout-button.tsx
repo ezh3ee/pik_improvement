@@ -18,20 +18,12 @@ export function LogoutButton() {
     >
       <LogOut />
       {isLoading ? (
-        <div className="flex items-center justify-center">
+        <div className="pl-7">
           <Spinner className="size-5" />
         </div>
       ) : (
         "Выйти из аккаунта"
       )}
     </DropdownMenuItem>
-    // <Button
-    //   disabled={isLoading}
-    //   onClick={async () => {
-    //     startTransition(() => signOut());
-    //   }}
-    // >
-    //   {isLoading ? <Spinner className="size-8" /> : "Выйти из аккаунта"}
-    // </Button>
   );
 }
