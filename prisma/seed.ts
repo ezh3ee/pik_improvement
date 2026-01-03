@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth";
+import { Prisma } from "@/lib/generated/prisma/client";
 import prisma from "@/lib/prisma";
 import { z } from "zod";
 
@@ -33,6 +34,11 @@ const adminUserEnvSchema = z
   }));
 
 async function main() {
+  await createAdmin();
+  await createPosition();
+}
+
+async function createAdmin() {
   const adminUserExists = await prisma.user.findUnique({
     where: {
       email: adminUserEnvSchema.parse(process.env).email,
@@ -63,6 +69,28 @@ async function main() {
   });
 
   console.log("adminUser successfully created", adminUser);
+}
+
+async function createPosition() {
+  const isPositionExists = await prisma.userPosition.findMany();
+
+  if (isPositionExists.length > 0) {
+    return console.log("Position already exists");
+  }
+
+  const positionToCreate: Prisma.UserPositionCreateInput = {
+    name: "Инженер",
+  };
+
+  try {
+    await prisma.userPosition.create({
+      data: positionToCreate,
+    });
+  } catch (e) {
+    console.log("ERROR from createPosition action ", e);
+  }
+
+  console.log("Position successfully created");
 }
 
 main()

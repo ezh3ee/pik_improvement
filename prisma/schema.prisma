@@ -30,13 +30,14 @@ model User {
   banned          Boolean?  @default(false)
   banReason       String?
   banExpires      DateTime?
+
   active          Boolean? @default(false)
 
   surname String
   patronymic String?
+  positionId String?
 
   position UserPosition? @relation(fields: [positionId], references: [id])
-  positionId String?
 
   @@unique([email])
   @@map("user")

@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Field,
   FieldDescription,
-  FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
@@ -13,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { cn, dataObjectToFormData } from "@/lib/utils";
 import Link from "next/link";
-import { useActionState, useTransition } from "react";
+import { useActionState, useState, useTransition } from "react";
 import { PIKLogo } from "../logo";
 import "./login-form.scss";
 
@@ -22,7 +21,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 
-import { AnimatePresence, motion } from "motion/react";
+import { Eye, EyeOff } from "lucide-react";
+import { InputFieldError } from "../errors/input-field";
 
 export function LoginForm({
   className,
@@ -55,7 +55,7 @@ export function LoginForm({
     });
   }
 
-  const MotionFieldError = motion.create(FieldError);
+  const [showPassword, setShowPassword] = useState(false);
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -82,32 +82,8 @@ export function LoginForm({
                       aria-invalid={fieldState.invalid}
                       {...field}
                     />
-                    <div className="min-h-[1px] overflow-hidden">
-                      <AnimatePresence mode="wait">
-                        {fieldState.invalid && (
-                          <MotionFieldError
-                            errors={[fieldState.error]}
-                            key="field-error"
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: "auto" }}
-                            exit={{
-                              opacity: 0,
-                              height: 0,
-                              display: "none",
-                              visibility: "hidden",
-                            }}
-                            transition={{
-                              type: "tween",
-                              duration: 0.2,
-                              stiffness: 100,
-                              damping: 20,
-                              ease: "backOut",
-                            }}
-                            className="overflow-hidden"
-                          />
-                        )}
-                      </AnimatePresence>
-                    </div>
+
+                    <InputFieldError fieldState={fieldState} />
 
                     {signinFormState.errors?.username && (
                       <p className="text-red-700">
@@ -132,40 +108,29 @@ export function LoginForm({
                         Забыли пароль?
                       </a>
                     </div>
-                    <Input
-                      id="password"
-                      type="password"
-                      placeholder="Пароль"
-                      aria-invalid={fieldState.invalid}
-                      {...field}
-                    />
-
-                    <div className="min-h-[1px] overflow-hidden">
-                      <AnimatePresence mode="wait">
-                        {fieldState.invalid && (
-                          <MotionFieldError
-                            errors={[fieldState.error]}
-                            key="field-error"
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: "auto" }}
-                            exit={{
-                              opacity: 0,
-                              height: 0,
-                              display: "none",
-                              visibility: "hidden",
-                            }}
-                            transition={{
-                              type: "tween",
-                              duration: 0.2,
-                              stiffness: 100,
-                              damping: 20,
-                              ease: "backOut",
-                            }}
-                            className="overflow-hidden"
-                          />
+                    <div className="relative">
+                      <Input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Пароль"
+                        aria-invalid={fieldState.invalid}
+                        {...field}
+                      />
+                      <Button
+                        className="absolute top-0 right-0 h-full px-3 hover:bg-transparent"
+                        onClick={() => setShowPassword(!showPassword)}
+                        size="icon"
+                        type="button"
+                        variant="ghost"
+                      >
+                        {showPassword ? (
+                          <EyeOff className="h-4 w-4 text-muted-foreground" />
+                        ) : (
+                          <Eye className="h-4 w-4 text-muted-foreground" />
                         )}
-                      </AnimatePresence>
+                      </Button>
                     </div>
+                    <InputFieldError fieldState={fieldState} />
 
                     {signinFormState.errors?.password && (
                       <p className="mt-2 text-sm text-red-500">
