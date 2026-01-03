@@ -242,9 +242,9 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                       <SelectItem value="64bc94f9-a913-40e4-9e57-2621dc702e19">
                         Инженер
                       </SelectItem>
-                      <SelectItem value="design">Подрядчик</SelectItem>
+                      {/* <SelectItem value="design">Подрядчик</SelectItem>
                       <SelectItem value="worker">Рабочий</SelectItem>
-                      <SelectItem value="office">Офис</SelectItem>
+                      <SelectItem value="office">Офис</SelectItem> */}
                     </SelectContent>
                   </Select>
 

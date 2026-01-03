@@ -30,9 +30,27 @@ export const SignupSchema = z.object({
     )
     .nonempty("Email не может быть пустым"),
   positionId: z.string().nonempty("Выберите должность"),
-  name: z.string().nonempty("Имя не может быть пустым"),
-  surname: z.string().nonempty("Фамилия не может быть пустой"),
-  patronymic: z.string().optional(),
+  name: z
+    .string()
+    .nonempty("Имя не может быть пустым")
+    .regex(
+      /^[a-zA-Z\u0400-\u04FF\u0451\u0401]+$/,
+      "Имя должно состоять только из букв"
+    ),
+  surname: z
+    .string()
+    .nonempty("Фамилия не может быть пустой")
+    .regex(
+      /^[a-zA-Z\u0400-\u04FF\u0451\u0401]+$/,
+      "Фамилия должно состоять только из букв"
+    ),
+  patronymic: z
+    .string()
+    .regex(
+      /^[a-zA-Z\u0400-\u04FF\u0451\u0401]+$/,
+      "Отчество должно состоять только из букв"
+    )
+    .optional(),
 });
 
 export const SignupSchemaRHF = SignupSchema.extend({
