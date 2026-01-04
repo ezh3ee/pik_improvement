@@ -17,9 +17,8 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { User } from "@/lib/generated/prisma/client";
 
-export function NavUser({ user }: { user: User }) {
+export function NavUser() {
   const { isMobile } = useSidebar();
 
   return (
@@ -31,7 +30,7 @@ export function NavUser({ user }: { user: User }) {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <SidebarUserCard user={user} />
+              <SidebarUserCard />
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
@@ -42,7 +41,7 @@ export function NavUser({ user }: { user: User }) {
             sideOffset={4}
           >
             <DropdownMenuLabel className="p-0 font-normal">
-              <SidebarUserCard user={user} />
+              <SidebarUserCard />
             </DropdownMenuLabel>
             {/* <DropdownMenuSeparator />
             <DropdownMenuGroup>

@@ -1,6 +1,9 @@
-import { User } from "@/lib/generated/prisma/client";
+import { useUser } from "@/app/providers/user-context";
+import { AppUser } from "@/lib/auth/types/app-user";
 
-export function SidebarUserCard({ user }: { user: User }) {
+export function SidebarUserCard() {
+  const user: AppUser = useUser();
+
   return (
     <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
       <div className="grid flex-1 text-left text-sm leading-tight">
