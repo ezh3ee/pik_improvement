@@ -28,10 +28,10 @@ export default async function ProtectedLayout({
     headers: await headers(),
   });
 
-  const user: User = session?.user as User;
-
   if (!session) redirect("/login");
   if (!session.user.active) redirect("/pending");
+
+  const user: User = session.user as User;
 
   return (
     <SidebarProvider>
