@@ -1,3 +1,4 @@
+"use client";
 import { useUser } from "@/app/providers/user-context";
 import { AppUser } from "@/lib/auth/types/app-user";
 
