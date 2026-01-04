@@ -17,6 +17,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { User } from "@/lib/generated/prisma/client";
 
 export default async function ProtectedLayout({
   children,
@@ -27,12 +28,14 @@ export default async function ProtectedLayout({
     headers: await headers(),
   });
 
+  const user: User = session?.user as User;
+
   if (!session) redirect("/login");
   if (!session.user.active) redirect("/pending");
 
   return (
     <SidebarProvider>
-      <AppSidebar />
+      <AppSidebar user={user} />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2">
           <div className="flex items-center gap-2 px-4">
