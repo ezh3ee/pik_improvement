@@ -29,12 +29,10 @@ const navigation = {
         {
           title: "Карта",
           url: "/projects/map",
-          isActive: false,
         },
         {
           title: "Список",
           url: "/projects/list",
-          isActive: false,
         },
       ],
     },
@@ -44,10 +42,6 @@ const navigation = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname: string = usePathname();
 
-  navigation.navMain[0].items.map((el) =>
-    el.url === pathname ? (el.isActive = true) : (el.isActive = false)
-  );
-
   return (
     <Sidebar {...props}>
       <SidebarHeader>
@@ -55,18 +49,24 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         {/* We create a SidebarGroup for each parent. */}
-        {navigation.navMain.map((item) => (
-          <SidebarGroup key={item.title}>
-            <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
+        {navigation.navMain.map((group) => (
+          <SidebarGroup key={group.title}>
+            <SidebarGroupLabel>{group.title}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {item.items.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild isActive={item.isActive}>
-                      <Link href={item.url}>{item.title}</Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
+                {group.items.map((item) => {
+                  const isActive =
+                    pathname === item.url ||
+                    pathname.startsWith(item.url + "/");
+
+                  return (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton asChild isActive={isActive}>
+                        <Link href={item.url}>{item.title}</Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
