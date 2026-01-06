@@ -1,44 +1,38 @@
 "use client";
 
-import { SquareTerminal } from "lucide-react";
 import * as React from "react";
 
 import { PIKLogo } from "@/components//logo";
-import { NavMain } from "@/components/nav-main";
-import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
+  SidebarMenuButton,
   SidebarMenuItem,
+  SidebarRail,
 } from "@/components/ui/sidebar";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
+const navigation = {
   navMain: [
     {
-      title: "Playground",
+      title: "Проекты",
       url: "#",
-      icon: SquareTerminal,
-      isActive: true,
       items: [
         {
-          title: "History",
-          url: "#",
+          title: "Карта",
+          url: "/projects/map",
+          isActive: false,
         },
         {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
+          title: "Список",
+          url: "/projects/list",
+          isActive: false,
         },
       ],
     },
@@ -46,21 +40,56 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const pathname: string = usePathname();
+
+  navigation.navMain[0].items.map((el) =>
+    el.url === pathname ? (el.isActive = true) : (el.isActive = false)
+  );
+
   return (
-    <Sidebar variant="inset" {...props}>
+    <Sidebar {...props}>
       <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <PIKLogo />
-          </SidebarMenuItem>
-        </SidebarMenu>
+        <PIKLogo />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        {/* We create a SidebarGroup for each parent. */}
+        {navigation.navMain.map((item) => (
+          <SidebarGroup key={item.title}>
+            <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {item.items.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild isActive={item.isActive}>
+                      <Link href={item.url}>{item.title}</Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        ))}
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser />
-      </SidebarFooter>
+      <SidebarRail />
     </Sidebar>
   );
 }
+
+// return (
+//   <Sidebar variant="inset" {...props}>
+//     <SidebarHeader>
+//       <SidebarMenu>
+//         <SidebarMenuItem>
+//           <PIKLogo />
+//         </SidebarMenuItem>
+//       </SidebarMenu>
+//     </SidebarHeader>
+//     <SidebarContent>
+//       <NavMain items={data.navMain} />
+//     </SidebarContent>
+//     <SidebarFooter>
+//       <NavUser />
+//     </SidebarFooter>
+//   </Sidebar>
+// );
+// }
