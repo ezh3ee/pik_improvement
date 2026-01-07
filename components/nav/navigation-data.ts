@@ -1,0 +1,18 @@
+export const navigation = {
+  navMain: [
+    {
+      title: "Проекты",
+      url: "#",
+      items: [
+        {
+          title: "Карта",
+          url: "/projects/map",
+        },
+        {
+          title: "Список",
+          url: "/projects/list",
+        },
+      ],
+    },
+  ],
+};

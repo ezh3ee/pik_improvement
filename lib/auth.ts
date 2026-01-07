@@ -30,6 +30,13 @@ export const auth = betterAuth({
       surname: {
         type: "string",
       },
+      patronymic: {
+        type: "string",
+        nullable: true,
+      },
+      positionId: {
+        type: "string",
+      },
     },
   },
 });
