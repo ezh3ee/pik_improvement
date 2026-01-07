@@ -1,6 +1,6 @@
 "use server";
 import { auth } from "@/lib/auth";
-import { getAuthErrorMessage } from "@/lib/auth-errors-map";
+import { getAuthErrorMessage } from "@/lib/auth/auth-errors-map";
 import { APIError } from "better-auth/api";
 import { redirect } from "next/navigation";
 import z from "zod";
