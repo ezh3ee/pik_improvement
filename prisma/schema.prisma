@@ -30,23 +30,22 @@ model User {
   banned          Boolean?  @default(false)
   banReason       String?
   banExpires      DateTime?
+  active          Boolean? @default(false)
 
-  active Boolean? @default(false)
-
-  surname    String
+  surname String
   patronymic String?
-  positionId String?
 
   position UserPosition? @relation(fields: [positionId], references: [id])
+  positionId String?
 
   @@unique([email])
-  @@unique([username])
   @@map("user")
+  @@unique([username])
 }
 
 model UserPosition {
-  id    String @id @default(uuid())
-  name  String
+  id String @id @default(uuid())
+  name String
   users User[]
 }
 
@@ -60,6 +59,7 @@ model Session {
   userAgent String?
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
 
   impersonatedBy String?
 
@@ -98,21 +98,4 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
-}
-
-model Object {
-  id         String      @id @default(uuid())
-  name       String
-  subObjects SubObject[]
-
-  @@map("object")
-}
-
-model SubObject {
-  id          String  @id @default(uuid())
-  name        String
-  coordinates Float[]
-
-  objectId String
-  object   Object @relation(fields: [objectId], references: [id])
 }
