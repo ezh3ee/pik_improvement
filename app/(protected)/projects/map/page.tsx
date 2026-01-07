@@ -1,3 +1,3 @@
 export default async function Projects() {
-  return <div>Projects PIDORAS</div>;
+  return <div>Projects map</div>;
 }

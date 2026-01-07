@@ -3,6 +3,7 @@
 import * as React from "react";
 
 import { PIKLogo } from "@/components//logo";
+import { navigation } from "@/components/nav/navigation-data";
 import {
   Sidebar,
   SidebarContent,
@@ -18,26 +19,7 @@ import {
 } from "@/components/ui/sidebar";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { NavUser } from "./nav-user";
-
-const navigation = {
-  navMain: [
-    {
-      title: "Проекты",
-      url: "#",
-      items: [
-        {
-          title: "Карта",
-          url: "/projects/map",
-        },
-        {
-          title: "Список",
-          url: "/projects/list",
-        },
-      ],
-    },
-  ],
-};
+import { NavUser } from "../nav-user";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname: string = usePathname();
@@ -79,22 +61,3 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     </Sidebar>
   );
 }
-
-// return (
-//   <Sidebar variant="inset" {...props}>
-//     <SidebarHeader>
-//       <SidebarMenu>
-//         <SidebarMenuItem>
-//           <PIKLogo />
-//         </SidebarMenuItem>
-//       </SidebarMenu>
-//     </SidebarHeader>
-//     <SidebarContent>
-//       <NavMain items={data.navMain} />
-//     </SidebarContent>
-//     <SidebarFooter>
-//       <NavUser />
-//     </SidebarFooter>
-//   </Sidebar>
-// );
-// }
