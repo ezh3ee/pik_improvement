@@ -1,10 +1,18 @@
 "use client";
 
+import ImageTile from "ol/ImageTile";
 import Map from "ol/Map";
 import View from "ol/View";
+import { intersects } from "ol/extent";
 import TileLayer from "ol/layer/Tile";
 import XYZ from "ol/source/XYZ";
 import { useEffect, useRef } from "react";
+
+const YANDEX_API_KEY = process.env.NEXT_PUBLIC_YANDEX_TILES_KEY;
+
+if (!YANDEX_API_KEY) {
+  throw new Error("Missing NEXT_PUBLIC_YANDEX_TILES_KEY in .env");
+}
 
 export default function OLMap() {
   const mapDivRef = useRef<HTMLDivElement | null>(null);
@@ -14,19 +22,63 @@ export default function OLMap() {
     if (!mapDivRef.current) return;
     if (mapRef.current) return;
 
-    console.log(process.env.NEXT_PUBLIC_YANDEX_TILES_KEY);
+    function killImage(image: HTMLImageElement) {
+      console.log("killing image ", image);
+      image.onload = null;
+      image.onerror = null;
+      image.src = "";
+    }
+
+    const source = new XYZ({
+      url: `https://tiles.api-maps.yandex.ru/v1/tiles/?x={x}&y={y}&z={z}&lang=ru_RU&l=map&apikey=${YANDEX_API_KEY}`,
+      transition: 0,
+      reprojectionErrorThreshold: 0,
+
+      tileLoadFunction: async (imageTile, src) => {
+        if (!(imageTile instanceof ImageTile)) return;
+        const image = imageTile.getImage() as HTMLImageElement;
+
+        if (blockTiles) {
+          console.log("blockTiles working....");
+          image.src = "";
+          return;
+        }
+
+        const map = mapRef.current;
+        if (!map) return;
+
+        const size = map.getSize();
+        if (!size) return;
+
+        const view = map.getView();
+        const viewExtent = view.calculateExtent(size);
+
+        const tileGrid = source.getTileGrid();
+        const tileCoord = imageTile.getTileCoord();
+        if (!tileCoord || !tileGrid) return;
+
+        const tileExtent = tileGrid.getTileCoordExtent(tileCoord);
+
+        if (!intersects(viewExtent, tileExtent)) {
+          console.log("!intersects");
+          killImage(image);
+          return;
+        }
+
+        await tilesDelay();
+        image.src = src;
+      },
+    });
 
     mapRef.current = new Map({
       target: mapDivRef.current,
+      maxTilesLoading: 2,
+      pixelRatio: 1,
       layers: [
         new TileLayer({
-          source: new XYZ({
-            url: `https://tiles.api-maps.yandex.ru/v1/tiles/?x={x}&y={y}&z={z}&lang=ru_RU&l=map&apikey=8c98e0f0-0a7e-4c0e-bdbc-3c3447909f9d`,
-            attributions: "© Yandex",
-            transition: 0,
-            reprojectionErrorThreshold: 0,
-          }),
+          source,
           preload: 0,
+          useInterimTilesOnError: false,
         }),
       ],
 
@@ -34,9 +86,43 @@ export default function OLMap() {
         center: [8546575.886939, 2137169.681579],
         zoom: 10,
         minZoom: 5,
-        maxZoom: 18,
+        maxZoom: 17,
         constrainResolution: true,
+        zoomFactor: 2,
+        smoothResolutionConstraint: false,
+        smoothExtentConstraint: false,
       }),
+
+      // interactions: defaultInteractions({
+      //   mouseWheelZoom: true,
+      // }).extend([
+      //   new MouseWheelZoom({
+      //     duration: 0, // Animation duration
+      //     timeout: 100, // Delay before zooming
+      //     constrainResolution: true, // Snap to tile levels
+      //     maxDelta: 1,
+      //   }),
+      // ]),
+    });
+
+    // const view = mapRef.current.getView();
+
+    // view.on("change:resolution", () => {
+    //   console.log("RESOLUTION CHANGE", view.getZoom());
+    // });
+
+    mapRef.current.getView().setHint("animating", 0);
+    mapRef.current.getView().setHint("interacting", 0);
+
+    let blockTiles = false;
+
+    mapRef.current.on("movestart", () => {
+      blockTiles = true;
+    });
+
+    mapRef.current.on("moveend", () => {
+      blockTiles = false;
+      source.refresh();
     });
 
     return () => {};
@@ -45,9 +131,6 @@ export default function OLMap() {
   return <div ref={mapDivRef} style={{ width: "100%", height: "100%" }} />;
 }
 
-// new TileLayer({
-//           source: new XYZ({
-//             url: `https://tiles.api-maps.yandex.ru/v1/tiles/?x={x}&y={y}&z={z}&lang=ru_RU&l=map&apikey=8c98e0f0-0a7e-4c0e-bdbc-3c3447909f9d`,
-//             attributions: "© Yandex",
-//           }),
-//         }),
+const tilesDelay = async () => {
+  return new Promise((resolve) => setTimeout(resolve, 10));
+};
