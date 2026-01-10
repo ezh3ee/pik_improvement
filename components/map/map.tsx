@@ -5,6 +5,7 @@ import Map from "ol/Map";
 import View from "ol/View";
 import { intersects } from "ol/extent";
 import TileLayer from "ol/layer/Tile";
+import { fromLonLat } from "ol/proj";
 import XYZ from "ol/source/XYZ";
 import { useEffect, useRef } from "react";
 
@@ -33,16 +34,17 @@ export default function OLMap() {
       url: `https://tiles.api-maps.yandex.ru/v1/tiles/?x={x}&y={y}&z={z}&lang=ru_RU&l=map&apikey=${YANDEX_API_KEY}`,
       transition: 0,
       reprojectionErrorThreshold: 0,
+      projection: "EPSG:3395",
+      // tileGrid: ol.tilegrid.createXYZ({
+      //   extent: [
+      //     -20037508.342789244, -20037508.342789244, 20037508.342789244,
+      //     20037508.342789244,
+      //   ],
+      // }),
 
       tileLoadFunction: async (imageTile, src) => {
         if (!(imageTile instanceof ImageTile)) return;
         const image = imageTile.getImage() as HTMLImageElement;
-
-        if (blockTiles) {
-          console.log("blockTiles working....");
-          image.src = "";
-          return;
-        }
 
         const map = mapRef.current;
         if (!map) return;
@@ -59,13 +61,19 @@ export default function OLMap() {
 
         const tileExtent = tileGrid.getTileCoordExtent(tileCoord);
 
+        if (blockTiles) {
+          console.log("blockTiles working....");
+          image.src = "";
+          return;
+        }
+
         if (!intersects(viewExtent, tileExtent)) {
           console.log("!intersects");
           killImage(image);
           return;
         }
 
-        await tilesDelay();
+        // await tilesDelay();
         image.src = src;
       },
     });
@@ -83,10 +91,12 @@ export default function OLMap() {
       ],
 
       view: new View({
-        center: [8546575.886939, 2137169.681579],
+        // center: [8546575.886939, 2137169.681579],
+        center: fromLonLat([55.374892, 37.539087]),
+        // projection: "EPSG:3395",
         zoom: 10,
         minZoom: 5,
-        maxZoom: 17,
+        maxZoom: 20,
         constrainResolution: true,
         zoomFactor: 2,
         smoothResolutionConstraint: false,
