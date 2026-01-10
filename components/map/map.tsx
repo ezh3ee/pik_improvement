@@ -34,7 +34,7 @@ export default function OLMap() {
       url: `https://tiles.api-maps.yandex.ru/v1/tiles/?x={x}&y={y}&z={z}&lang=ru_RU&l=map&apikey=${YANDEX_API_KEY}`,
       transition: 0,
       reprojectionErrorThreshold: 0,
-      projection: "EPSG:3395",
+      // projection: "EPSG:3395",
       // tileGrid: ol.tilegrid.createXYZ({
       //   extent: [
       //     -20037508.342789244, -20037508.342789244, 20037508.342789244,
