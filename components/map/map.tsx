@@ -11,7 +11,7 @@ import { useEffect, useRef } from "react";
 
 const YANDEX_API_KEY = process.env.NEXT_PUBLIC_YANDEX_TILES_KEY;
 
-if (!YANDEX_API_KEY) {
+if (!YANDEX_API_KEY)
   throw new Error("Missing NEXT_PUBLIC_YANDEX_TILES_KEY in .env");
 
 export default function OLMap() {
@@ -144,7 +144,3 @@ export default function OLMap() {
 
   return <div ref={mapDivRef} style={{ width: "100%", height: "100%" }} />;
 }
-
-const tilesDelay = async () => {
-  return new Promise((resolve) => setTimeout(resolve, 10));
-};
