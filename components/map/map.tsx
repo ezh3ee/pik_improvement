@@ -2,8 +2,8 @@
 
 import ImageTile from "ol/ImageTile";
 import Map from "ol/Map";
+import TileState from "ol/TileState";
 import View from "ol/View";
-import { intersects } from "ol/extent";
 import TileLayer from "ol/layer/Tile";
 import { fromLonLat } from "ol/proj";
 import XYZ from "ol/source/XYZ";
@@ -30,6 +30,8 @@ export default function OLMap() {
       image.src = "";
     }
 
+    const retries: Record<string, number> = {};
+
     const source = new XYZ({
       url: `https://tiles.api-maps.yandex.ru/v1/tiles/?x={x}&y={y}&z={z}&lang=ru_RU&l=map&apikey=${YANDEX_API_KEY}`,
       transition: 0,
@@ -42,45 +44,68 @@ export default function OLMap() {
       //   ],
       // }),
 
-      tileLoadFunction: async (imageTile, src) => {
-        if (!(imageTile instanceof ImageTile)) return;
-        const image = imageTile.getImage() as HTMLImageElement;
+      // tileLoadFunction: async (tile, src) => {
+      //   if (!(tile instanceof ImageTile)) return;
+      //   const image = tile.getImage() as HTMLImageElement;
 
-        const map = mapRef.current;
-        if (!map) return;
+      //   fetch(src, { mode: "no-cors" })
+      //     .then((response) => {
+      //       if (!response.ok) {
+      //         retries[src] = (retries[src] || 0) + 1;
+      //         if (retries[src] <= 1) {
+      //           setTimeout(() => tile.load(), retries[src] * 1000);
+      //         }
 
-        const size = map.getSize();
-        if (!size) return;
+      //         return;
+      //       }
+      //       console.log("ok");
+      //       return response.blob();
+      //     })
+      //     .then((data) => {
+      //       console.log("blob ", data);
+      //       if (data !== undefined && data !== null) {
+      //         image.src = URL.createObjectURL(data);
+      //       } else {
+      //         tile.setState(TileState.ERROR);
+      //       }
+      //     })
+      //     .catch(() => {
+      //       tile.setState(TileState.ERROR);
+      //     });
+      // },
 
-        const view = map.getView();
-        const viewExtent = view.calculateExtent(size);
+      tileLoadFunction: async (tile, src) => {
+        const xhr = new XMLHttpRequest();
+        if (!(tile instanceof ImageTile)) return;
+        const image = tile.getImage() as HTMLImageElement;
+        xhr.responseType = "blob";
 
-        const tileGrid = source.getTileGrid();
-        const tileCoord = imageTile.getTileCoord();
-        if (!tileCoord || !tileGrid) return;
+        xhr.addEventListener("loadend", function () {
+          const data = this.response;
+          if (data !== undefined && data !== null) {
+            image.src = URL.createObjectURL(data);
+          } else {
+            tile.setState(TileState.ERROR);
+          }
+        });
 
-        const tileExtent = tileGrid.getTileCoordExtent(tileCoord);
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4 && xhr.status === 0) {
+            retries[src] = (retries[src] || 0) + 1;
+            if (retries[src] <= 10) {
+              setTimeout(() => tile.load(), retries[src] * 300);
+            }
+          }
+        };
 
-        if (blockTiles) {
-          console.log("blockTiles working....");
-          image.src = "";
-          return;
-        }
-
-        if (!intersects(viewExtent, tileExtent)) {
-          console.log("!intersects");
-          killImage(image);
-          return;
-        }
-
-        // await tilesDelay();
-        image.src = src;
+        xhr.open("GET", src);
+        xhr.send();
       },
     });
 
     mapRef.current = new Map({
       target: mapDivRef.current,
-      maxTilesLoading: 2,
+      // maxTilesLoading: 1,
       pixelRatio: 1,
       layers: [
         new TileLayer({
@@ -121,8 +146,8 @@ export default function OLMap() {
     //   console.log("RESOLUTION CHANGE", view.getZoom());
     // });
 
-    mapRef.current.getView().setHint("animating", 0);
-    mapRef.current.getView().setHint("interacting", 0);
+    // mapRef.current.getView().setHint("animating", 0);
+    // mapRef.current.getView().setHint("interacting", 0);
 
     let blockTiles = false;
 
@@ -132,7 +157,7 @@ export default function OLMap() {
 
     mapRef.current.on("moveend", () => {
       blockTiles = false;
-      source.refresh();
+      // source.refresh();
     });
 
     return () => {};
