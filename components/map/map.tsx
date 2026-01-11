@@ -13,7 +13,6 @@ const YANDEX_API_KEY = process.env.NEXT_PUBLIC_YANDEX_TILES_KEY;
 
 if (!YANDEX_API_KEY) {
   throw new Error("Missing NEXT_PUBLIC_YANDEX_TILES_KEY in .env");
-}
 
 export default function OLMap() {
   const mapDivRef = useRef<HTMLDivElement | null>(null);
@@ -29,11 +28,12 @@ export default function OLMap() {
       image.onerror = null;
       image.src = "";
     }
-
     const retries: Record<string, number> = {};
+    const xhrMap = new WeakMap<ImageTile, XMLHttpRequest>();
 
     const source = new XYZ({
-      url: `https://tiles.api-maps.yandex.ru/v1/tiles/?x={x}&y={y}&z={z}&lang=ru_RU&l=map&apikey=${YANDEX_API_KEY}`,
+      // url: `https://tiles.api-maps.yandex.ru/v1/tiles/?x={x}&y={y}&z={z}&lang=ru_RU&l=map&apikey=${YANDEX_API_KEY}`,
+      url: `/api/yandex/tile?x={x}&y={y}&z={z}`,
       transition: 0,
       reprojectionErrorThreshold: 0,
       // projection: "EPSG:3395",
@@ -44,39 +44,15 @@ export default function OLMap() {
       //   ],
       // }),
 
-      // tileLoadFunction: async (tile, src) => {
-      //   if (!(tile instanceof ImageTile)) return;
-      //   const image = tile.getImage() as HTMLImageElement;
-
-      //   fetch(src, { mode: "no-cors" })
-      //     .then((response) => {
-      //       if (!response.ok) {
-      //         retries[src] = (retries[src] || 0) + 1;
-      //         if (retries[src] <= 1) {
-      //           setTimeout(() => tile.load(), retries[src] * 1000);
-      //         }
-
-      //         return;
-      //       }
-      //       console.log("ok");
-      //       return response.blob();
-      //     })
-      //     .then((data) => {
-      //       console.log("blob ", data);
-      //       if (data !== undefined && data !== null) {
-      //         image.src = URL.createObjectURL(data);
-      //       } else {
-      //         tile.setState(TileState.ERROR);
-      //       }
-      //     })
-      //     .catch(() => {
-      //       tile.setState(TileState.ERROR);
-      //     });
-      // },
-
       tileLoadFunction: async (tile, src) => {
-        const xhr = new XMLHttpRequest();
         if (!(tile instanceof ImageTile)) return;
+
+        const prev = xhrMap.get(tile);
+        if (prev) prev.abort();
+
+        const xhr = new XMLHttpRequest();
+        xhrMap.set(tile, xhr);
+
         const image = tile.getImage() as HTMLImageElement;
         xhr.responseType = "blob";
 
@@ -90,7 +66,10 @@ export default function OLMap() {
         });
 
         xhr.onreadystatechange = function () {
-          if (xhr.readyState === 4 && xhr.status === 0) {
+          if (
+            (xhr.readyState === 4 && xhr.status === 0) ||
+            xhr.status === 204
+          ) {
             retries[src] = (retries[src] || 0) + 1;
             if (retries[src] <= 10) {
               setTimeout(() => tile.load(), retries[src] * 300);
