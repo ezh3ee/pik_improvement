@@ -15,6 +15,7 @@ if (!YANDEX_API_KEY)
   throw new Error("Missing NEXT_PUBLIC_YANDEX_TILES_KEY in .env");
 
 export default function OLMap() {
+  console.log("init");
   const mapDivRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<Map | null>(null);
 
@@ -22,13 +23,8 @@ export default function OLMap() {
     if (!mapDivRef.current) return;
     if (mapRef.current) return;
 
-    function killImage(image: HTMLImageElement) {
-      console.log("killing image ", image);
-      image.onload = null;
-      image.onerror = null;
-      image.src = "";
-    }
     const retries: Record<string, number> = {};
+    console.log(retries);
     const xhrMap = new WeakMap<ImageTile, XMLHttpRequest>();
 
     const source = new XYZ({
@@ -84,7 +80,6 @@ export default function OLMap() {
 
     mapRef.current = new Map({
       target: mapDivRef.current,
-      // maxTilesLoading: 1,
       pixelRatio: 1,
       layers: [
         new TileLayer({
@@ -106,37 +101,6 @@ export default function OLMap() {
         smoothResolutionConstraint: false,
         smoothExtentConstraint: false,
       }),
-
-      // interactions: defaultInteractions({
-      //   mouseWheelZoom: true,
-      // }).extend([
-      //   new MouseWheelZoom({
-      //     duration: 0, // Animation duration
-      //     timeout: 100, // Delay before zooming
-      //     constrainResolution: true, // Snap to tile levels
-      //     maxDelta: 1,
-      //   }),
-      // ]),
-    });
-
-    // const view = mapRef.current.getView();
-
-    // view.on("change:resolution", () => {
-    //   console.log("RESOLUTION CHANGE", view.getZoom());
-    // });
-
-    // mapRef.current.getView().setHint("animating", 0);
-    // mapRef.current.getView().setHint("interacting", 0);
-
-    let blockTiles = false;
-
-    mapRef.current.on("movestart", () => {
-      blockTiles = true;
-    });
-
-    mapRef.current.on("moveend", () => {
-      blockTiles = false;
-      // source.refresh();
     });
 
     return () => {};

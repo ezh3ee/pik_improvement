@@ -1,6 +1,10 @@
-import { NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
 
-export async function GET(req: NextRequest) {
+export async function proxy(req: NextRequest) {
+  return handleYandexTileRequest(req);
+}
+
+async function handleYandexTileRequest(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
 
   const x = searchParams.get("x");
@@ -19,12 +23,17 @@ export async function GET(req: NextRequest) {
 
   if (!upstream.ok) {
     if (upstream.status === 429) {
-      return new Response(null, { status: 204, headers: upstream.headers });
+      return new Response(null, {
+        status: 204,
+        // headers: upstream.headers
+        headers: {
+          "X-Rate-Limited": "true",
+        },
+      });
     }
 
     return new Response(null, {
       status: upstream.status,
-      headers: upstream.headers,
     });
   }
 
@@ -32,10 +41,9 @@ export async function GET(req: NextRequest) {
     status: upstream.status,
     statusText: upstream.statusText,
     headers: upstream.headers,
-    // headers: {
-    //   "Content-Type": upstream.headers.get("content-type") ?? "image/png",
-    //   "Access-Control-Allow-Origin": "*",
-    //   "Cache-Control": "no-store",
-    // },
   });
 }
+
+export const config = {
+  matcher: "/api/yandex/tile",
+};
