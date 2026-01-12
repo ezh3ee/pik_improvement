@@ -15,7 +15,7 @@ async function handleYandexTileRequest(req: NextRequest) {
     return new Response("Missing tile params", { status: 400 });
   }
 
-  const url = `https://tiles.api-maps.yandex.ru/v1/tiles/?x=${x}&y=${y}&z=${z}&lang=ru_RU&l=map&apikey=${process.env.NEXT_PUBLIC_YANDEX_TILES_KEY}`;
+  const url = `https://tiles.api-maps.yandex.ru/v1/tiles/?x=${x}&y=${y}&z=${z}&lang=ru_RU&scale=2&l=map&apikey=${process.env.NEXT_PUBLIC_YANDEX_TILES_KEY}`;
 
   const upstream = await fetch(url, {
     cache: "no-store",
