@@ -6,6 +6,7 @@ import { convertCoordReverser } from "@/lib/map/convert-coord-reverser";
 import Feature from "ol/Feature";
 import Map from "ol/Map";
 import View from "ol/View";
+import { defaults as defaultControls, FullScreen } from "ol/control";
 import Point from "ol/geom/Point.js";
 import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector.js";
@@ -36,6 +37,11 @@ export default function OLMap() {
 
     mapRef.current = new Map({
       target: mapDivRef.current,
+      controls: defaultControls().extend([
+        new FullScreen({
+          source: "fullscreen",
+        }),
+      ]),
       layers: [
         new TileLayer({
           source,

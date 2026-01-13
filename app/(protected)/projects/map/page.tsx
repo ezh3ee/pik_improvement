@@ -4,7 +4,11 @@ import "./style.scss";
 
 export default function MapPage() {
   return (
-    <div style={{ width: "100%", height: "100%" }} className="map-wrapper">
+    <div
+      id="fullscreen"
+      style={{ width: "100%", height: "100%" }}
+      className="fullscreen map-wrapper"
+    >
       <Map />
       <Image
         className="yandex-logo"
