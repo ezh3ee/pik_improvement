@@ -1,7 +1,9 @@
 import type { NextRequest } from "next/server";
 
 export async function proxy(req: NextRequest) {
-  return handleYandexTileRequest(req);
+  if (req.nextUrl.pathname === "/api/yandex/tile") {
+    return handleYandexTileRequest(req);
+  }
 }
 
 async function handleYandexTileRequest(req: NextRequest) {

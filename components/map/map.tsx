@@ -9,6 +9,7 @@ import View from "ol/View";
 import Point from "ol/geom/Point.js";
 import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector.js";
+import "ol/ol.css";
 import VectorSource from "ol/source/Vector";
 import XYZ from "ol/source/XYZ";
 import { useEffect, useRef } from "react";
