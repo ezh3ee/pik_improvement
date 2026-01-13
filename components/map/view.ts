@@ -9,4 +9,5 @@ export const VIEW_CONFIG = {
   minZoom: 5,
   maxZoom: 21,
   constrainResolution: true,
+  enableRotation: false,
 };
