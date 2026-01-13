@@ -3,6 +3,7 @@
 import * as React from "react";
 
 import { PIKLogo } from "@/components//logo";
+import { NavUser } from "@/components/nav-user";
 import { navigation } from "@/components/nav/navigation-data";
 import {
   Sidebar,
@@ -16,13 +17,19 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { NavUser } from "../nav-user";
+import { useEffect } from "react";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname: string = usePathname();
+  const { setOpenMobile } = useSidebar();
+
+  useEffect(() => {
+    setOpenMobile(false);
+  }, [pathname, setOpenMobile]);
 
   return (
     <Sidebar {...props}>
