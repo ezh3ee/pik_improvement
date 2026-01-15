@@ -6,14 +6,17 @@ import "./style.scss";
 
 export default function MapList() {
   const { isMobile } = useSidebar();
-  const [isOpen, setIsOpen] = useState(!isMobile);
+  const [isOpen, setIsOpen] = useState<boolean | undefined>(undefined);
 
-  console.log("isMobile ", isMobile);
-  console.log("isOpen ", isOpen);
+  const isVisible = isOpen ?? !isMobile;
+
+  const handleToggle = () => {
+    setIsOpen(!isVisible);
+  };
 
   return (
     <div className="map-list-container">
-      <aside style={{ display: isOpen ? "block" : "none" }}>
+      <aside style={{ display: isVisible ? "block" : "none" }}>
         <div className="search-container">
           <input type="text" placeholder="Поиск по адресу" />
           <button>Поиск</button>
@@ -32,10 +35,7 @@ export default function MapList() {
           </div>
         </div>
       </aside>
-      <ArrowLeft
-        className="arrow cursor-pointer"
-        onClick={() => setIsOpen((isOpen) => !isOpen)}
-      />
+      <ArrowLeft className="arrow cursor-pointer" onClick={handleToggle} />
     </div>
   );
 }
