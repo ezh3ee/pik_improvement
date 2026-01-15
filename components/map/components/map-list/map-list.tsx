@@ -1,10 +1,15 @@
 "use client";
+import { useSidebar } from "@/components/ui/sidebar";
 import { ArrowLeft } from "lucide-react";
 import { useState } from "react";
 import "./style.scss";
 
 export default function MapList() {
-  const [isOpen, setIsOpen] = useState(true);
+  const { isMobile } = useSidebar();
+  const [isOpen, setIsOpen] = useState(!isMobile);
+
+  console.log("isMobile ", isMobile);
+  console.log("isOpen ", isOpen);
 
   return (
     <div className="map-list-container">
