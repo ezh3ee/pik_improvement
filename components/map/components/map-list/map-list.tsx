@@ -1,10 +1,14 @@
+"use client";
 import { ArrowLeft } from "lucide-react";
+import { useState } from "react";
 import "./style.scss";
 
 export default function MapList() {
+  const [isOpen, setIsOpen] = useState(true);
+
   return (
     <div className="map-list-container">
-      <aside>
+      <aside style={{ display: isOpen ? "block" : "none" }}>
         <div className="search-container">
           <input type="text" placeholder="Поиск по адресу" />
           <button>Поиск</button>
@@ -22,8 +26,11 @@ export default function MapList() {
             </div>
           </div>
         </div>
-        <ArrowLeft className="arrow cursor-pointer" />
       </aside>
+      <ArrowLeft
+        className="arrow cursor-pointer"
+        onClick={() => setIsOpen((isOpen) => !isOpen)}
+      />
     </div>
   );
 }
