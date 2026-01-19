@@ -9,10 +9,16 @@ import { useEffect, useRef } from "react";
 export function MapPane() {
   const mapDivRef = useRef<HTMLDivElement>(null);
   const { setMap } = useMapContext();
-  const isInitializedRef = useRef(false);
+  // const isInitializedRef = useRef(false);
 
   useEffect(() => {
-    if (!mapDivRef.current || isInitializedRef.current) return;
+    console.log("MAP PANE use effect");
+    // if (!mapDivRef.current || isInitializedRef.current) return;
+    if (!mapDivRef.current) return;
+
+    console.log(
+      "after !mapDivRef.current check || isInitializedRef.current check",
+    );
 
     const newMap = new Map({
       target: mapDivRef.current,
@@ -21,7 +27,7 @@ export function MapPane() {
     });
 
     setMap(newMap);
-    isInitializedRef.current = true;
+    // isInitializedRef.current = true;
 
     return () => {
       newMap.setTarget(undefined); //
