@@ -21,18 +21,30 @@ export default function MapList() {
         {/* <motion.aside style={{ maxWidth: isVisible ? "350px" : "0px" }}> */}
         {isVisible && (
           <motion.div
-            initial={{ opacity: 0, maxWidth: "0px" }}
-            animate={{ opacity: 1, maxWidth: "350px" }}
+            initial={{ opacity: 0, width: "0px" }}
+            animate={{
+              opacity: 1,
+              width: "350px",
+              transition: {
+                width: { duration: 0.15 },
+                opacity: { duration: 0.15, delay: 0.12 },
+              },
+            }}
             exit={{
               opacity: 0,
-              maxWidth: "0px",
+              width: "0px",
               display: "none",
               visibility: "hidden",
             }}
             transition={{
-              duration: 0.4,
-              maxWidth: { type: "spring", visualDuration: 0.1, bounce: 0.5 },
+              width: {
+                type: "tween",
+                duration: 0.15,
+                delay: 0.12,
+              },
+              opacity: { duration: 0.15 },
             }}
+            // style={{ overflow: "hidden" }}
           >
             <div className="search-container">
               <input type="text" placeholder="Поиск по адресу" />
