@@ -1,17 +1,14 @@
 "use client";
 import { useMap } from "@/components/map/hooks/use-map";
-import { tileLoadFunction } from "@/components/map/tile-load";
 import Layer from "ol/layer/Layer";
 import TileLayer from "ol/layer/Tile";
 import XYZ from "ol/source/XYZ";
 import { useEffect, useRef } from "react";
 
-const source = new XYZ({
-  url: `/api/yandex/tile?x={x}&y={y}&z={z}`,
-  tileLoadFunction: tileLoadFunction,
-});
+import "@/lib/map/projections";
+import { OSM } from "ol/source";
 
-export function YandexTileLayer() {
+export function OSMTileLayer() {
   const { map, isReady } = useMap();
   const layerRef = useRef<Layer<XYZ> | null>(null);
 
@@ -19,8 +16,9 @@ export function YandexTileLayer() {
     if (!map || !isReady) return;
 
     const layer = new TileLayer({
-      source,
-      zIndex: 0,
+      source: new OSM(),
+      properties: { layerType: "osm" },
+      visible: false,
     });
 
     layerRef.current = layer;

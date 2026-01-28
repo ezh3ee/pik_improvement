@@ -18,7 +18,6 @@ export default function MapList() {
   return (
     <div className="map-list-container">
       <AnimatePresence mode="wait">
-        {/* <motion.aside style={{ maxWidth: isVisible ? "350px" : "0px" }}> */}
         {isVisible && (
           <motion.div
             initial={{ opacity: 0, width: "0px" }}
@@ -44,7 +43,6 @@ export default function MapList() {
               },
               opacity: { duration: 0.15 },
             }}
-            // style={{ overflow: "hidden" }}
           >
             <div className="search-container">
               <input type="text" placeholder="Поиск по адресу" />

@@ -1,6 +1,8 @@
 import GetCoordsByClick from "@/components/map/components/get-coords-by-click";
 import MapList from "@/components/map/components/map-list/map-list";
-import { YandexTileLayer } from "@/components/map/layers/yandex-tile-layer";
+import { OSMTileLayer } from "@/components/map/layers/tiles/osm";
+import { YandexTileLayer } from "@/components/map/layers/tiles/yandex";
+import { TestPoint } from "@/components/map/layers/vector/test-point";
 import { MapPane } from "@/components/map/map-pane";
 import { MapProvider } from "@/components/map/providers/map-provider";
 import Image from "next/image";
@@ -17,7 +19,9 @@ export default function MapPage() {
         <MapList />
         <MapPane />
         <YandexTileLayer />
+        <OSMTileLayer />
         <GetCoordsByClick />
+        <TestPoint />
         <Image
           className="yandex-logo"
           src="/yndex_logo_ru.svg"
