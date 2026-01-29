@@ -2,6 +2,7 @@
 
 import { useMapContext } from "@/components/map/providers/map-provider";
 import { VIEW_CONFIG } from "@/components/map/view";
+import { defaults as defaultControls, FullScreen } from "ol/control";
 import Map from "ol/Map";
 import "ol/ol.css";
 import View from "ol/View";
@@ -20,6 +21,11 @@ export function MapPane() {
       target: mapDivRef.current,
       layers: [],
       view: new View(VIEW_CONFIG),
+      controls: defaultControls().extend([
+        new FullScreen({
+          source: "fullscreen",
+        }),
+      ]),
     });
 
     setMap(newMap);

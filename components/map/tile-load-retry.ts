@@ -5,7 +5,8 @@ import TileState from "ol/TileState";
 export async function tileLoadFunction(tile: Tile, src: string) {
   /*взято отсюда. Спасибо Mike https://gis.stackexchange.com/questions/368119/retrying-failed-tilewms-tile-load-in-openlayers*/
 
-  console.log("tileLoadFunction called");
+  // console.log("tileLoadFunction called");
+
   if (!(tile instanceof ImageTile)) return;
 
   const image = tile.getImage() as HTMLImageElement;

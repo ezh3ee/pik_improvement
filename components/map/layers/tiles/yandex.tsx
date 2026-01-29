@@ -38,13 +38,8 @@ export function YandexTileLayer() {
       source,
       zIndex: 0,
       properties: { layerType: "yandex" },
-      visible: true,
+      visible: false,
     });
-
-    console.log(
-      "yandex layer projection is: ",
-      layer.getSource()?.getProjection()?.getCode(),
-    );
 
     layerRef.current = layer;
     map.addLayer(layer);

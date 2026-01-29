@@ -1,4 +1,5 @@
 import GetCoordsByClick from "@/components/map/components/get-coords-by-click";
+import LayersSwitch from "@/components/map/components/layers-switch";
 import MapList from "@/components/map/components/map-list/map-list";
 import { OSMTileLayer } from "@/components/map/layers/tiles/osm";
 import { YandexTileLayer } from "@/components/map/layers/tiles/yandex";
@@ -18,6 +19,7 @@ export default function MapPage() {
       >
         <MapList />
         <MapPane />
+        <LayersSwitch />
         <YandexTileLayer />
         <OSMTileLayer />
         <GetCoordsByClick />
