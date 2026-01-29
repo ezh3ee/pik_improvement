@@ -1,5 +1,6 @@
 "use client";
 import { useMap } from "@/components/map/hooks/use-map";
+import { tileGroup } from "@/components/map/layers/tiles/tile-group";
 import Layer from "ol/layer/Layer";
 import TileLayer from "ol/layer/Tile";
 import XYZ from "ol/source/XYZ";
@@ -42,7 +43,8 @@ export function YandexTileLayer() {
     });
 
     layerRef.current = layer;
-    map.addLayer(layer);
+    // map.addLayer(layer);
+    tileGroup.getLayers().push(layer);
 
     return () => {
       map.removeLayer(layer);

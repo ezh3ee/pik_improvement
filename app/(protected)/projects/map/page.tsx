@@ -19,11 +19,11 @@ export default function MapPage() {
       >
         <MapList />
         <MapPane />
-        <LayersSwitch />
         <YandexTileLayer />
         <OSMTileLayer />
         <GetCoordsByClick />
         <TestPoint />
+        <LayersSwitch />
         <Image
           className="yandex-logo"
           src="/yndex_logo_ru.svg"

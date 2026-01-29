@@ -1,5 +1,6 @@
 "use client";
 
+import { tileGroup } from "@/components/map/layers/tiles/tile-group";
 import { useMapContext } from "@/components/map/providers/map-provider";
 import { VIEW_CONFIG } from "@/components/map/view";
 import { defaults as defaultControls, FullScreen } from "ol/control";
@@ -29,6 +30,8 @@ export function MapPane() {
     });
 
     setMap(newMap);
+
+    newMap.addLayer(tileGroup);
 
     return () => {
       newMap.setTarget(undefined); //

@@ -27,6 +27,7 @@ export function TestPoint() {
         "circle-radius": 9,
         "circle-fill-color": "red",
       },
+      properties: { name: "point" },
     });
 
     layerRef.current = layer;

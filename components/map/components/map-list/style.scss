@@ -1,10 +1,11 @@
 .map-list-container {
   max-width: 350px;
-  height: 95%;
-  margin: 10px;
+  height: calc(100% - 114px);
+  margin: 62px 10px 10px 8px;
   background-color: #fff;
   position: absolute;
   z-index: 10;
+  border-radius: 8px;
 }
 
 .arrow {

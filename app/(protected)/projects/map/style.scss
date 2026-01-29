@@ -26,8 +26,13 @@
 // }
 
 .layers-switch {
-  // position: absolute;
-  bottom: 20px;
-  right: 0;
-  // z-index: 10;
+  position: absolute;
+  bottom: 5px;
+  left: 8px;
+  z-index: 11;
+  // background-color: #fff;
+  * {
+    border: 0;
+    background-color: #fff;
+  }
 }
