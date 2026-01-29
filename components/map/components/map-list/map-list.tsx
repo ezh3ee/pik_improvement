@@ -2,17 +2,46 @@
 import { useSidebar } from "@/components/ui/sidebar";
 import { ArrowLeft } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./style.scss";
 
 export default function MapList() {
   const { isMobile } = useSidebar();
-  const [isOpen, setIsOpen] = useState<boolean | undefined>(undefined);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [hydrated, setHydrated] = useState<boolean>(false);
 
-  const isVisible = isOpen ?? !isMobile;
+  useEffect(() => {
+    if (isMobile) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setIsOpen(false);
+      return;
+    }
+    /* Решение с локалсторейджем https://stackoverflow.com/questions/72869030/initializing-component-with-parameter-from-local-storage-in-react-nextjs */
+    const saved = localStorage.getItem("map-list-open");
+    const initial = saved !== null ? saved === "true" : !isMobile;
+
+    setIsOpen(initial);
+    setHydrated(true);
+  }, [isMobile]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    localStorage.setItem("map-list-open", isOpen.toString());
+  }, [isOpen, hydrated]);
+
+  // useEffect(() => {
+  //   if (isMobile) {
+  //     // eslint-disable-next-line react-hooks/set-state-in-effect
+  //     setIsOpen(false);
+  //   }
+  // }, [isMobile]);
+
+  if (!hydrated) return null;
+
+  const isVisible = isOpen && !isMobile;
 
   const handleToggle = () => {
-    setIsOpen(!isVisible);
+    setIsOpen((prev) => !prev);
   };
 
   return (
