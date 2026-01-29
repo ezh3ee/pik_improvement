@@ -11,15 +11,11 @@ export default function MapList() {
   const [hydrated, setHydrated] = useState<boolean>(false);
 
   useEffect(() => {
-    if (isMobile) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setIsOpen(false);
-      return;
-    }
     /* Решение с локалсторейджем https://stackoverflow.com/questions/72869030/initializing-component-with-parameter-from-local-storage-in-react-nextjs */
     const saved = localStorage.getItem("map-list-open");
     const initial = saved !== null ? saved === "true" : !isMobile;
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsOpen(initial);
     setHydrated(true);
   }, [isMobile]);
@@ -29,16 +25,9 @@ export default function MapList() {
     localStorage.setItem("map-list-open", isOpen.toString());
   }, [isOpen, hydrated]);
 
-  // useEffect(() => {
-  //   if (isMobile) {
-  //     // eslint-disable-next-line react-hooks/set-state-in-effect
-  //     setIsOpen(false);
-  //   }
-  // }, [isMobile]);
-
   if (!hydrated) return null;
 
-  const isVisible = isOpen && !isMobile;
+  const isVisible = isOpen;
 
   const handleToggle = () => {
     setIsOpen((prev) => !prev);
