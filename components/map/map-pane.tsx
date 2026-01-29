@@ -1,6 +1,6 @@
 "use client";
 
-import { tileGroup } from "@/components/map/layers/tiles/tile-group";
+import { tileGroup } from "@/components/map/layers/tiles/group/tile-group";
 import { useMapContext } from "@/components/map/providers/map-provider";
 import { VIEW_CONFIG } from "@/components/map/view";
 import { defaults as defaultControls, FullScreen } from "ol/control";
@@ -15,8 +15,6 @@ export function MapPane() {
 
   useEffect(() => {
     if (!mapDivRef.current) return;
-
-    // const point = new Point(convertCoordReverser(55.749521, 37.62481));
 
     const newMap = new Map({
       target: mapDivRef.current,

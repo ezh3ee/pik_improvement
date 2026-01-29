@@ -1,5 +1,6 @@
 "use client";
 import { useMap } from "@/components/map/hooks/use-map";
+import { tileGroup } from "@/components/map/layers/tiles/group/tile-group";
 import {
   Select,
   SelectContent,
@@ -9,15 +10,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useEffect, useState } from "react";
-import { tileGroup } from "../layers/tiles/tile-group";
 
 const items: { label: string; value: string }[] = [
   { label: "Яндекс", value: "yandex" },
-  { label: "Open Street Map", value: "osm" },
-  { label: "Open Street Map (спутник)", value: "osm-satellite" },
+  { label: "Open Street Map (топография)", value: "osm" },
+  { label: "Спутник", value: "satellite" },
 ];
 
 export default function LayersSwitch() {
+  /* ЗДЕСЬ БУДЕТ ПОЛУЧЕНИЕ ТЕКУЗЕГО СЛОЯ ИЗ ПАРАМЕТРОВ КАРТЫ */
   const [currentLayer, setCurrentLayer] = useState("yandex");
   const { map, isReady } = useMap();
 

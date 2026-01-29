@@ -7,22 +7,24 @@ import { useEffect, useRef } from "react";
 
 import { tileGroup } from "@/components/map/layers/tiles/group/tile-group";
 import "@/lib/map/projections";
-import { OSM } from "ol/source";
 
-export function OSMTileLayer() {
+export function SatteliteLayer() {
   const { map, isReady } = useMap();
   const layerRef = useRef<Layer<XYZ> | null>(null);
 
   useEffect(() => {
     if (!map || !isReady) return;
 
+    const source = new XYZ({
+      url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+      maxZoom: 19,
+    });
+
     const layer = new TileLayer({
-      source: new OSM({
-        attributions: "Open Street Map Топография © OpenStreetMap.org",
-      }),
-      zIndex: 0,
-      properties: { layerType: "osm" },
+      source,
       visible: false,
+      zIndex: 0,
+      properties: { layerType: "satellite" },
     });
 
     layerRef.current = layer;
