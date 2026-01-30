@@ -1,13 +1,13 @@
 import GetCoordsByClick from "@/components/map/components/get-coords-by-click";
-import LayersSwitch from "@/components/map/components/layers-switch";
+import LayersSwitch from "@/components/map/components/layer-switch/layers-switch";
 import MapList from "@/components/map/components/map-list/map-list";
+import MapYandexLogo from "@/components/map/components/map-yandex-logo";
 import { OSMTileLayer } from "@/components/map/layers/tiles/osm";
 import { SatteliteLayer } from "@/components/map/layers/tiles/satellite";
 import { YandexTileLayer } from "@/components/map/layers/tiles/yandex";
 import { TestPoint } from "@/components/map/layers/vector/test-point";
 import { MapPane } from "@/components/map/map-pane";
 import { MapProvider } from "@/components/map/providers/map-provider";
-import Image from "next/image";
 import "./style.scss";
 
 export default function MapPage() {
@@ -26,13 +26,7 @@ export default function MapPage() {
         <GetCoordsByClick />
         <TestPoint />
         <LayersSwitch />
-        <Image
-          className="yandex-logo"
-          src="/yndex_logo_ru.svg"
-          alt="Логотип Яндекс.Карт"
-          width={50}
-          height={25}
-        />
+        <MapYandexLogo />
       </div>
     </MapProvider>
   );

@@ -11,7 +11,7 @@ import { useEffect, useRef } from "react";
 
 export function MapPane() {
   const mapDivRef = useRef<HTMLDivElement>(null);
-  const { setMap } = useMapContext();
+  const { setMap, setContainer } = useMapContext();
 
   useEffect(() => {
     if (!mapDivRef.current) return;
@@ -28,13 +28,14 @@ export function MapPane() {
     });
 
     setMap(newMap);
+    setContainer(mapDivRef.current);
 
     newMap.addLayer(tileGroup);
 
     return () => {
       newMap.setTarget(undefined); //
     };
-  }, [setMap]);
+  }, [setMap, setContainer]);
 
   return <div ref={mapDivRef} style={{ width: "100%", height: "100%" }} />;
 }

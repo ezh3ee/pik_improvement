@@ -1,0 +1,12 @@
+.layers-switch {
+  position: absolute;
+  bottom: 5px;
+  left: 8px;
+  z-index: 11;
+  // background-color: #fff;
+  .bg-popover,
+  button {
+    border: 0;
+    background-color: #fff;
+  }
+}

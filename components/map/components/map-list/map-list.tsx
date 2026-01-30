@@ -35,13 +35,14 @@ export default function MapList() {
 
   return (
     <div className="map-list-container">
+      {/* <div className="wrapper"> */}
       <AnimatePresence mode="wait">
         {isVisible && (
           <motion.div
             initial={{ opacity: 0, width: "0px" }}
             animate={{
               opacity: 1,
-              width: "350px",
+              width: "300px",
               transition: {
                 width: { duration: 0.15 },
                 opacity: { duration: 0.15, delay: 0.12 },
@@ -82,7 +83,12 @@ export default function MapList() {
           </motion.div>
         )}
       </AnimatePresence>
-      <ArrowLeft className="arrow cursor-pointer" onClick={handleToggle} />
+      {/* </div> */}
+
+      <ArrowLeft
+        className={"arrow cursor-pointer " + (!isVisible && " closed")}
+        onClick={handleToggle}
+      />
     </div>
   );
 }
