@@ -1,0 +1,20 @@
+.yandex-logo {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 80px;
+  height: auto;
+}
+
+.map-wrapper {
+  position: relative;
+}
+
+.fullscreen:-webkit-full-screen {
+  height: 100%;
+  margin: 0;
+}
+
+.fullscreen:fullscreen {
+  height: 100%;
+}
