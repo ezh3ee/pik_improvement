@@ -1,0 +1,30 @@
+.map-list-container {
+  // max-width: 300px;
+  height: calc(100% - 114px);
+  margin: 62px 10px 10px 8px;
+  background-color: #fff;
+  position: absolute;
+  z-index: 10;
+  border-radius: 8px;
+
+  @media screen and (max-width: 400px) {
+    margin: 80px 10px 10px 8px;
+    height: calc(100% - 125px);
+  }
+
+  // @media screen and (max-width: 375) {
+  //   width: 230px;
+  // }
+}
+
+.arrow {
+  position: absolute;
+  top: 10px;
+  right: -30px;
+  color: #fff;
+  background: #000;
+  border-radius: 3px;
+  &.closed {
+    transform: rotate(180deg);
+  }
+}

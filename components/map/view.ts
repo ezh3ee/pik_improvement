@@ -1,13 +1,14 @@
-import { convertCoordReverser } from "@/lib/map/convert-coord-reverser";
-import "@/lib/map/yandex-projections";
+import "@/lib/map/projections";
+import { fromLonLat } from "ol/proj";
 
 export const VIEW_CONFIG = {
-  // center: fromLonLat([37.617635, 55.755814], "EPSG:3395"), // kremlin 55.755814, 37.617635
-  // center: fromLonLat([37.623168, 55.752447], "EPSG:3395"), // vasiliy 55.752447, 37.623168
-  center: convertCoordReverser(55.74952, 37.624773), // vasiliy 55.752447, 37.623168
-  zoom: 20,
+  // center: convertCoordReverser(55.74952, 37.624773), // vasiliy 55.752447, 37.623168
+  center: fromLonLat([37.624773, 55.74952]), // vasiliy 55.752447, 37.623168
+  zoom: 19,
   minZoom: 5,
-  maxZoom: 21,
+  maxZoom: 20,
   constrainResolution: true,
   enableRotation: false,
+  // projection: "EPSG:3395",
+  // projection: "EPSG:3857",
 };

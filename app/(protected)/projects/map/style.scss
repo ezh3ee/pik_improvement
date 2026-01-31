@@ -9,3 +9,12 @@
 .map-wrapper {
   position: relative;
 }
+
+.fullscreen:-webkit-full-screen {
+  height: 100%;
+  margin: 0;
+}
+
+.fullscreen:fullscreen {
+  height: 100%;
+}
