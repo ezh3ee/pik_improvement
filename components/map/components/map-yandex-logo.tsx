@@ -1,8 +1,9 @@
 "use client";
-import { useMapContext } from "@/components/map/providers/map-provider";
+import { useMapStore } from "@/components/map/state/map-store";
 import Image from "next/image";
 export default function MapYandexLogo() {
-  const { layer } = useMapContext();
+  const layer = useMapStore((state) => state.layer);
+  console.log(layer);
 
   return layer === "yandex" ? (
     <Image

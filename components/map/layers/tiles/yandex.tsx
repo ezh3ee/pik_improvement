@@ -43,7 +43,6 @@ export function YandexTileLayer() {
     });
 
     layerRef.current = layer;
-    // map.addLayer(layer);
     tileGroup.getLayers().push(layer);
 
     return () => {
