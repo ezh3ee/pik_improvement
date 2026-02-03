@@ -1,7 +1,6 @@
 "use client";
 import { useMap } from "@/components/map/hooks/use-map";
 import { tileGroup } from "@/components/map/layers/tiles/group/tile-group";
-import { useMapContext } from "@/components/map/providers/map-provider";
 import {
   Select,
   SelectContent,
@@ -11,6 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useEffect, useRef, useState } from "react";
+import { useMapStore } from "../../state/map-store";
 import "./style.scss";
 
 const items: { label: string; value: string }[] = [
@@ -23,7 +23,7 @@ export default function LayersSwitch() {
   /* ЗДЕСЬ БУДЕТ ПОЛУЧЕНИЕ ТЕКУЗЕГО СЛОЯ ИЗ ПАРАМЕТРОВ КАРТЫ */
   const [currentLayer, setCurrentLayer] = useState("yandex");
   const { map, isReady } = useMap();
-  const { setTileLayer } = useMapContext();
+  const setTileLayer = useMapStore((state) => state.setTileLayer);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [container, setContainer] = useState<HTMLElement | null>(null);

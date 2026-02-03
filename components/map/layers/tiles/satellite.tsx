@@ -1,10 +1,10 @@
 "use client";
-import { useMap } from "@/components/map/hooks/use-map";
 import Layer from "ol/layer/Layer";
 import TileLayer from "ol/layer/Tile";
 import XYZ from "ol/source/XYZ";
 import { useEffect, useRef } from "react";
 
+import { useMap } from "@/components/map/hooks/use-map";
 import { tileGroup } from "@/components/map/layers/tiles/group/tile-group";
 import "@/lib/map/projections";
 
