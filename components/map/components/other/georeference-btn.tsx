@@ -6,5 +6,9 @@ import { useGeoreferenceStore } from "../../state/georeference-store";
 export default function GeoreferenceBtn() {
   const toggleVisible = useGeoreferenceStore((state) => state.toggleVisible);
 
-  return <Button onClick={() => toggleVisible()}>Georeference</Button>;
+  return (
+    <Button onClick={() => toggleVisible()} className="georeference-btn">
+      Геореф
+    </Button>
+  );
 }

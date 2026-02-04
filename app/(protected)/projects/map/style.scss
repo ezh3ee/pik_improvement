@@ -6,6 +6,12 @@
   height: auto;
 }
 
+.georeference-btn {
+  position: absolute;
+  top: 50px;
+  right: 0px;
+}
+
 .fullscreen:-webkit-full-screen {
   height: 100%;
   margin: 0;
@@ -24,14 +30,7 @@
 
 .map-wrapper {
   position: relative;
-
   flex-grow: 1;
   height: 100%;
   display: flex;
 }
-
-// .map-pane {
-//   flex-grow: 1;
-//   height: 100%;
-//   display: flex;
-// }

@@ -1,5 +1,6 @@
 "use client";
 
+import RefImageUpload from "@/components/map/components/georeference/ref-image-upload";
 import { useGeoreferenceStore } from "@/components/map/state/georeference-store";
 import { AnimatePresence, motion } from "motion/react";
 import "./style.scss";
@@ -33,9 +34,9 @@ export default function MapGeoreference() {
             },
             opacity: { duration: 0.15 },
           }}
-          className="georeference-container"
+          className="georeference-container items-center justify-center flex"
         >
-          MapGeoreference
+          <RefImageUpload />
         </motion.div>
       </AnimatePresence>
     )
