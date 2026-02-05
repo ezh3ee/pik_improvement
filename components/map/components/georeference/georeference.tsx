@@ -3,9 +3,13 @@
 import RefImageUpload from "@/components/map/components/georeference/ref-image-upload";
 import { useGeoreferenceStore } from "@/components/map/state/georeference-store";
 import { AnimatePresence, motion } from "motion/react";
+import Image from "next/image";
 import "./style.scss";
 export default function MapGeoreference() {
   const isVisible = useGeoreferenceStore((state) => state.isVisible);
+  const imagePath = useGeoreferenceStore((state) => state.imagePath);
+
+  console.log(imagePath);
 
   return (
     isVisible && (
@@ -36,7 +40,21 @@ export default function MapGeoreference() {
           }}
           className="georeference-container items-center justify-center flex"
         >
-          <RefImageUpload />
+          {!imagePath ? (
+            <RefImageUpload />
+          ) : (
+            <Image
+              src={imagePath}
+              alt="Генплан"
+              width={0} // Required to suppress Next.js error when using CSS for sizing
+              height={0} // Required to suppress Next.js error
+              sizes="100vw" // Tells Next.js to generate an image suitable for a full-viewport-width display
+              style={{
+                width: "100%",
+                height: "auto", // Maintains aspect ratio
+              }}
+            />
+          )}
         </motion.div>
       </AnimatePresence>
     )

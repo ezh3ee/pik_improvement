@@ -21,9 +21,8 @@ export async function POST(req: Request) {
 
     console.log(`Saved file to /public/uploads/${filename}`);
 
-    // return `${filepath + filename}`;
     return Response.json({
-      url: `/upload/${filename}`,
+      url: `/uploads/${filename}`,
     });
   } catch (error) {
     console.log(error);

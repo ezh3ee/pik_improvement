@@ -1,10 +1,11 @@
-// import { uploadImageAction } from "@/components/map/components/georeference/action";
+import { useGeoreferenceStore } from "@/components/map/state/georeference-store";
 import { useState } from "react";
 import Dropzone, { DropzoneState } from "shadcn-dropzone";
 
 export default function RefImageUpload() {
-  const [paths, setPaths] = useState<string[]>([]);
+  // const [paths, setPaths] = useState<string[]>([]);
   const [errorUploading, setErrorUploading] = useState(false);
+  const setImagePath = useGeoreferenceStore((state) => state.setImagePath);
 
   // const onDrop = useCallback((acceptedFiles: File[]) => {
   //   console.log();
@@ -26,13 +27,13 @@ export default function RefImageUpload() {
 
     if (errorUploading) setErrorUploading(false);
 
-    console.log("uploaded file is ", await res.json());
-    // return res.json();
+    return res.json();
   };
 
   const handleUpload = async (files: File[]) => {
     try {
-      await Promise.all(files.map((file) => uploadImage(file)));
+      const [url] = await Promise.all(files.map((file) => uploadImage(file)));
+      setImagePath(url);
     } catch (error) {
       setErrorUploading(true);
       if (error instanceof Error) {
@@ -64,14 +65,6 @@ export default function RefImageUpload() {
         )}
       </Dropzone>
       {errorUploading && "Ошибка загрузки генплана"}
-      {/* {paths.map((path) => (
-        <Image key={path} src={path} alt="Генплан для синхронизации с картой" />
-      ))} */}
-
-      <img
-        src="/uploads/1770254233558Снимок экрана 2026-02-02 003838.png"
-        alt="Генплан для синхронизации с картой"
-      />
     </div>
   );
 }
