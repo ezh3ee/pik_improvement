@@ -40,6 +40,9 @@ export default function RefImageUpload() {
       if (error instanceof Error) {
         console.error(error.message);
         setErrorUploading(error.message);
+      } else {
+        console.error(error);
+        setErrorUploading(true);
       }
     }
   };
