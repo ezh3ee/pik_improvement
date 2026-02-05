@@ -11,7 +11,8 @@ export async function POST(req: Request) {
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    const filepath = path.join(process.cwd(), "public/uploads/");
+    // const filepath = path.join(process.cwd(), "public/uploads/");
+    const filepath = path.join("public/uploads/");
     const filename = Date.now() + file.name;
 
     console.log("filepath ", filepath);
@@ -26,6 +27,8 @@ export async function POST(req: Request) {
     });
   } catch (error) {
     console.log(error);
-    return new Response("Error", { status: 400 });
+    if (error instanceof Error) {
+      return new Response(error.message);
+    }
   }
 }
