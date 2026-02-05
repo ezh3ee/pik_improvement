@@ -4,7 +4,7 @@ import Dropzone, { DropzoneState } from "shadcn-dropzone";
 
 export default function RefImageUpload() {
   // const [paths, setPaths] = useState<string[]>([]);
-  const [errorUploading, setErrorUploading] = useState(false);
+  const [errorUploading, setErrorUploading] = useState<boolean | string>(false);
   const setImagePath = useGeoreferenceStore((state) => state.setImagePath);
 
   // const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -22,7 +22,8 @@ export default function RefImageUpload() {
     });
 
     if (!res.ok) {
-      throw new Error("Ошибка загрузки генплана");
+      // throw new Error("Ошибка загрузки генплана");
+      throw new Error(res.statusText);
     }
 
     if (errorUploading) setErrorUploading(false);
@@ -35,9 +36,10 @@ export default function RefImageUpload() {
       const [url] = await Promise.all(files.map((file) => uploadImage(file)));
       setImagePath(url);
     } catch (error) {
-      setErrorUploading(true);
+      // setErrorUploading(true);
       if (error instanceof Error) {
         console.error(error.message);
+        setErrorUploading(error.message);
       }
     }
   };
@@ -64,7 +66,7 @@ export default function RefImageUpload() {
           </div>
         )}
       </Dropzone>
-      {errorUploading && "Ошибка загрузки генплана"}
+      {errorUploading && "Ошибка загрузки генплана: " + errorUploading}
     </div>
   );
 }
