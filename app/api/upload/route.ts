@@ -1,5 +1,3 @@
-"use server";
-
 import { writeFile } from "fs/promises";
 import path from "path";
 
@@ -16,13 +14,16 @@ export async function POST(req: Request) {
     const filepath = path.join(process.cwd(), "public/uploads/");
     const filename = Date.now() + file.name;
 
+    console.log("filepath ", filepath);
+    console.log("filename ", filename);
+
     await writeFile(path.join(filepath + filename), buffer);
 
     console.log(`Saved file to /public/uploads/${filename}`);
 
     // return `${filepath + filename}`;
     return Response.json({
-      url: `${filepath + filename}`,
+      url: `/upload/${filename}`,
     });
   } catch (error) {
     console.log(error);
