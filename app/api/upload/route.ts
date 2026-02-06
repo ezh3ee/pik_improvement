@@ -26,11 +26,9 @@ export async function POST(req: Request) {
       url: `/uploads/${filename}`,
     });
   } catch (error) {
-    console.log(error);
+    console.log("error in upload route handler: ", error);
     if (error instanceof Error) {
-      throw new Error(error.message);
-    } else {
-      throw new Error("Error !!!!!!!!!!!!!!!!!AAAAAA!!!!!!!!!!!!!!!!!!!");
+      return new Response(error.message);
     }
   }
 }
