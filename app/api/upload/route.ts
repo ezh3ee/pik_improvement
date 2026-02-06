@@ -28,7 +28,7 @@ export async function POST(req: Request) {
   } catch (error) {
     console.log(error);
     if (error instanceof Error) {
-      return new Response(error.message);
+      throw new Error(error.message);
     }
   }
 }

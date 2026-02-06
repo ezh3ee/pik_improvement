@@ -30,15 +30,7 @@ export default function RefImageUpload() {
 
     console.log("res before extract json ", res);
 
-    try {
-      console.log("before get json ");
-      const result = await res.json();
-      console.log("after get json ", result);
-      return result;
-    } catch (error) {
-      console.log(error);
-      throw new Error("Ошибка загрузки генплана. Джейсон не получился");
-    }
+    return res.json();
   };
 
   const handleUpload = async (files: File[]) => {
