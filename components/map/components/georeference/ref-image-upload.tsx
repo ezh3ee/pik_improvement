@@ -28,7 +28,7 @@ export default function RefImageUpload() {
         handleUploadUrl: "/api/upload-vercel",
       });
 
-      if (res.url) return res.url;
+      if (res.url) return res;
 
       throw new Error("Cannot upload image on VERCEL");
     } else {
