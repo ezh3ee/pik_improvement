@@ -26,7 +26,7 @@ export default function RefImageUpload() {
       throw new Error(res.statusText);
     }
 
-    console.log("!!res ", res);
+    console.log("!!res ", res.url);
 
     if (errorUploading) setErrorUploading(false);
 
