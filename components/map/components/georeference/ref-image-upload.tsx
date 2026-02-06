@@ -1,4 +1,6 @@
 import { useGeoreferenceStore } from "@/components/map/state/georeference-store";
+import { type PutBlobResult } from "@vercel/blob";
+import { upload } from "@vercel/blob/client";
 import { useState } from "react";
 import Dropzone, { DropzoneState } from "shadcn-dropzone";
 
@@ -18,21 +20,34 @@ export default function RefImageUpload() {
 
     formData.append("file", file);
 
-    const res = await fetch("/api/upload", {
-      method: "POST",
-      body: formData,
-    });
+    let res: Response | PutBlobResult | null = null;
 
-    if (!res.ok) {
-      // throw new Error("Ошибка загрузки генплана");
-      throw new Error(res.statusText);
+    if (process.env.NEXT_PUBLIC_VERCEL_ENV) {
+      res = await upload(file.name, file, {
+        access: "public",
+        handleUploadUrl: "/api/upload-vercel",
+      });
+
+      if (res.url) return res.url;
+
+      throw new Error("Cannot upload image on VERCEL");
+    } else {
+      res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) {
+        // throw new Error("Ошибка загрузки генплана");
+        throw new Error(res.statusText);
+      }
+
+      if (errorUploading) setErrorUploading(false);
+
+      console.log("res before extract json ", res);
+
+      return res.json();
     }
-
-    if (errorUploading) setErrorUploading(false);
-
-    console.log("res before extract json ", res);
-
-    return res.json();
   };
 
   const handleUpload = async (files: File[]) => {
