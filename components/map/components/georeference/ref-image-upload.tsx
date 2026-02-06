@@ -30,7 +30,7 @@ export default function RefImageUpload() {
 
     if (errorUploading) setErrorUploading(false);
 
-    return res.json();
+    return await res.json();
   };
 
   const handleUpload = async (files: File[]) => {
