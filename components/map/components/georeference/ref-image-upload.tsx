@@ -7,6 +7,8 @@ export default function RefImageUpload() {
   const [errorUploading, setErrorUploading] = useState<boolean | string>(false);
   const setImagePath = useGeoreferenceStore((state) => state.setImagePath);
 
+  console.log("vercel ENV: ", process.env.NEXT_PUBLIC_VERCEL_ENV);
+
   // const onDrop = useCallback((acceptedFiles: File[]) => {
   //   console.log();
   // }, []);
