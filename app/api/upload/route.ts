@@ -9,8 +9,8 @@ export async function POST(req: Request) {
     return new Response("No file", { status: 400 });
   }
 
-  // if (!process.env.NEXT_PUBLIC_VERCEL_ENV) {
-  if (false) {
+  if (!process.env.NEXT_PUBLIC_VERCEL_ENV) {
+    // if (false) {
     try {
       const buffer = Buffer.from(await file.arrayBuffer());
       // const filepath = path.join(process.cwd(), "public/uploads/");
@@ -45,8 +45,6 @@ export async function POST(req: Request) {
       });
 
       console.log("res before json() : ", res);
-
-      // return Response.json(res.json);
 
       res = await res.json();
 
