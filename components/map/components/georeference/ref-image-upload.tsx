@@ -1,6 +1,4 @@
 import { useGeoreferenceStore } from "@/components/map/state/georeference-store";
-import { type PutBlobResult } from "@vercel/blob";
-import { upload } from "@vercel/blob/client";
 import { useState } from "react";
 import Dropzone, { DropzoneState } from "shadcn-dropzone";
 
@@ -9,45 +7,23 @@ export default function RefImageUpload() {
   const [errorUploading, setErrorUploading] = useState<boolean | string>(false);
   const setImagePath = useGeoreferenceStore((state) => state.setImagePath);
 
-  console.log("vercel ENV: ", process.env.NEXT_PUBLIC_VERCEL_ENV);
-
-  // const onDrop = useCallback((acceptedFiles: File[]) => {
-  //   console.log();
-  // }, []);
-
   const uploadImage = async (file: File) => {
     const formData = new FormData();
 
     formData.append("file", file);
 
-    let res: Response | PutBlobResult | null = null;
+    const res = await fetch("/api/upload", {
+      method: "POST",
+      body: formData,
+    });
 
-    if (process.env.NEXT_PUBLIC_VERCEL_ENV) {
-      res = await upload(file.name, file, {
-        access: "public",
-        handleUploadUrl: "/api/upload-vercel",
-      });
-
-      if (res.url) return res;
-
-      throw new Error("Cannot upload image on VERCEL");
-    } else {
-      res = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!res.ok) {
-        // throw new Error("Ошибка загрузки генплана");
-        throw new Error(res.statusText);
-      }
-
-      if (errorUploading) setErrorUploading(false);
-
-      console.log("res before extract json ", res);
-
-      return res.json();
+    if (!res.ok) {
+      throw new Error(res.statusText);
     }
+
+    if (errorUploading) setErrorUploading(false);
+
+    return res.json();
   };
 
   const handleUpload = async (files: File[]) => {
@@ -55,7 +31,6 @@ export default function RefImageUpload() {
       const [url] = await Promise.all(files.map((file) => uploadImage(file)));
       setImagePath(url);
     } catch (error) {
-      // setErrorUploading(true);
       if (error instanceof Error) {
         console.error(error.message);
         setErrorUploading(error.message);

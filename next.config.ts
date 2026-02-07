@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       new URL("https://tgjtxnazjau8wvz1.public.blob.vercel-storage.com/**"),
+      new URL("http://localhost/**"),
     ],
   },
 };

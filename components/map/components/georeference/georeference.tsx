@@ -4,6 +4,7 @@ import RefImageUpload from "@/components/map/components/georeference/ref-image-u
 import { useGeoreferenceStore } from "@/components/map/state/georeference-store";
 import { AnimatePresence, motion } from "motion/react";
 import "./style.scss";
+
 export default function MapGeoreference() {
   const isVisible = useGeoreferenceStore((state) => state.isVisible);
   const imagePath = useGeoreferenceStore((state) => state.imagePath);
@@ -53,6 +54,7 @@ export default function MapGeoreference() {
             //     height: "auto", // Maintains aspect ratio
             //   }}
             // />
+
             <img
               src={imagePath}
               alt="Генплан"
