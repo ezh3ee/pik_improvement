@@ -21,8 +21,8 @@ export async function POST(req: Request) {
     return new Response("No file", { status: 400 });
   }
 
-  // if (!process.env.NEXT_PUBLIC_VERCEL_ENV) {
-  if (false) {
+  if (!process.env.NEXT_PUBLIC_VERCEL_ENV) {
+    // if (false) {
     try {
       const buffer = Buffer.from(await file.arrayBuffer());
       // const filepath = path.join(process.cwd(), "public/uploads/");
