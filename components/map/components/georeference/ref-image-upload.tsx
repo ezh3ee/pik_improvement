@@ -3,7 +3,6 @@ import { useState } from "react";
 import Dropzone, { DropzoneState } from "shadcn-dropzone";
 
 export default function RefImageUpload() {
-  // const [paths, setPaths] = useState<string[]>([]);
   const [errorUploading, setErrorUploading] = useState<boolean | string>(false);
   const setImagePath = useGeoreferenceStore((state) => state.setImagePath);
 
