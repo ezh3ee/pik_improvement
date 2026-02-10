@@ -46,19 +46,21 @@ export default function RefImageUpload() {
         {(dropzone: DropzoneState) => (
           <div className="flex flex-col  h-full items-center justify-center gap-2 p-6 border-2 border-dashed border-gray-200 rounded-lg">
             {dropzone.isDragAccept ? (
-              <div className="text-sm font-medium h-full">
-                Бросьте генплан сюда
+              <div className="flex items-center flex-col gap-1.5 h-full">
+                <div className="flex items-center text-sm font-medium h-[30vh]">
+                  Бросьте генплан сюда
+                </div>
               </div>
             ) : (
               <div className="flex items-center flex-col gap-1.5 h-full">
-                <div className="flex items-center flex-row gap-0.5 text-sm font-medium h-full">
-                  Нажмите чтобы загрузить или перетащите генплан
+                <div className="flex items-center flex-row gap-0.5 text-sm font-medium h-[30vh]">
+                  Нажмите, чтобы загрузить генплан или перетащите его сюда
                 </div>
               </div>
             )}
-            <div className="text-xs text-gray-400 font-medium ">
+            {/* <div className="text-xs text-gray-400 font-medium ">
               Генплан не загружен
-            </div>
+            </div> */}
           </div>
         )}
       </Dropzone>
