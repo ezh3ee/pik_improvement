@@ -1,13 +1,11 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
-import Feature from "ol/Feature";
-import Geometry from "ol/geom/Geometry";
 import Map from "ol/Map";
 
 export type RefPoint = {
-  // original: number[];
-  feature: Feature<Geometry>;
+  original: number[];
+  // feature: Feature<Geometry>;
   converted: number[];
   id: string;
 };
@@ -28,6 +26,7 @@ type GeoreferenceStore = {
   refPoints: RefPoint[];
   setRefPoints: (points: RefPoint) => void;
   updateRefPoint: (id: string, newCoords: number[]) => void;
+  removeRefPoint: (id: string) => void;
 };
 
 export const useGeoreferenceStore = create<GeoreferenceStore>()(
@@ -59,15 +58,22 @@ export const useGeoreferenceStore = create<GeoreferenceStore>()(
         updateRefPoint: (id, newCoords) =>
           set((state) => ({
             refPoints: state.refPoints.map((refPoint) =>
-              refPoint.id === id ? { ...refPoint, value: newCoords } : refPoint,
+              refPoint.id === id
+                ? { ...refPoint, original: newCoords } // дополнить еще и изменгение конвертед
+                : refPoint,
             ),
+          })),
+        removeRefPoint: (id) =>
+          set((state) => ({
+            refPoints: state.refPoints.filter((refPoint) => refPoint.id !== id),
           })),
       }),
       {
-        name: "georeference-storage", // name of the item in the storage (must be unique)
+        name: "georeference-storage",
         // storage: createJSONStorage(() => localStorage), // (optional) by default, 'localStorage' is used
         partialize: (state) => ({
           imagePath: state.imagePath,
+          refPoints: state.refPoints,
         }),
       },
     ),

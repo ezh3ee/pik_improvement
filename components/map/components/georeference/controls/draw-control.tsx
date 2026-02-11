@@ -8,9 +8,10 @@ import {
   useGeoreferenceStore,
 } from "@/components/map/state/georeference-store";
 import { altKeyOnly } from "ol/events/condition";
-import BaseEvent from "ol/events/Event";
+// import BaseEvent from "ol/events/Event";
 import Feature from "ol/Feature";
 import Geometry from "ol/geom/Geometry";
+import Point from "ol/geom/Point";
 import SimpleGeometry from "ol/geom/SimpleGeometry";
 import Draw from "ol/interaction/Draw";
 import Modify from "ol/interaction/Modify";
@@ -29,17 +30,20 @@ export default function ControlPoints() {
   const isReady = useGeoreferenceStore((state) => state.isReady);
   const addRefPoints = useGeoreferenceStore((state) => state.setRefPoints);
   const updateRefPoint = useGeoreferenceStore((state) => state.updateRefPoint);
+  const removeRefPoint = useGeoreferenceStore((state) => state.removeRefPoint);
   const sourceRef = useRef<VectorSource | null>(null);
   const vLayerRef = useRef<VectorLayer | null>(null);
   const drawRef = useRef<Draw | null>(null);
   const modifyRef = useRef<Modify | null>(null);
+
+  // const refPoints = useGeoreferenceStore((state) => state.refPoints);
 
   useEffect(() => {
     if (!map || !isReady) return;
 
     const refPoints: RefPoint[] = useGeoreferenceStore.getState().refPoints;
 
-    // console.log("refPoints ", refPoints);
+    console.log("RENDER. refPoints ", refPoints);
 
     const source = new VectorSource();
 
@@ -52,10 +56,9 @@ export default function ControlPoints() {
       type: "Point",
       source: source,
       style: blackCrossStyle,
-      condition: (e) =>
-        !(source.getFeatures().length === 2) &&
-        !altKeyOnly(e) &&
-        !(refPoints.length === 2), // добавить рефпоинты
+      condition: (e) => !(source.getFeatures().length === 2) && !altKeyOnly(e),
+      // &&
+      // !(refPoints.length === 2), // добавить рефпоинты
     });
 
     const modify = new Modify({
@@ -66,12 +69,24 @@ export default function ControlPoints() {
     vLayer.setMap(map);
 
     if (refPoints.length > 0)
-      refPoints.map((el) => source.addFeature(el.feature));
+      refPoints.map((el) => {
+        const feature = new Feature({
+          geometry: new Point(el.original),
+        });
+        feature.setId(el.id);
+
+        source.addFeature(feature);
+      });
 
     vLayerRef.current = vLayer;
     sourceRef.current = source;
     drawRef.current = draw;
     modifyRef.current = modify;
+
+    map.addInteraction(modify);
+    map.addInteraction(draw);
+
+    draw.set("source", vLayer.getSource());
 
     modify.on("modifyend", (e) => {
       const modifiedFeatureId = e.features.item(0).getId();
@@ -80,45 +95,27 @@ export default function ControlPoints() {
           const geometry = f.getGeometry();
           if (geometry instanceof SimpleGeometry) {
             updateRefPoint(
-              f.getId() as string,
+              String(f.getId()),
               geometry.getCoordinates() as number[],
             );
           }
         }
       });
-
-      // const f = e.features.item(0);
-      // map.dispatchEvent({
-      //   type: "updateControlPoint",
-      //   feature: f,
-      // } as unknown as BaseEvent);
     });
-
-    map.addInteraction(modify);
-    map.addInteraction(draw);
-
-    draw.set("source", vLayer.getSource());
 
     source.on("addfeature", (e) => {
       const feature = e.feature;
       if (!feature) return;
       feature.setId(crypto.randomUUID());
-
       const geometry = feature.getGeometry();
-
       if (geometry instanceof SimpleGeometry) {
         const coordinates = geometry.getCoordinates();
         if (!coordinates) return;
-
         const refPoints: RefPoint = {
-          feature: feature,
-          converted: [
-            coordinates[0] + 1553 / 2,
-            coordinates[1] + 900 / 2,
-          ] as number[],
-          id: feature.getId() as string,
+          original: coordinates,
+          converted: [coordinates[0] + 1553 / 2, coordinates[1] + 900 / 2],
+          id: String(feature.getId()),
         };
-
         addRefPoints(refPoints);
       }
     });
@@ -127,8 +124,10 @@ export default function ControlPoints() {
       if (!altKeyOnly(e)) return;
 
       const feature = map.forEachFeatureAtPixel(e.pixel, (f) => f);
-      if (feature instanceof Feature && source.hasFeature(feature))
+      if (feature instanceof Feature && source.hasFeature(feature)) {
         source.removeFeature(feature);
+        removeRefPoint(String(feature.getId()));
+      }
     });
 
     return () => {
@@ -140,7 +139,7 @@ export default function ControlPoints() {
       modifyRef.current = null;
       vLayerRef.current = null;
     };
-  }, [map, isReady, addRefPoints]);
+  }, [map, isReady, addRefPoints, removeRefPoint, updateRefPoint]);
 
   return null;
 }
