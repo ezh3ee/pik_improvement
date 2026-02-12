@@ -5,7 +5,6 @@ import Map from "ol/Map";
 
 export type RefPoint = {
   original: number[];
-  // feature: Feature<Geometry>;
   converted: number[];
   id: string;
 };
@@ -24,9 +23,11 @@ type GeoreferenceStore = {
   setContainer: (container: HTMLElement | null) => void;
   /** REF POINTS */
   refPoints: RefPoint[];
+  resetRefPointTrigger: number;
   setRefPoints: (points: RefPoint) => void;
   updateRefPoint: (id: string, newCoords: number[]) => void;
   removeRefPoint: (id: string) => void;
+  resetRefPoints: () => void;
 };
 
 export const useGeoreferenceStore = create<GeoreferenceStore>()(
@@ -53,6 +54,7 @@ export const useGeoreferenceStore = create<GeoreferenceStore>()(
           })),
         /** REF POINTS */
         refPoints: [],
+        resetRefPointTrigger: 0,
         setRefPoints: (refPoints) =>
           set((state) => ({ refPoints: [...state.refPoints, refPoints] })),
         updateRefPoint: (id, newCoords) =>
@@ -66,6 +68,11 @@ export const useGeoreferenceStore = create<GeoreferenceStore>()(
         removeRefPoint: (id) =>
           set((state) => ({
             refPoints: state.refPoints.filter((refPoint) => refPoint.id !== id),
+          })),
+        resetRefPoints: () =>
+          set((state) => ({
+            refPoints: [],
+            resetRefPointTrigger: ++state.resetRefPointTrigger,
           })),
       }),
       {
