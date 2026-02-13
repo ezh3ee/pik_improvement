@@ -1,4 +1,5 @@
 import { default as MapGeoreference } from "@/components/map/components/georeference/georeference";
+import MainIntercations from "@/components/map/components/interactions/main-intercations";
 import LayersSwitch from "@/components/map/components/layer-switch/layers-switch";
 import MapList from "@/components/map/components/map-list/map-list";
 import GeoreferenceBtn from "@/components/map/components/other/georeference-btn";
@@ -8,7 +9,6 @@ import { MapPane } from "@/components/map/components/pane/map-pane";
 import { OSMTileLayer } from "@/components/map/layers/tiles/osm";
 import { SatteliteLayer } from "@/components/map/layers/tiles/satellite";
 import { YandexTileLayer } from "@/components/map/layers/tiles/yandex";
-import { TestPoint } from "@/components/map/layers/vector/test-point";
 import "./style.scss";
 
 export default function MapPage() {
@@ -23,13 +23,17 @@ export default function MapPage() {
         <div className="map-wrapper">
           <MapPane />
           <MapList />
+          {/* tiles */}
           <YandexTileLayer />
           <OSMTileLayer />
           <SatteliteLayer />
-          <GetCoordsByClick />
-          <TestPoint />
+          {/* controls */}
           <LayersSwitch />
           <GeoreferenceBtn />
+          {/* interactions */}
+          <MainIntercations />
+          {/* other */}
+          <GetCoordsByClick />
           <MapYandexLogo />
         </div>
       </div>
