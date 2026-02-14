@@ -4,7 +4,7 @@ import useDrawPointsInteraction from "@/components/map/hooks/use-draw-points-int
 import { useGeoreferenceStore } from "@/components/map/state/georeference-store";
 import { useRefPointsStore } from "@/components/map/state/refpoints-store";
 
-export default function ControlPoints() {
+export default function GeoreferenceControlPoints() {
   const map = useGeoreferenceStore((state) => state.map);
   const isReady = useGeoreferenceStore((state) => state.isReady);
   const addRefPoints = useRefPointsStore((state) => state.setRefPoints);
