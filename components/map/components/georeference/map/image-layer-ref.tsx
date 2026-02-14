@@ -26,7 +26,6 @@ declare module "ol-ext/source/GeoImage" {
 /** */
 
 export default function ImageLayerRef() {
-  // const { map, isReady } = useMap();
   const map = useGeoreferenceStore((state) => state.map);
   const isReady = useGeoreferenceStore((state) => state.isReady);
   const layerRef = useRef<Layer<ImageSource> | null>(null);
@@ -48,11 +47,6 @@ export default function ImageLayerRef() {
     layerRef.current.setSource(source);
 
     map.addLayer(layerRef.current);
-    // map.getView().fit(source.getExtent());
-
-    // imageRef.current.addEventListener("load", () => {
-    //   map.getView().fit(source.getExtent());
-    // });
 
     return () => {};
   }, [map, isReady, imgUrl]);

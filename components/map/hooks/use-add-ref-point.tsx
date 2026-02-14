@@ -1,7 +1,5 @@
-import {
-  RefPoint,
-  useGeoreferenceStore,
-} from "@/components/map/state/georeference-store";
+import usePointCoordConverter from "@/components/map/hooks/use-point-coord-converter";
+import { RefPoint } from "@/components/map/state/refpoints-store";
 import { altKeyOnly } from "ol/events/condition";
 import Feature from "ol/Feature";
 import { Point, SimpleGeometry } from "ol/geom";
@@ -9,13 +7,18 @@ import Modify from "ol/interaction/Modify";
 import Map from "ol/Map";
 import VectorSource from "ol/source/Vector";
 import { RefObject, useEffect } from "react";
+import { useRefPointsStore } from "../state/refpoints-store";
 
 type AddRefPointType = {
   modifyRef: RefObject<Modify | null>;
   sourceRef: RefObject<VectorSource | null>;
   map: Map | null;
   isReady: boolean;
-  updateRefPoint: (id: string, coordinates: number[]) => void;
+  updateRefPoint: (
+    id: string,
+    coordinates: number[],
+    original: number[],
+  ) => void;
   addRefPoints: (refPoint: RefPoint) => void;
   removeRefPoint: (id: string) => void;
 };
@@ -29,13 +32,14 @@ export default function useAddRefPoint({
   addRefPoints,
   removeRefPoint,
 }: AddRefPointType) {
-  const resetRefPointsTrigger = useGeoreferenceStore(
+  const resetRefPointsTrigger = useRefPointsStore(
     (state) => state.resetRefPointTrigger,
   );
+  const converImageDimensions = usePointCoordConverter();
   useEffect(() => {
     if (!map || !isReady || !modifyRef.current || !sourceRef.current) return;
 
-    const refPoints: RefPoint[] = useGeoreferenceStore.getState().refPoints;
+    const refPoints: RefPoint[] = useRefPointsStore.getState().refPoints;
 
     if (refPoints.length > 0)
       refPoints.map((el) => {
@@ -49,18 +53,25 @@ export default function useAddRefPoint({
 
     modifyRef.current.on("modifyend", (e) => {
       const modifiedFeatureId = e.features.item(0).getId();
+      if (!modifiedFeatureId) return;
 
-      sourceRef?.current?.forEachFeature((f) => {
-        if (f.getId() === modifiedFeatureId) {
-          const geometry = f.getGeometry();
-          if (geometry instanceof SimpleGeometry) {
-            updateRefPoint(
-              String(f.getId()),
-              geometry.getCoordinates() as number[],
-            );
-          }
-        }
-      });
+      const feature = sourceRef?.current?.getFeatureById(modifiedFeatureId);
+
+      if (!feature) return;
+
+      const geometry = feature.getGeometry();
+
+      if (!geometry) return;
+      if (!(geometry instanceof SimpleGeometry)) return;
+
+      const coordinates = geometry.getCoordinates();
+      if (!coordinates) return;
+
+      updateRefPoint(
+        String(modifiedFeatureId),
+        coordinates,
+        converImageDimensions(coordinates),
+      );
     });
 
     sourceRef.current.on("addfeature", (e) => {
@@ -77,7 +88,7 @@ export default function useAddRefPoint({
 
         const refPoints: RefPoint = {
           original: coordinates,
-          converted: [coordinates[0] + 1553 / 2, coordinates[1] + 900 / 2],
+          converted: converImageDimensions(coordinates),
           id: String(feature.getId()),
         };
 
@@ -104,10 +115,11 @@ export default function useAddRefPoint({
     modifyRef,
     sourceRef,
     isReady,
+    converImageDimensions,
   ]);
 
   useEffect(() => {
-    const refPoints: RefPoint[] = useGeoreferenceStore.getState().refPoints;
+    const refPoints: RefPoint[] = useRefPointsStore.getState().refPoints;
     if (refPoints.length === 0 && resetRefPointsTrigger > 0)
       sourceRef?.current?.clear();
   }, [resetRefPointsTrigger, sourceRef]);

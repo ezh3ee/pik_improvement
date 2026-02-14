@@ -1,44 +1,8 @@
-import { useGeoreferenceStore } from "@/components/map/state/georeference-store";
-import { useState } from "react";
+import useGeorefImageUpload from "@/components/map/hooks/use-georef-image-upload";
 import Dropzone, { DropzoneState } from "shadcn-dropzone";
 
 export default function RefImageUpload() {
-  const [errorUploading, setErrorUploading] = useState<boolean | string>(false);
-  const setImagePath = useGeoreferenceStore((state) => state.setImagePath);
-
-  const uploadImage = async (file: File) => {
-    const formData = new FormData();
-
-    formData.append("file", file);
-
-    const res = await fetch("/api/upload", {
-      method: "POST",
-      body: formData,
-    });
-
-    if (!res.ok) {
-      throw new Error(res.statusText);
-    }
-
-    if (errorUploading) setErrorUploading(false);
-
-    return res.json();
-  };
-
-  const handleUpload = async (files: File[]) => {
-    try {
-      const [url] = await Promise.all(files.map((file) => uploadImage(file)));
-      setImagePath(url);
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error(error.message);
-        setErrorUploading(error.message);
-      } else {
-        console.error(error);
-        setErrorUploading(true);
-      }
-    }
-  };
+  const { handleUpload, isUploadingError } = useGeorefImageUpload();
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center gap-2">
@@ -58,13 +22,11 @@ export default function RefImageUpload() {
                 </div>
               </div>
             )}
-            {/* <div className="text-xs text-gray-400 font-medium ">
-              Генплан не загружен
-            </div> */}
           </div>
         )}
       </Dropzone>
-      {errorUploading && "Ошибка загрузки генплана: " + errorUploading}
+      {/* TODO: нужна нормальная обработка ошибок  */}
+      {isUploadingError && "Ошибка загрузки генплана: " + isUploadingError}
     </div>
   );
 }

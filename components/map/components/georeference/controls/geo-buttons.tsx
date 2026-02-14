@@ -1,11 +1,12 @@
 import { useGeoreferenceStore } from "@/components/map/state/georeference-store";
+import { useRefPointsStore } from "@/components/map/state/refpoints-store";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { RotateCcw, Trash2 } from "lucide-react";
 
 export default function GeoButtons() {
-  const setImagePath = useGeoreferenceStore((state) => state.setImagePath);
-  const resetRefPoints = useGeoreferenceStore((state) => state.resetRefPoints);
+  const resetRefPointsStore = useRefPointsStore((state) => state.resetStore);
+  const resetImageStore = useGeoreferenceStore((state) => state.resetStore);
 
   return (
     <ButtonGroup>
@@ -13,12 +14,12 @@ export default function GeoButtons() {
         variant="outline"
         size="icon-lg"
         onClick={() => {
-          return (setImagePath({ url: null }), resetRefPoints());
+          return (resetImageStore(), resetRefPointsStore());
         }}
       >
         <Trash2 />
       </Button>
-      <Button variant="outline" size="icon-lg" onClick={resetRefPoints}>
+      <Button variant="outline" size="icon-lg" onClick={resetRefPointsStore}>
         <RotateCcw />
       </Button>
     </ButtonGroup>
