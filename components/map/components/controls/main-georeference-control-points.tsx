@@ -1,7 +1,11 @@
+"use client";
 import useAddRefPoint from "@/components/map/hooks/use-add-ref-point";
 import useDrawPointsInteraction from "@/components/map/hooks/use-draw-points-interaction";
 import { useMap } from "@/components/map/hooks/use-map";
-import { useRefPointsStore } from "@/components/map/state/refpoints-store";
+import {
+  RefPoint,
+  useRefPointsStore,
+} from "@/components/map/state/refpoints-store";
 
 export default function MainGeoreferenceControlPoints() {
   const { map, isReady } = useMap();
@@ -12,12 +16,18 @@ export default function MainGeoreferenceControlPoints() {
   const removeRefPoint = useRefPointsStore(
     (state) => state.removeMainMapRefPoint,
   );
+  const refPoints: RefPoint[] = useRefPointsStore.getState().refPoints;
 
-  const { modifyRef, sourceRef } = useDrawPointsInteraction({ map, isReady });
+  const { modifyRef, sourceRef, drawRef } = useDrawPointsInteraction({
+    map,
+    isReady,
+  });
 
   useAddRefPoint({
     modifyRef,
     sourceRef,
+    drawRef,
+    refPoints,
     map,
     isReady,
     updateRefPoint,

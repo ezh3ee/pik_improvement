@@ -7,6 +7,15 @@ export default function MainInteractions() {
   const useIsGeoreferenceVisible = useGeoreferenceStore(
     (state) => state.isVisible,
   );
+  const imagePath = useGeoreferenceStore((state) => state.imagePath);
+
+  // const isPointsReady = useRefPointsStore(
+  //   (state) =>
+  //     state.refPoints.length >= 2 && state.mainMapRefPoints.length >= 2,
+  // );
+
+  // console.log("isPointsReady ", isPointsReady);
+
   return !useIsGeoreferenceVisible ? (
     <TestPoint />
   ) : (

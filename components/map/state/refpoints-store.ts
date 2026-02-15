@@ -60,7 +60,7 @@ export const useRefPointsStore = create<RefPointsStore>()(
         })),
       updateMainMapRefPoint: (id, newCoords, newConvertedCoords) =>
         set((state) => ({
-          mainMapRefPoints: state.refPoints.map((refPoint) =>
+          mainMapRefPoints: state.mainMapRefPoints.map((refPoint) =>
             refPoint.id === id
               ? {
                   ...refPoint,
@@ -76,7 +76,7 @@ export const useRefPointsStore = create<RefPointsStore>()(
         })),
       removeMainMapRefPoint: (id) =>
         set((state) => ({
-          mainMapRefPoints: state.refPoints.filter(
+          mainMapRefPoints: state.mainMapRefPoints.filter(
             (refPoint) => refPoint.id !== id,
           ),
         })),

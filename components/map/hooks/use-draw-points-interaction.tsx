@@ -38,7 +38,10 @@ export default function useDrawPointsInteraction({
       type: "Point",
       source: source,
       style: blackCrossStyle,
-      condition: (e) => !(source.getFeatures().length === 2) && !altKeyOnly(e),
+      condition: (e) => {
+        console.log("DRAW CONDITION ", source.getFeatures().length);
+        return !(source.getFeatures().length >= 2) && !altKeyOnly(e);
+      },
     });
 
     const modify = new Modify({
@@ -48,16 +51,6 @@ export default function useDrawPointsInteraction({
 
     vLayer.setMap(map);
 
-    // if (refPoints.length > 0)
-    //   refPoints.map((el) => {
-    //     const feature = new Feature({
-    //       geometry: new Point(el.original),
-    //     });
-    //     feature.setId(el.id);
-
-    //     source.addFeature(feature);
-    //   });
-
     vLayerRef.current = vLayer;
     sourceRef.current = source;
     drawRef.current = draw;
@@ -66,11 +59,14 @@ export default function useDrawPointsInteraction({
     map.addInteraction(modify);
     map.addInteraction(draw);
 
-    draw.set("source", vLayer.getSource());
+    // draw.set("source", vLayer.getSource());
 
     return () => {
       map.removeInteraction(draw);
       map.removeInteraction(modify);
+      if (vLayerRef.current && map) {
+        map.removeLayer(vLayerRef.current);
+      }
       source.clear();
       sourceRef.current = null;
       drawRef.current = null;

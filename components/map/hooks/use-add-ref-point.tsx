@@ -1,17 +1,23 @@
 import usePointCoordConverter from "@/components/map/hooks/use-point-coord-converter";
-import { RefPoint } from "@/components/map/state/refpoints-store";
+import {
+  RefPoint,
+  useRefPointsStore,
+} from "@/components/map/state/refpoints-store";
 import { altKeyOnly } from "ol/events/condition";
 import Feature from "ol/Feature";
-import { Point, SimpleGeometry } from "ol/geom";
-import Modify from "ol/interaction/Modify";
+import { Geometry, Point, SimpleGeometry } from "ol/geom";
+import Draw from "ol/interaction/Draw";
+import Modify, { ModifyEvent } from "ol/interaction/Modify";
 import Map from "ol/Map";
-import VectorSource from "ol/source/Vector";
+import MapBrowserEvent from "ol/MapBrowserEvent";
+import VectorSource, { VectorSourceEvent } from "ol/source/Vector";
 import { RefObject, useEffect } from "react";
-import { useRefPointsStore } from "../state/refpoints-store";
 
 type AddRefPointType = {
   modifyRef: RefObject<Modify | null>;
   sourceRef: RefObject<VectorSource | null>;
+  drawRef: RefObject<Draw | null>;
+  refPoints: RefPoint[];
   map: Map | null;
   isReady: boolean;
   updateRefPoint: (
@@ -26,6 +32,8 @@ type AddRefPointType = {
 export default function useAddRefPoint({
   modifyRef,
   sourceRef,
+  drawRef,
+  refPoints,
   map,
   isReady,
   updateRefPoint,
@@ -37,22 +45,20 @@ export default function useAddRefPoint({
   );
   const converImageDimensions = usePointCoordConverter();
   useEffect(() => {
-    if (!map || !isReady || !modifyRef.current || !sourceRef.current) return;
+    if (
+      !map ||
+      !isReady ||
+      !modifyRef.current ||
+      !sourceRef.current ||
+      !drawRef.current
+    )
+      return;
 
-    const refPoints: RefPoint[] = useRefPointsStore.getState().refPoints;
+    const modify = modifyRef.current;
+    const source = sourceRef.current;
 
-    if (refPoints.length > 0)
-      refPoints.map((el) => {
-        const feature = new Feature({
-          geometry: new Point(el.original),
-        });
-        feature.setId(el.id);
-
-        sourceRef?.current?.addFeature(feature);
-      });
-
-    modifyRef.current.on("modifyend", (e) => {
-      const modifiedFeatureId = e.features.item(0).getId();
+    const modifyHandler = (e: ModifyEvent) => {
+      const modifiedFeatureId = e.features?.item(0).getId();
       if (!modifiedFeatureId) return;
 
       const feature = sourceRef?.current?.getFeatureById(modifiedFeatureId);
@@ -72,11 +78,13 @@ export default function useAddRefPoint({
         coordinates,
         converImageDimensions(coordinates),
       );
-    });
+    };
 
-    sourceRef.current.on("addfeature", (e) => {
+    const addFeatureHandler = (e: VectorSourceEvent<Feature<Geometry>>) => {
+      // const addFeatureHandler = (e: DrawEvent) => {
       const feature = e.feature;
       if (!feature) return;
+      if (feature.getId()) return; // проверить, если фича уже есть в сторе
 
       feature.setId(crypto.randomUUID());
 
@@ -86,17 +94,17 @@ export default function useAddRefPoint({
         const coordinates = geometry.getCoordinates();
         if (!coordinates) return;
 
-        const refPoints: RefPoint = {
+        const refPoint: RefPoint = {
           original: coordinates,
           converted: converImageDimensions(coordinates),
           id: String(feature.getId()),
         };
 
-        addRefPoints(refPoints);
+        addRefPoints(refPoint);
       }
-    });
+    };
 
-    map.on("singleclick", (e) => {
+    const clickHandler = (e: MapBrowserEvent) => {
       if (!altKeyOnly(e)) return;
       if (!sourceRef.current) return;
 
@@ -106,7 +114,17 @@ export default function useAddRefPoint({
         sourceRef.current.removeFeature(feature);
         removeRefPoint(String(feature.getId()));
       }
-    });
+    };
+
+    source.on("addfeature", addFeatureHandler);
+    modify.on("modifyend", modifyHandler);
+    map.on("singleclick", clickHandler);
+
+    return () => {
+      modify.un("modifyend", modifyHandler);
+      source.un("addfeature", addFeatureHandler);
+      map.un("singleclick", clickHandler);
+    };
   }, [
     addRefPoints,
     removeRefPoint,
@@ -116,7 +134,26 @@ export default function useAddRefPoint({
     sourceRef,
     isReady,
     converImageDimensions,
+    drawRef,
+    // refPoints,
   ]);
+
+  useEffect(() => {
+    if (!sourceRef.current || !isReady) return;
+
+    if (refPoints.length > 0) {
+      console.log("refPoints", refPoints);
+      refPoints.map((el) => {
+        if (sourceRef.current?.getFeatureById(el.id)) return;
+        const feature = new Feature({
+          geometry: new Point(el.original),
+        });
+        feature.setId(el.id);
+
+        sourceRef.current?.addFeature(feature);
+      });
+    }
+  }, [map, refPoints, sourceRef, isReady]);
 
   useEffect(() => {
     const refPoints: RefPoint[] = useRefPointsStore.getState().refPoints;
