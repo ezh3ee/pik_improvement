@@ -1,6 +1,7 @@
 "use client";
 import { useMap } from "@/components/map/hooks/use-map";
 import { tileGroup } from "@/components/map/layers/tiles/group/tile-group";
+import { useMapStore } from "@/components/map/state/map-store";
 import {
   Select,
   SelectContent,
@@ -10,7 +11,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useEffect, useRef, useState } from "react";
-import { useMapStore } from "../../state/map-store";
 import "./style.scss";
 
 const items: { label: string; value: string }[] = [

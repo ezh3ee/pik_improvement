@@ -16,7 +16,7 @@ export default function MainGeoreferenceControlPoints() {
   const removeRefPoint = useRefPointsStore(
     (state) => state.removeMainMapRefPoint,
   );
-  const refPoints: RefPoint[] = useRefPointsStore.getState().refPoints;
+  const refPoints: RefPoint[] = useRefPointsStore.getState().mainMapRefPoints;
 
   const { modifyRef, sourceRef, drawRef } = useDrawPointsInteraction({
     map,

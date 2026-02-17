@@ -6,9 +6,11 @@ import Map from "ol/Map";
 type GeoreferenceStore = {
   /* GEOREFERENCE */
   isVisible: boolean;
+  isGeoRefImgVisible: boolean;
   imagePath: string | null;
   imageDimensions: { width: number; height: number };
   toggleVisible: () => void;
+  toggleGeoRefImgVisible: () => void;
   setImagePath: (path: { url: string | null }) => void;
   setImageDimensions: (dimensions: { width: number; height: number }) => void;
   resetStore: () => Promise<void>;
@@ -23,6 +25,7 @@ type GeoreferenceStore = {
 
 const initialState = {
   isVisible: false,
+  isGeoRefImgVisible: true,
   imagePath: null,
   imageDimensions: { width: 0, height: 0 },
   map: null,
@@ -35,6 +38,8 @@ export const useGeoreferenceStore = create<GeoreferenceStore>()(
     (set) => ({
       ...initialState,
       toggleVisible: () => set((state) => ({ isVisible: !state.isVisible })),
+      toggleGeoRefImgVisible: () =>
+        set((state) => ({ isGeoRefImgVisible: !state.isGeoRefImgVisible })),
       setImagePath: (path) => set({ imagePath: path.url }),
       setImageDimensions: (dimensions) => set({ imageDimensions: dimensions }),
       resetStore: async () => {

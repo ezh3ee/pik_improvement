@@ -10,7 +10,7 @@ export default function usePointCoordConverter() {
     (coords: number[]): number[] => {
       return [
         coords[0] + imageDimensions.width / 2,
-        coords[1] + imageDimensions.width / 2,
+        coords[1] + imageDimensions.height / 2,
       ];
     },
     [imageDimensions],
