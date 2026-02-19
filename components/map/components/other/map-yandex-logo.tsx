@@ -3,7 +3,6 @@ import { useMapStore } from "@/components/map/state/map-store";
 import Image from "next/image";
 export default function MapYandexLogo() {
   const layer = useMapStore((state) => state.layer);
-  console.log(layer);
 
   return layer === "yandex" ? (
     <Image

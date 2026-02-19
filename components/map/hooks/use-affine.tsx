@@ -16,7 +16,6 @@ export default function useAffine() {
     };
 
     const transform = (pt: number[]) => {
-      console.log("transform", pt);
       // image -> map
       const x = params.a * pt[0] - params.b * pt[1] + params.tx;
       const y = params.b * pt[0] + params.a * pt[1] + params.ty;
@@ -24,7 +23,6 @@ export default function useAffine() {
     };
 
     const inverseTransform = (pt: number[]) => {
-      console.log("inverseTransform", pt);
       // map -> image
       const det = params.a * params.a + params.b * params.b;
       if (!det) throw new Error("Similarity inverse: singular");

@@ -11,23 +11,28 @@ export default function MainInteractions() {
   const isGeoRefImgVisible = useGeoreferenceStore(
     (state) => state.isGeoRefImgVisible,
   );
+  const isShowGeoRefImgOnMapOnly = useGeoreferenceStore(
+    (state) => state.showGeoRefImgOnMapOnly,
+  );
 
   const isPointsReady = useRefPointsStore(
     (state) =>
       state.refPoints.length >= 2 && state.mainMapRefPoints.length >= 2,
   );
 
-  if (!isVisible || !isImagePathSet) {
+  if ((!isVisible || !isImagePathSet) && !isShowGeoRefImgOnMapOnly) {
     return <TestPoint />;
+  } else if (!isVisible && isImagePathSet && isShowGeoRefImgOnMapOnly) {
+    return <ImageOnMap />;
   } else {
-    if (isPointsReady && isGeoRefImgVisible)
+    if (isPointsReady && isGeoRefImgVisible) {
       return (
         <>
           <ImageOnMap />
           <MainGeoreferenceControlPoints />
         </>
       );
-    else {
+    } else {
       return <MainGeoreferenceControlPoints />;
     }
   }

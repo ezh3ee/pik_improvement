@@ -7,10 +7,14 @@ type GeoreferenceStore = {
   /* GEOREFERENCE */
   isVisible: boolean;
   isGeoRefImgVisible: boolean;
+  showGeoRefImgOnMapOnly: boolean;
+  geoRefImgOpacity: number;
   imagePath: string | null;
   imageDimensions: { width: number; height: number };
   toggleVisible: () => void;
   toggleGeoRefImgVisible: () => void;
+  toggleShowGeoRefImgOnMapOnly: () => void;
+  setGeoRefImageOpacity: (opacity: number) => void;
   setImagePath: (path: { url: string | null }) => void;
   setImageDimensions: (dimensions: { width: number; height: number }) => void;
   resetStore: () => Promise<void>;
@@ -26,6 +30,8 @@ type GeoreferenceStore = {
 const initialState = {
   isVisible: false,
   isGeoRefImgVisible: true,
+  showGeoRefImgOnMapOnly: false,
+  geoRefImgOpacity: 1.0,
   imagePath: null,
   imageDimensions: { width: 0, height: 0 },
   map: null,
@@ -40,6 +46,12 @@ export const useGeoreferenceStore = create<GeoreferenceStore>()(
       toggleVisible: () => set((state) => ({ isVisible: !state.isVisible })),
       toggleGeoRefImgVisible: () =>
         set((state) => ({ isGeoRefImgVisible: !state.isGeoRefImgVisible })),
+      toggleShowGeoRefImgOnMapOnly: () =>
+        set((state) => ({
+          showGeoRefImgOnMapOnly: !state.showGeoRefImgOnMapOnly,
+        })),
+      setGeoRefImageOpacity: (opacity) =>
+        set(() => ({ geoRefImgOpacity: opacity })),
       setImagePath: (path) => set({ imagePath: path.url }),
       setImageDimensions: (dimensions) => set({ imageDimensions: dimensions }),
       resetStore: async () => {

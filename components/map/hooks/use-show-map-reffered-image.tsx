@@ -16,6 +16,7 @@ export default function useShowMapRefferedImage() {
   const imageDimensions = useGeoreferenceStore(
     (state) => state.imageDimensions,
   );
+  const opacity = useGeoreferenceStore((state) => state.geoRefImgOpacity);
   const imagePath = useGeoreferenceStore((state) => state.imagePath);
   const imagePoints = useRefPointsStore(
     useShallow((state) => state.refPoints.map((p) => p.converted)),
@@ -59,6 +60,7 @@ export default function useShowMapRefferedImage() {
     });
 
     imageLayer.setSource(geoImageSource);
+    imageLayer.setOpacity(opacity);
 
     return () => {
       if (layerRef.current && map) {
@@ -74,5 +76,6 @@ export default function useShowMapRefferedImage() {
     imageDimensions,
     imagePoints,
     mapPoints,
+    opacity,
   ]);
 }
