@@ -1,5 +1,5 @@
 import { useGeoreferenceStore } from "@/components/map/state/georeference-store";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 
 export default function useGeorefImageUpload() {
   const [isUploadingError, setUploadingError] = useState<boolean | string>(
@@ -9,6 +9,8 @@ export default function useGeorefImageUpload() {
   const setImageDimensions = useGeoreferenceStore(
     (state) => state.setImageDimensions,
   );
+
+  const [isLoading, startTransition] = useTransition();
 
   const uploadImage = async (file: File) => {
     const formData = new FormData();
@@ -37,8 +39,10 @@ export default function useGeorefImageUpload() {
 
   const handleUpload = async (files: File[]) => {
     try {
-      const [url] = await Promise.all(files.map((file) => uploadImage(file)));
-      setImagePath(url);
+      startTransition(async () => {
+        const [url] = await Promise.all(files.map((file) => uploadImage(file)));
+        setImagePath(url);
+      });
     } catch (error) {
       if (error instanceof Error) {
         console.error(error.message);
@@ -50,5 +54,5 @@ export default function useGeorefImageUpload() {
     }
   };
 
-  return { handleUpload, isUploadingError };
+  return { handleUpload, isUploadingError, isLoading };
 }

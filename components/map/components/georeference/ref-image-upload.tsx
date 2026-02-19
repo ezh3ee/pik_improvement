@@ -1,8 +1,9 @@
 import useGeorefImageUpload from "@/components/map/hooks/use-georef-image-upload";
+import { Spinner } from "@/components/ui/spinner";
 import Dropzone, { DropzoneState } from "shadcn-dropzone";
 
 export default function RefImageUpload() {
-  const { handleUpload, isUploadingError } = useGeorefImageUpload();
+  const { handleUpload, isUploadingError, isLoading } = useGeorefImageUpload();
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center gap-2">
@@ -18,7 +19,11 @@ export default function RefImageUpload() {
             ) : (
               <div className="flex items-center flex-col gap-1.5 h-full">
                 <div className="flex items-center flex-row gap-0.5 text-sm font-medium h-[30vh]">
-                  Нажмите, чтобы загрузить генплан или перетащите его сюда
+                  {isLoading ? (
+                    <Spinner className="size-25 w-[250px]" />
+                  ) : (
+                    "Нажмите, чтобы загрузить генплан или перетащите его сюда"
+                  )}
                 </div>
               </div>
             )}

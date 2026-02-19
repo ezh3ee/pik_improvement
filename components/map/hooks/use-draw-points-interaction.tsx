@@ -38,10 +38,7 @@ export default function useDrawPointsInteraction({
       type: "Point",
       source: source,
       style: blackCrossStyle,
-      condition: (e) => {
-        console.log("DRAW CONDITION ", source.getFeatures().length);
-        return !(source.getFeatures().length >= 2) && !altKeyOnly(e);
-      },
+      condition: (e) => !(source.getFeatures().length >= 2) && !altKeyOnly(e),
     });
 
     const modify = new Modify({

@@ -5,7 +5,7 @@ import Layer from "ol/layer/Layer";
 import ImageSource from "ol/source/Image";
 
 import { pixelProjection } from "@/components/map/components/georeference/map/map-pane";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 /**
  * https://github.com/IGNF-Ma-carte/mcgeoimage/blob/main/src/map/imageMap.js
@@ -15,6 +15,7 @@ import { useEffect, useRef } from "react";
  */
 
 import { useGeoreferenceStore } from "@/components/map/state/georeference-store";
+import { Spinner } from "@/components/ui/spinner";
 import type { ProjectionLike } from "ol/proj";
 
 declare module "ol-ext/source/GeoImage" {
@@ -31,6 +32,7 @@ export default function ImageLayerRef() {
   const layerRef = useRef<Layer<ImageSource> | null>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
   const imgUrl = useGeoreferenceStore((state) => state.imagePath);
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
 
   useEffect(() => {
     if (!map || !isReady || !imgUrl) return;
@@ -48,8 +50,25 @@ export default function ImageLayerRef() {
 
     map.addLayer(layerRef.current);
 
-    return () => {};
+    source.on("change", () => {
+      const img = source.getGeoImage();
+      if (img.complete && img.naturalWidth > 0) {
+        setIsImageLoaded(true);
+      }
+    });
+
+    return () => {
+      if (imageRef.current && map && layerRef.current) {
+        map.removeLayer(layerRef.current);
+      }
+      imageRef.current = null;
+      layerRef.current = null;
+    };
   }, [map, isReady, imgUrl]);
 
-  return null;
+  return isImageLoaded ? null : (
+    <div className="pl-7 w-full h-full flex flex-col items-center justify-center gap-2">
+      <Spinner className="size-25" />
+    </div>
+  );
 }
