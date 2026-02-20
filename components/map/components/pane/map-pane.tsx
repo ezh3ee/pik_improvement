@@ -1,8 +1,8 @@
 "use client";
 
+import { VIEW_CONFIG } from "@/components/map/components/config/view";
 import { tileGroup } from "@/components/map/layers/tiles/group/tile-group";
 import { useMapStore } from "@/components/map/state/map-store";
-import { VIEW_CONFIG } from "@/components/map/view";
 import { defaults as defaultControls, FullScreen } from "ol/control";
 import Map from "ol/Map";
 import "ol/ol.css";
@@ -40,5 +40,11 @@ export function MapPane() {
     };
   }, [setMap, setContainer]);
 
-  return <div ref={mapDivRef} style={{ width: "100%", height: "100%" }} />;
+  return (
+    <div
+      ref={mapDivRef}
+      style={{ width: "100%", height: "100%" }}
+      className="map-pane"
+    />
+  );
 }
