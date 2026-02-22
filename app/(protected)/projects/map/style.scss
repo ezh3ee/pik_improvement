@@ -6,30 +6,6 @@
   height: auto;
 }
 
-.georeference-btn {
-  position: absolute;
-  top: 50px;
-  right: 0px;
-}
-
-.show-georefimg-btn {
-  position: absolute;
-  top: 90px;
-  right: 0px;
-}
-
-.layered-genplan-btn {
-  position: absolute;
-  top: 130px;
-  right: 0px;
-}
-
-.opacity-slider {
-  position: absolute;
-  top: 170px;
-  right: 0px;
-}
-
 .fullscreen {
   background: #fff;
 }
@@ -56,3 +32,35 @@
   height: 100%;
   display: flex;
 }
+
+/** */
+
+.main-controls {
+  position: absolute;
+  top: 50px;
+  right: 0px;
+}
+
+.opacity-slider {
+  position: absolute;
+  top: 100px;
+  right: 0px;
+}
+
+// .georeference-btn {
+//   position: absolute;
+//   top: 50px;
+//   right: 0px;
+// }
+
+// .show-georefimg-btn {
+//   position: absolute;
+//   top: 90px;
+//   right: 0px;
+// }
+
+// .layered-genplan-btn {
+//   position: absolute;
+//   top: 130px;
+//   right: 0px;
+// }

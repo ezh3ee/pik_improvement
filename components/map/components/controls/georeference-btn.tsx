@@ -7,8 +7,9 @@ export default function GeoreferenceBtn() {
   const toggleVisible = useGeoreferenceStore((state) => state.toggleVisible);
 
   return (
-    <Button onClick={() => toggleVisible()} className="georeference-btn">
-      Геореф
+    // <Button onClick={() => toggleVisible()} className="georeference-btn">
+    <Button onClick={() => toggleVisible()} variant="outline">
+      Наложение
     </Button>
   );
 }

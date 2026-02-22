@@ -9,11 +9,17 @@ export default function ShowGeoRefOnMapOnly() {
   );
 
   return (
-    <Button
-      onClick={() => toggleShowGeoRefImgOnMapOnly()}
-      className="layered-genplan-btn"
-    >
+    <Button variant="outline" onClick={() => toggleShowGeoRefImgOnMapOnly()}>
       Наложенный генлан
     </Button>
   );
+
+  // return (
+  //   <Button
+  //     onClick={() => toggleShowGeoRefImgOnMapOnly()}
+  //     className="layered-genplan-btn"
+  //   >
+  //     Наложенный генлан
+  //   </Button>
+  // );
 }
