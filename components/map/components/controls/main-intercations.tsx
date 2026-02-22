@@ -1,7 +1,7 @@
 "use client";
 import ImageOnMap from "@/components/map/components/georeference/map/image-on-map";
 import MainGeoreferenceControlPoints from "@/components/map/components/interactions/main-georeference-control-points";
-import { TestPoint } from "@/components/map/layers/vector/test-point";
+// import { TestPoint } from "@/components/map/layers/vector/test-point";
 import { useGeoreferenceStore } from "@/components/map/state/georeference-store";
 import { useRefPointsStore } from "@/components/map/state/refpoints-store";
 
@@ -21,7 +21,7 @@ export default function MainInteractions() {
   );
 
   if ((!isVisible || !isImagePathSet) && !isShowGeoRefImgOnMapOnly) {
-    return <TestPoint />;
+    // return <TestPoint />;
   } else if (!isVisible && isImagePathSet && isShowGeoRefImgOnMapOnly) {
     return <ImageOnMap />;
   } else {

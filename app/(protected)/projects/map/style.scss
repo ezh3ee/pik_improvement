@@ -34,17 +34,26 @@
 }
 
 /** */
+.ol-full-screen {
+  top: 14px;
+  right: 7px;
+}
 
 .main-controls {
   position: absolute;
-  top: 50px;
-  right: 0px;
+  top: 9px;
+  right: 40px;
 }
 
 .opacity-slider {
   position: absolute;
   top: 100px;
   right: 0px;
+}
+
+button[data-slot="button"].active,
+div[data-slot="dropdown-menu-item"].active {
+  background-color: #e6e6e6;
 }
 
 // .georeference-btn {

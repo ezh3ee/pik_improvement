@@ -11,7 +11,11 @@ export default function ToggleRefImageButton() {
 
   return (
     // <Button onClick={() => toggleVisible()} className="show-georefimg-btn">
-    <Button onClick={() => toggleVisible()} variant="outline">
+    <Button
+      onClick={() => toggleVisible()}
+      variant="outline"
+      className={isVisible ? "active" : ""}
+    >
       {isVisible ? "Скрыть генплан" : "Показать генплан"}
     </Button>
   );

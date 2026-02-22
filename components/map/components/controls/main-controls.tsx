@@ -2,13 +2,20 @@
 
 // import GeoreferenceBtn from "@/components/map/components/controls/georeference-btn";
 import GeoreferenceBtn from "@/components/map/components/controls/georeference-btn";
+import InteractionsDropdown from "@/components/map/components/controls/interactions-dropdown";
 import LayersSwitch from "@/components/map/components/controls/layer-switch/layers-switch";
 import OpacityCtrl from "@/components/map/components/controls/opacity-ctrl";
 import ShowGeoRefOnMapOnly from "@/components/map/components/controls/show-georef-on-map-only-btn";
 import ToggleRefImageButton from "@/components/map/components/controls/toggle-refimg-button";
 import { useGeoreferenceStore } from "@/components/map/state/georeference-store";
+import { useRefPointsStore } from "@/components/map/state/refpoints-store";
+import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
-import { useRefPointsStore } from "../../state/refpoints-store";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { DraftingCompass } from "lucide-react";
 
 export default function MainControls() {
   const isGeoRefVisible = useGeoreferenceStore((state) => state.isVisible);
@@ -41,79 +48,20 @@ export default function MainControls() {
           {showToggleImageBtn && <ToggleRefImageButton />}
           <GeoreferenceBtn />
         </ButtonGroup>
-        {/* <ButtonGroup>
-        <Button variant="outline">Snooze</Button>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="icon" aria-label="More Options">
-              <MoreHorizontalIcon />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-40">
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <MailCheckIcon />
-                Mark as Read
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <ArchiveIcon />
-                Archive
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <ClockIcon />
-                Snooze
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CalendarPlusIcon />
-                Add to Calendar
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <ListFilterIcon />
-                Add to List
-              </DropdownMenuItem>
-              <DropdownMenuSub>
-                <DropdownMenuSubTrigger>
-                  <TagIcon />
-                  Label As...
-                </DropdownMenuSubTrigger>
-              </DropdownMenuSub>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem variant="destructive">
-                <Trash2Icon />
-                Trash
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </ButtonGroup> */}
+        <ButtonGroup>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="icon" aria-label="More Options">
+                <DraftingCompass />
+              </Button>
+            </DropdownMenuTrigger>
+            <InteractionsDropdown />
+          </DropdownMenu>
+        </ButtonGroup>
       </ButtonGroup>
       {showOpacityCtrl && <OpacityCtrl />}
 
       <LayersSwitch />
     </>
   );
-
-  // return (
-  //   <>
-  //     {!isGeoRefVisible && isImagePathSet && isPointsReady && (
-  //       <>
-  //         {showGeoRefImgOnMapOnly && <OpacityCtrl />}
-  //         <ShowGeoRefOnMapOnly />
-  //       </>
-  //     )}
-  //     {isGeoRefVisible && isImagePathSet && isPointsReady && (
-  //       <>
-  //         {isGeoRefImgVisible && <OpacityCtrl />}
-  //         <ToggleRefImageButton />
-  //       </>
-  //     )}
-  //     <LayersSwitch />
-  //     <GeoreferenceBtn />
-  //   </>
-  // );
 }
