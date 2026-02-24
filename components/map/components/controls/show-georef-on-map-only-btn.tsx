@@ -20,13 +20,4 @@ export default function ShowGeoRefOnMapOnly() {
       Наложенный генлан
     </Button>
   );
-
-  // return (
-  //   <Button
-  //     onClick={() => toggleShowGeoRefImgOnMapOnly()}
-  //     className="layered-genplan-btn"
-  //   >
-  //     Наложенный генлан
-  //   </Button>
-  // );
 }

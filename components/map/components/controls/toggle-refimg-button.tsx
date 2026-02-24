@@ -10,7 +10,6 @@ export default function ToggleRefImageButton() {
   const isVisible = useGeoreferenceStore((state) => state.isGeoRefImgVisible);
 
   return (
-    // <Button onClick={() => toggleVisible()} className="show-georefimg-btn">
     <Button
       onClick={() => toggleVisible()}
       variant="outline"

@@ -8,12 +8,18 @@ import VectorSource from "ol/source/Vector";
 import { Fill, Stroke, Style } from "ol/style";
 import { useEffect, useRef } from "react";
 
+// const drawIntercation = (e: DrawEvent) => {
+//   const currentFeature = e.feature;
+//   vectorSource.addFeature(justDrawnFeature);
+// };
+
 export default function Drawing() {
   const { map, isReady } = useMap();
 
   const drawVectorRef = useRef<VectorLayer>(null);
   const snapRef = useRef<Snap>(null);
   const drawRef = useRef<Draw>(null);
+  const vectorSourceRef = useRef<VectorSource>(null);
 
   useEffect(() => {
     if (!map || !isReady) return;
@@ -37,7 +43,7 @@ export default function Drawing() {
       source: vectorSource,
     });
 
-    const draw = new Draw({
+    const drawInteraction = new Draw({
       // type: value,
       type: "Polygon",
       // source: drawVector.getSource(),
@@ -52,20 +58,33 @@ export default function Drawing() {
       },
     });
 
+    drawInteraction.on("drawend", (e) => {
+      const justDrawnFeature = e.feature;
+      console.log(justDrawnFeature);
+      vectorSource.addFeature(justDrawnFeature);
+    });
+
     drawVectorRef.current = drawVector;
     snapRef.current = snap;
-    drawRef.current = draw;
+    drawRef.current = drawInteraction;
+    vectorSourceRef.current = vectorSource;
 
-    map.addInteraction(draw);
+    map.addInteraction(drawInteraction);
     map.addInteraction(snap);
+    map.addLayer(drawVector);
 
     return () => {
-      map.removeInteraction(draw);
+      map.removeInteraction(drawInteraction);
       map.removeInteraction(snap);
+      map.removeLayer(drawVector);
       drawVectorRef.current = null;
       snapRef.current = null;
     };
   }, [isReady, map]);
+
+  // useEffect(() => {
+  //   const drawVector = drawVectorRef.current;
+  // }, []);
 
   return null;
 }

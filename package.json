@@ -25,6 +25,7 @@
     "@radix-ui/react-separator": "^1.1.8",
     "@radix-ui/react-slot": "^1.2.4",
     "@radix-ui/react-tooltip": "^1.2.8",
+    "@turf/turf": "^7.3.4",
     "@types/ol-ext": "npm:@siedlerchr/types-ol-ext@^3.6.6",
     "@types/openlayers": "^4.6.23",
     "@types/proj4": "^2.19.0",
