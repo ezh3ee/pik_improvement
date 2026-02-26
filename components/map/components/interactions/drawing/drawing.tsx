@@ -1,6 +1,9 @@
 "use client";
 
+import useDifference from "@/components/map/hooks/use-difference";
 import { useMap } from "@/components/map/hooks/use-map";
+import Feature from "ol/Feature";
+import { Geometry } from "ol/geom";
 import Draw from "ol/interaction/Draw";
 import Snap from "ol/interaction/Snap.js";
 import VectorLayer from "ol/layer/Vector";
@@ -20,6 +23,8 @@ export default function Drawing() {
   const snapRef = useRef<Snap>(null);
   const drawRef = useRef<Draw>(null);
   const vectorSourceRef = useRef<VectorSource>(null);
+
+  const difference = useDifference();
 
   useEffect(() => {
     if (!map || !isReady) return;
@@ -58,10 +63,10 @@ export default function Drawing() {
       },
     });
 
-    drawInteraction.on("drawend", (e) => {
-      const justDrawnFeature = e.feature;
-      console.log(justDrawnFeature);
-      vectorSource.addFeature(justDrawnFeature);
+    drawInteraction.on("drawend", (event) => {
+      const justDrawnFeature = difference(event, drawVector, true);
+      if (!justDrawnFeature) return;
+      vectorSource.addFeature(justDrawnFeature as Feature<Geometry>);
     });
 
     drawVectorRef.current = drawVector;
@@ -80,7 +85,7 @@ export default function Drawing() {
       drawVectorRef.current = null;
       snapRef.current = null;
     };
-  }, [isReady, map]);
+  }, [isReady, map, difference]);
 
   // useEffect(() => {
   //   const drawVector = drawVectorRef.current;

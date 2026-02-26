@@ -53,6 +53,9 @@ importers:
       '@turf/turf':
         specifier: ^7.3.4
         version: 7.3.4
+      '@types/geojson':
+        specifier: ^7946.0.16
+        version: 7946.0.16
       '@types/ol-ext':
         specifier: npm:@siedlerchr/types-ol-ext@^3.6.6
         version: '@siedlerchr/types-ol-ext@3.6.6(jspdf@4.1.0)'
