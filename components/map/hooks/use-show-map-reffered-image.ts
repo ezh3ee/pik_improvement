@@ -9,6 +9,7 @@ import ImageSource from "ol/source/Image";
 import ImageCanvas from "ol/source/ImageCanvas";
 import { useEffect, useRef } from "react";
 import { useShallow } from "zustand/shallow";
+import { ZIndexes } from "../components/config/z-indexes";
 
 export default function useShowMapRefferedImage() {
   const affine = useAffine();
@@ -40,7 +41,10 @@ export default function useShowMapRefferedImage() {
         return canvas;
       },
     });
-    const imageLayer = new ImageLayer({ source: canvasSource });
+    const imageLayer = new ImageLayer({
+      source: canvasSource,
+      zIndex: ZIndexes.Map,
+    });
     map.addLayer(imageLayer);
 
     layerRef.current = imageLayer;

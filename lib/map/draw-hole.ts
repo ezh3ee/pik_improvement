@@ -60,6 +60,12 @@ interface DrawHoleTurfOptions {
 
 type RecursiveCoordinate = number | RecursiveCoordinate[];
 
+// кастомный ивент вырезаний дырки, чтобы получить айди измененной фичи
+export interface HoleCutResult {
+  targetFeature: Feature<Geometry>;
+  targetLayer: VectorLayer<VectorSource<Feature<Geometry>>> | null;
+}
+
 class DrawHoleTurf extends Draw {
   private layers_: VectorLayer<VectorSource<Feature<Geometry>>>[] | null;
   private mapProjection: string;
@@ -68,6 +74,9 @@ class DrawHoleTurf extends Draw {
   private _targetFeature: Feature<Geometry> | null;
   private _targetLayer: VectorLayer<VectorSource<Feature<Geometry>>> | null;
   private _originalStyle: StyleLike | null;
+  private _originalId: string | number | undefined;
+  // private _onHoleCut: ((result: HoleCutResult) => void) | null = null;
+  private _onHoleCut: ((result: Feature<Geometry>) => void) | null = null;
 
   constructor(options: DrawHoleTurfOptions = {}) {
     super({
@@ -91,6 +100,7 @@ class DrawHoleTurf extends Draw {
     this._targetFeature = null;
     this._targetLayer = null;
     this._originalStyle = null;
+    this._originalId = undefined;
 
     this.on(
       "drawstart",
@@ -100,6 +110,10 @@ class DrawHoleTurf extends Draw {
       "drawend",
       this._handleDrawEnd.bind(this) as (e: DrawEvent) => void,
     );
+  }
+
+  onHoleCut(callback: (result: Feature<Geometry>) => void): void {
+    this._onHoleCut = callback;
   }
 
   private _highlightTarget(): void {
@@ -144,7 +158,7 @@ class DrawHoleTurf extends Draw {
     return null;
   }
 
-  private _restoreTargetStyle(): void {
+  public _restoreTargetStyle(): void {
     if (!this._targetFeature) return;
 
     if (this._originalStyle) {
@@ -154,6 +168,15 @@ class DrawHoleTurf extends Draw {
     }
 
     this._originalStyle = null;
+  }
+
+  private _restoreOriginalId(): void {
+    console.log("originalId restoting.. ", this._originalId);
+    if (!this._originalId) return;
+    this._targetFeature?.setId(this._originalId);
+
+    console.log("originalId restored.. ", this._targetFeature);
+    // this._originalId = undefined;
   }
 
   /**
@@ -225,6 +248,8 @@ class DrawHoleTurf extends Draw {
           this._targetLayer = layer as VectorLayer<
             VectorSource<Feature<Geometry>>
           > | null;
+
+          this._originalId = this._targetFeature?.getId();
         }
       },
       { hitTolerance: 5 },
@@ -241,6 +266,7 @@ class DrawHoleTurf extends Draw {
 
   private _handleDrawEnd(e: DrawEvent): void {
     this._restoreTargetStyle();
+    this._restoreOriginalId();
 
     if (!this._targetFeature) return;
 
@@ -315,7 +341,14 @@ class DrawHoleTurf extends Draw {
           );
         }
 
-        console.log("✂️ success");
+        console.log("✂️ success", targetFeature);
+
+        // пробрасывем кастомный коллбэк
+        this._onHoleCut?.(targetFeature);
+        // this._onHoleCut?.({
+        //   targetFeature,
+        //   targetLayer: this._targetLayer,
+        // });
       } else {
         console.log("⚠️ empty result");
       }
@@ -328,6 +361,7 @@ class DrawHoleTurf extends Draw {
 
   _handleDrawAbort(): void {
     this._restoreTargetStyle();
+    this._restoreOriginalId();
     this._targetFeature = null;
   }
 }

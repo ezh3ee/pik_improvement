@@ -22,14 +22,6 @@ export default function useSubtractWithTurf() {
         return;
       }
 
-      // if (
-      //   !(from instanceof Polygon) ||
-      //   !(from instanceof MultiPolygon) ||
-      //   !(existing instanceof Polygon) ||
-      //   !(existing instanceof MultiPolygon)
-      // )
-      //   return;
-
       const result = difference(
         featureCollection([
           from as GJFeature<Polygon | MultiPolygon>,

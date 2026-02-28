@@ -1,23 +1,28 @@
 import useSubtractWithTurf from "@/components/map/hooks/use-subtract-with-turf";
+import { useDrawingStore } from "@/components/map/state/drawing-store";
 import { difference, featureCollection, union } from "@turf/turf";
 import { Feature, MultiPolygon, Polygon } from "geojson";
 import GeoJSON from "ol/format/GeoJSON";
 import { DrawEvent } from "ol/interaction/Draw";
 import VectorLayer from "ol/layer/Vector";
-import { useCallback } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 export default function useDifference() {
   const subtractWithTurf = useSubtractWithTurf();
 
+  const differenceMode = useDrawingStore((state) => state.differenceMode);
+
+  const differenceRef = useRef<boolean>(differenceMode);
+
+  useEffect(() => {
+    differenceRef.current = differenceMode;
+  }, [differenceMode]);
+
   return useCallback(
-    (
-      event: DrawEvent,
-      vectorLayer: VectorLayer,
-      subtractCheckboxActive: boolean,
-    ) => {
+    (event: DrawEvent, vectorLayer: VectorLayer) => {
       const justDrawnFeature = event.feature;
 
-      if (!subtractCheckboxActive) {
+      if (!differenceRef.current) {
         return justDrawnFeature;
       }
 
