@@ -52,7 +52,7 @@ export default function useModifying({ map, isReady }: UseDrawingProps) {
       source: vectorSource,
     });
 
-    const selectAltClick = new Select({
+    const sClick = new Select({
       layers: [drawVector],
       style: function (feature) {
         const layerStyleFunction = drawVector.getStyleFunction();
@@ -92,15 +92,31 @@ export default function useModifying({ map, isReady }: UseDrawingProps) {
         }
       },
       condition: function (mapBrowserEvent) {
-        // правая кнопка мыши - контекст меню!
-        // return click(mapBrowserEvent) && altKeyOnly(mapBrowserEvent);
+        // if (
+        //   mapBrowserEvent.type !== "pointermove" &&
+        //   mapBrowserEvent.type !== "pointerdrag"
+        // ) {
+        //   console.log(mapBrowserEvent);
+        //   console.log(
+        //     "should click be blocked? ",
+        //     Date.now() - lastModifyEnd < 400,
+        //   );
+        // }
+        // if (Date.now() - lastModifyEnd < 400) {
+        //   return false;
+        // }
+        // if (
+        //   mapBrowserEvent.type !== "pointermove" &&
+        //   mapBrowserEvent.type !== "pointerdrag"
+        // ) {
+        //   console.log("anyway click", mapBrowserEvent);
+        // }
         return singleClick(mapBrowserEvent);
       },
     });
 
     const modifyInteraction = new Modify({
-      // source: drawVector.getSource(),
-      features: selectAltClick.getFeatures(),
+      features: sClick.getFeatures(),
       // trace: true,
       // traceSource: baseVector.getSource(),
     });
@@ -127,15 +143,15 @@ export default function useModifying({ map, isReady }: UseDrawingProps) {
     snapRef.current = snap;
     vectorSourceRef.current = vectorSource;
     modifyRef.current = modifyInteraction;
-    selectRef.current = selectAltClick;
+    selectRef.current = sClick;
 
-    map.addInteraction(selectAltClick);
+    map.addInteraction(sClick);
     map.addInteraction(modifyInteraction);
     map.addInteraction(snap);
     map.addLayer(drawVector);
 
     return () => {
-      map.removeInteraction(selectAltClick);
+      map.removeInteraction(sClick);
       map.removeInteraction(modifyInteraction);
       map.removeInteraction(snap);
       map.removeLayer(drawVector);
@@ -145,7 +161,10 @@ export default function useModifying({ map, isReady }: UseDrawingProps) {
       modifyRef.current = null;
       selectRef.current = null;
     };
-  }, [isReady, map, storedFeatures, updateFeature]);
+  }, [isReady, map, updateFeature]); // не добавил специально storedFeatures.
+  //  Потом это все будет переделываться.
+  //  Пока специально так,
+  // чтобы не пропадало выделение с фичи после модификации
 
   return null;
 }

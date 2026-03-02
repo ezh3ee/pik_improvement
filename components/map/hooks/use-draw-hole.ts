@@ -2,8 +2,11 @@ import { ZIndexes } from "@/components/map/components/config/z-indexes";
 import { useDrawingStore } from "@/components/map/state/drawing-store";
 import DrawHoleTurf from "@/lib/map/draw-hole";
 import { Feature, Map } from "ol";
+import { pointerMove } from "ol/events/condition";
 import GeoJSON, { GeoJSONFeature } from "ol/format/GeoJSON";
 import { Geometry } from "ol/geom";
+import { DrawEvent } from "ol/interaction/Draw";
+import Select from "ol/interaction/Select";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { Fill, Stroke, Style } from "ol/style";
@@ -63,12 +66,37 @@ export default function useDrawHole({ map, isReady }: UseDrawHoleProps) {
       ],
     });
 
+    const hover = new Select({
+      condition: pointerMove,
+      layers: [drawVector],
+      style: new Style({
+        stroke: new Stroke({
+          color: "rgba(202, 54, 54, 0.5)",
+          width: 3,
+        }),
+        fill: new Fill({
+          color: "rgba(202, 54, 54, 0.5)",
+        }),
+      }),
+    });
+
+    const drawStartHandler = (event: DrawEvent) => {
+      hover.getFeatures().clear();
+      // map.removeInteraction(hover);
+      hover.setActive(false);
+      console.log("target style after removal: ", event.feature);
+    };
+
+    drawhole.on("drawstart", drawStartHandler);
+
     drawhole.onHoleCut((feature) => {
       const geojson = JSON.parse(
         format.writeFeature(feature),
       ) as GeoJSONFeature;
 
       updateFeature(geojson);
+      // map.addInteraction(hover);
+      hover.setActive(true);
     });
 
     const handler = (e: KeyboardEvent) => {
@@ -79,21 +107,55 @@ export default function useDrawHole({ map, isReady }: UseDrawHoleProps) {
 
     document.addEventListener("keydown", handler);
 
-    drawhole.on("drawabort", drawhole._restoreTargetStyle);
+    const drawAbortHandler = () => {
+      drawhole._restoreTargetStyle();
+      // map.addInteraction(hover);
+      hover.setActive(true);
+    };
+
+    drawhole.on("drawabort", drawAbortHandler);
 
     drawVectorRef.current = drawVector;
     vectorSourceRef.current = vectorSource;
 
     map.addLayer(drawVector);
+    map.addInteraction(hover);
     map.addInteraction(drawhole);
 
     return () => {
       map.removeLayer(drawVector);
       map.removeInteraction(drawhole);
+      map.removeInteraction(hover);
       drawVectorRef.current = null;
       vectorSourceRef.current = null;
-      drawhole.un("drawabort", drawhole._restoreTargetStyle);
+      drawhole.un("drawabort", drawAbortHandler);
+      drawhole.un("drawstart", drawStartHandler);
       document.removeEventListener("keydown", handler);
     };
   }, [isReady, map, storedFeatures, updateFeature]);
+
+  // useEffect(() => {
+  //   if (!map || !isReady) return;
+
+  //   const hover = new Select({
+  //     condition: pointerMove,
+  //     style: new Style({
+  //       stroke: new Stroke({
+  //         color: "rgba(202, 54, 54, 0.5)",
+  //         width: 3,
+  //       }),
+  //       fill: new Fill({
+  //         color: "rgba(202, 54, 54, 0.5)",
+  //       }),
+  //     }),
+  //   });
+
+  //   if (!isHoverDisabled) {
+  //     map.addInteraction(hover);
+  //   }
+
+  //   return () => {
+  //     map.removeInteraction(hover);
+  //   };
+  // }, [isReady, map, isHoverDisabled]);
 }

@@ -123,31 +123,14 @@ class DrawHoleTurf extends Draw {
   }
 
   private _getOriginalStyle(): StyleLike | null {
-    if (!this._targetFeature) return null;
-
-    const featureStyle = this._targetFeature.getStyle();
-    if (featureStyle) {
-      return featureStyle as StyleLike;
-    }
-
     if (this._targetLayer) {
-      const layerStyleFunc = this._targetLayer.getStyleFunction();
-      if (layerStyleFunc) {
-        const map = this.getMap() as OlMap | null;
-        const resolution = map?.getView()?.getResolution() || 1;
-        return (layerStyleFunc as StyleFunction)(
-          this._targetFeature,
-          resolution,
-        ) as StyleLike;
-      }
-
       const layerStyle = this._targetLayer.getStyle();
       if (layerStyle) {
         if (typeof layerStyle === "function") {
           const map = this.getMap() as OlMap | null;
           const resolution = map?.getView()?.getResolution() || 1;
           return (layerStyle as StyleFunction)(
-            this._targetFeature,
+            this._targetFeature!,
             resolution,
           ) as StyleLike;
         }
@@ -156,18 +139,59 @@ class DrawHoleTurf extends Draw {
     }
 
     return null;
+
+    // if (!this._targetFeature) return null;
+
+    // const featureStyle = this._targetFeature.getStyle();
+    // if (featureStyle) {
+    //   return featureStyle as StyleLike;
+    // }
+
+    // if (this._targetLayer) {
+    //   const layerStyleFunc = this._targetLayer.getStyleFunction();
+    //   if (layerStyleFunc) {
+    //     const map = this.getMap() as OlMap | null;
+    //     const resolution = map?.getView()?.getResolution() || 1;
+    //     return (layerStyleFunc as StyleFunction)(
+    //       this._targetFeature,
+    //       resolution,
+    //     ) as StyleLike;
+    //   }
+
+    //   const layerStyle = this._targetLayer.getStyle();
+    //   if (layerStyle) {
+    //     if (typeof layerStyle === "function") {
+    //       const map = this.getMap() as OlMap | null;
+    //       const resolution = map?.getView()?.getResolution() || 1;
+    //       return (layerStyle as StyleFunction)(
+    //         this._targetFeature,
+    //         resolution,
+    //       ) as StyleLike;
+    //     }
+    //     return layerStyle as unknown as StyleLike;
+    //   }
+    // }
+
+    // return null;
   }
 
   public _restoreTargetStyle(): void {
     if (!this._targetFeature) return;
-
-    if (this._originalStyle) {
-      this._targetFeature.setStyle(this._originalStyle);
-    } else {
-      this._targetFeature.setStyle(undefined);
-    }
-
+    this._targetFeature.setStyle(undefined);
     this._originalStyle = null;
+
+    // console.log("restore target style");
+    // if (!this._targetFeature) return;
+    // console.log("after target feature check");
+    // if (this._originalStyle) {
+    //   this._targetFeature.setStyle(this._originalStyle);
+    //   console.log("there is original style. set it", this._originalStyle);
+    // } else {
+    //   this._targetFeature.setStyle(undefined);
+    //   console.log("there is no original style. set it to undefined");
+    // }
+
+    // this._originalStyle = null;
   }
 
   private _restoreOriginalId(): void {
@@ -260,8 +284,10 @@ class DrawHoleTurf extends Draw {
       this.abortDrawing();
     }
 
-    this._highlightTarget();
-    console.log("Target polygon highlighted: ", this._targetFeature);
+    setTimeout(() => {
+      this._highlightTarget();
+      console.log("Target polygon highlighted: ", this._targetFeature);
+    }, 1);
   }
 
   private _handleDrawEnd(e: DrawEvent): void {
@@ -345,10 +371,6 @@ class DrawHoleTurf extends Draw {
 
         // пробрасывем кастомный коллбэк
         this._onHoleCut?.(targetFeature);
-        // this._onHoleCut?.({
-        //   targetFeature,
-        //   targetLayer: this._targetLayer,
-        // });
       } else {
         console.log("⚠️ empty result");
       }

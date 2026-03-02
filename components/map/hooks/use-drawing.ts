@@ -61,7 +61,7 @@ export default function useDrawing({ map, isReady }: UseDrawingProps) {
         "circle-radius": 6,
         "circle-fill-color": "rgba(179, 11, 165, 0.5)",
       },
-      snapTolerance: 3,
+      snapTolerance: 4,
     });
 
     if (storedFeatures) {
