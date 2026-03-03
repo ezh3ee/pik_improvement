@@ -1,3 +1,4 @@
+import DrawingInteractions from "@/components/map/components/controls/drawing-interactions";
 import MainControls from "@/components/map/components/controls/main-controls";
 import MainIntercations from "@/components/map/components/controls/main-intercations";
 import { default as MapGeoreference } from "@/components/map/components/georeference/georeference";
@@ -32,6 +33,7 @@ export default function MapPage() {
           <MainControls />
           {/* interactions */}
           <MainIntercations />
+          <DrawingInteractions />
           {/* other */}
           <GetCoordsByClick />
           <MapYandexLogo />

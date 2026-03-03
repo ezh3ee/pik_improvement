@@ -7,11 +7,15 @@ export default function ShowGeoRefOnMapOnly() {
   const toggleShowGeoRefImgOnMapOnly = useGeoreferenceStore(
     (state) => state.toggleShowGeoRefImgOnMapOnly,
   );
+  const isShowGeoRefImgOnMapOnly = useGeoreferenceStore(
+    (state) => state.showGeoRefImgOnMapOnly,
+  );
 
   return (
     <Button
+      variant="outline"
       onClick={() => toggleShowGeoRefImgOnMapOnly()}
-      className="layered-genplan-btn"
+      className={isShowGeoRefImgOnMapOnly ? "active" : ""}
     >
       Наложенный генлан
     </Button>

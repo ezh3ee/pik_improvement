@@ -1,6 +1,7 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { useSidebar } from "@/components/ui/sidebar";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import "./style.scss";
@@ -85,10 +86,22 @@ export default function MapList() {
       </AnimatePresence>
       {/* </div> */}
 
-      <ArrowLeft
+      {/* <ButtonGroup className="hidden sm:flex arrow cursor-pointer"> */}
+      <Button
+        variant="outline"
+        size="icon-sm"
+        aria-label="Go Back"
+        onClick={handleToggle}
+        className="arrow"
+      >
+        {isVisible ? <ArrowLeftIcon /> : <ArrowRightIcon />}
+      </Button>
+      {/* </ButtonGroup> */}
+
+      {/* <ArrowLeft
         className={"arrow cursor-pointer " + (!isVisible && " closed")}
         onClick={handleToggle}
-      />
+      /> */}
     </div>
   );
 }
