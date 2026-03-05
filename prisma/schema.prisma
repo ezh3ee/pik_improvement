@@ -94,19 +94,37 @@ model Verification {
   @@map("verification")
 }
 
-model Object {
-  id         String      @id @default(uuid())
-  name       String
-  subObjects SubObject[]
+/**
+ */
 
-  @@map("object")
+model ResidentialComplex {
+  id         String          @id @default(uuid())
+  name       String
+  subObjects SubObjectBase[]
+
+  @@map("residential_complex")
 }
 
-model SubObject {
-  id          String  @id @default(uuid())
-  name        String
-  coordinates Float[]
+model SubObjectBase {
+  id       String        @id @default(uuid())
+  name     String
+  // coordinates Float[]
+  geometry Json
+  type     SubObjectType
 
-  objectId String
-  object   Object @relation(fields: [objectId], references: [id])
+  residentialComplexId String
+  object               ResidentialComplex @relation(fields: [residentialComplexId], references: [id])
+
+  @@index([residentialComplexId])
+}
+
+enum SubObjectType {
+  APARTMENT
+  BOULEVARD
+  GARAGE
+}
+
+model Apartment {
+  id      String @id @default(uuid())
+  address String
 }
