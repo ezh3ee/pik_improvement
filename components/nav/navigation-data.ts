@@ -12,6 +12,10 @@ export const navigation = {
           title: "Список",
           url: "/projects/list",
         },
+        {
+          title: "Добавление тест",
+          url: "/projects/adding",
+        },
       ],
     },
   ],

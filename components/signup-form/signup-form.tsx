@@ -1,6 +1,8 @@
 "use client";
 import { signupAction, SignupFormState } from "@/app/(public)/signup/action";
 import { SignupSchemaRHF } from "@/app/(public)/signup/schema";
+import { InputFieldError } from "@/components/errors/input-field";
+import { PIKLogo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -23,6 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Spinner } from "@/components/ui/spinner";
 import { dataObjectToFormData } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
@@ -30,9 +33,6 @@ import Link from "next/link";
 import { useActionState, useEffect, useState, useTransition } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import z from "zod";
-import { InputFieldError } from "../errors/input-field";
-import { PIKLogo } from "../logo";
-import { Spinner } from "../ui/spinner";
 
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
   const [showPassword, setShowPassword] = useState(false);
@@ -45,7 +45,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
   };
   const [signupFormState, signupSubmit] = useActionState(
     signupAction,
-    initialSignupState
+    initialSignupState,
   );
 
   const [isPending, startTransition] = useTransition();
