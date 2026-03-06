@@ -1,0 +1,45 @@
+"use server";
+import { complexSchema } from "@/components/residential-complex-add-form/schema";
+import prisma from "@/lib/prisma";
+import z from "zod";
+
+export type complexState = {
+  errors: {
+    name?: string[];
+  };
+  message: string | null;
+  success: boolean;
+};
+
+export async function addResidentialComplexAction(
+  state: complexState,
+  formData: FormData,
+) {
+  const rawFormData = Object.fromEntries(formData.entries());
+  const validatedFields = complexSchema.safeParse(rawFormData);
+
+  if (!validatedFields.success) {
+    return {
+      errors: z.flattenError(validatedFields.error).fieldErrors,
+      message: "Ошибки при заполнении",
+      success: false,
+    };
+  }
+
+  try {
+    await prisma.residentialComplex.create({
+      data: {
+        name: validatedFields.data.name,
+      },
+    });
+
+    return {
+      errors: {},
+      message: "ЖК успешно добавлена",
+      success: true,
+    };
+  } catch (e) {
+    console.error("Error adding residential complex ", e);
+    throw "Нельзя добавить ЖК"; // TODO: add error handling
+  }
+}

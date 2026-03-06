@@ -1,166 +1,120 @@
 "use client";
+import { InputFieldError } from "@/components/errors/input-field";
 import { PIKLogo } from "@/components/logo";
+import {
+  addResidentialComplexAction,
+  complexState,
+} from "@/components/residential-complex-add-form/action";
+import { complexSchema } from "@/components/residential-complex-add-form/schema";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
-// import { Controller } from "react-hook-form";
+import { Field, FieldLabel } from "@/components/ui/field";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
+import { dataObjectToFormData } from "@/lib/utils";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { HousePlusIcon } from "lucide-react";
+import { startTransition, useActionState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { z } from "zod";
 
-export default function ResidentialComplexAddForm({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
-  //   const initialSigninState: signinFormState = {
-  //     message: null,
-  //     errors: {},
-  //     success: false,
-  //   };
-  //   const [signinFormState, submitSignin] = useActionState(
-  //     signinAction,
-  //     initialSigninState,
-  //   );
+export default function ResidentialComplexAddForm() {
+  const initialState: complexState = {
+    message: null,
+    errors: {},
+    success: false,
+  };
 
-  //   const [isPending, startTransition] = useTransition();
+  const [complexAddFormState, addComplexSubmit] = useActionState(
+    addResidentialComplexAction,
+    initialState,
+  );
 
-  //   const form = useForm<z.infer<typeof SigninSchema>>({
-  //     resolver: zodResolver(SigninSchema),
-  //     defaultValues: {
-  //       username: "",
-  //       password: "",
-  //     },
-  //     mode: "onChange",
-  //   });
+  const form = useForm<z.infer<typeof complexSchema>>({
+    resolver: zodResolver(complexSchema),
+    defaultValues: {
+      name: "",
+    },
+    mode: "onChange",
+  });
 
-  //   function onSubmit(data: z.infer<typeof SigninSchema>) {
-  //     startTransition(() => {
-  //       submitSignin(dataObjectToFormData(data));
-  //     });
-  //   }
+  // function onSubmit(values: z.infer<typeof formSchema>) {
+  //   console.log(values);
+  // }
 
-  //   const [showPassword, setShowPassword] = useState(false);
+  function onSubmit(data: z.infer<typeof complexSchema>) {
+    startTransition(() => {
+      // signupSubmit(dataObjectToFormData(data));
+      // console.log("data", dataObjectToFormData(data));
+      console.log("data", dataObjectToFormData(data));
+      addComplexSubmit(dataObjectToFormData(data));
+    });
+  }
+
+  function onReset() {
+    form.reset();
+    form.clearErrors();
+  }
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
-        <CardHeader>
-          <div className="flex flex-row justify-center">
-            <PIKLogo />
-          </div>
-        </CardHeader>
-        <CardContent>
-          <form>
-            {/* <form onSubmit={form.handleSubmit(onSubmit)}> */}
-            <FieldGroup>
-              {/* username */}
-              {/* <Controller
-                name="username"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field>
-                    <FieldLabel htmlFor="username">Имя пользователя</FieldLabel>
-                    <Input
-                      id="username"
-                      type="text"
-                      placeholder="Пользователь"
-                      aria-invalid={fieldState.invalid}
-                      {...field}
-                    />
+    <form
+      onSubmit={form.handleSubmit(onSubmit)}
+      onReset={onReset}
+      className="space-y-8 @container"
+    >
+      <div className="flex flex-row justify-center">
+        <PIKLogo />
+      </div>
+      <div className="grid grid-cols-12 gap-4">
+        <Controller
+          control={form.control}
+          name="name"
+          render={({ field, fieldState }) => (
+            <Field
+              className="col-span-12 col-start-auto @5xl:col-start-auto flex self-end flex-col gap-2 space-y-0 items-start"
+              data-invalid={fieldState.invalid}
+            >
+              <FieldLabel className="flex @5xl:flex w-auto!">
+                Наименование
+              </FieldLabel>
 
-                    <InputFieldError fieldState={fieldState} />
-
-                    {signinFormState.errors?.username && (
-                      <p className="text-red-700">
-                        {signinFormState.errors.username}
-                      </p>
-                    )}
-                  </Field>
-                )}
-              /> */}
-              {/* password */}
-              {/* <Controller
-                name="password"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field>
-                    <div className="flex items-center">
-                      <FieldLabel htmlFor="password">Пароль</FieldLabel>
-                      <a
-                        href="#"
-                        className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                      >
-                        Забыли пароль?
-                      </a>
-                    </div>
-                    <div className="relative">
-                      <Input
-                        id="password"
-                        type={showPassword ? "text" : "password"}
-                        placeholder="Пароль"
-                        aria-invalid={fieldState.invalid}
-                        {...field}
-                      />
-                      <Button
-                        className="absolute top-0 right-0 h-full px-3 hover:bg-transparent"
-                        onClick={() => setShowPassword(!showPassword)}
-                        size="icon"
-                        type="button"
-                        variant="ghost"
-                      >
-                        {showPassword ? (
-                          <EyeOff className="h-4 w-4 text-muted-foreground" />
-                        ) : (
-                          <Eye className="h-4 w-4 text-muted-foreground" />
-                        )}
-                      </Button>
-                    </div>
-                    <InputFieldError fieldState={fieldState} />
-
-                    {signinFormState.errors?.password && (
-                      <p className="mt-2 text-sm text-red-500">
-                        {signinFormState.errors.password}
-                      </p>
-                    )}
-                  </Field>
-                )}
-              /> */}
-              <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="m@example.com"
-                  required
+              <InputGroup>
+                <InputGroupInput
+                  key="text-input-0"
+                  placeholder=""
+                  type="text"
+                  className=""
+                  {...field}
                 />
-              </Field>{" "}
-              <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="m@example.com"
-                  required
-                />
-              </Field>
-              <Field>
-                <Button
-                  type="submit"
-                  //   disabled={isPending || !form.formState.isValid}
-                >
-                  {/* {isPending ? <Spinner className="size-8" /> : "Войти"} */}
-                  Войти
-                </Button>
-              </Field>
-            </FieldGroup>
+                <InputGroupAddon align="inline-start">
+                  <HousePlusIcon className="size-4" strokeWidth={2} />
+                </InputGroupAddon>
+              </InputGroup>
 
-            {/* {signinFormState.message && !signinFormState.success && (
-              <p className="mt-2 text-sm text-red-500">
-                {signinFormState.message}
-              </p>
-            )} */}
-          </form>
-        </CardContent>
-      </Card>
-    </div>
+              <InputFieldError fieldState={fieldState} />
+            </Field>
+          )}
+        />
+        <Field className="col-span-12 @5xl:col-span-12 col-start-auto flex self-end flex-col gap-2 space-y-0 items-start">
+          <FieldLabel className="hidden w-auto!">Submit</FieldLabel>
+          <Button
+            className="w-full"
+            type="submit"
+            variant="default"
+            disabled={!form.formState.isValid}
+          >
+            Добавить ЖК
+          </Button>
+        </Field>
+
+        {complexAddFormState.message && !complexAddFormState.success && (
+          <p className="mt-2 text-sm text-red-500">
+            {complexAddFormState.message}
+          </p>
+        )}
+      </div>
+    </form>
   );
 }
