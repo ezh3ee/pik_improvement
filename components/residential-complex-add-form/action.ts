@@ -43,3 +43,18 @@ export async function addResidentialComplexAction(
     throw "Нельзя добавить ЖК"; // TODO: add error handling
   }
 }
+
+export async function fetchResidentialComplexAction(id: string) {
+  try {
+    const complex = await prisma.residentialComplex.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    return complex;
+  } catch (e) {
+    console.error("Error fetching residential complex ", e);
+    throw "Нельзя добавить ЖК"; // TODO: add error handling
+  }
+}

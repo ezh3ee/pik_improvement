@@ -1,4 +1,5 @@
 "use client";
+import { ResidentialComplexFetched } from "@/app/(protected)/projects/adding/[id]/page";
 import { InputFieldError } from "@/components/errors/input-field";
 import { PIKLogo } from "@/components/logo";
 import {
@@ -16,11 +17,17 @@ import {
 import { dataObjectToFormData } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { HousePlusIcon } from "lucide-react";
-import { startTransition, useActionState } from "react";
+import { startTransition, useActionState, useCallback, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
-export default function ResidentialComplexAddForm() {
+export default function ResidentialComplexAddForm({
+  complex,
+}: {
+  complex: ResidentialComplexFetched | null;
+}) {
+  console.log("complex ", complex);
+
   const initialState: complexState = {
     message: null,
     errors: {},
@@ -35,33 +42,32 @@ export default function ResidentialComplexAddForm() {
   const form = useForm<z.infer<typeof complexSchema>>({
     resolver: zodResolver(complexSchema),
     defaultValues: {
-      name: "",
+      name: complex?.name || "",
     },
     mode: "onChange",
   });
 
-  // function onSubmit(values: z.infer<typeof formSchema>) {
-  //   console.log(values);
-  // }
-
   function onSubmit(data: z.infer<typeof complexSchema>) {
     startTransition(() => {
-      // signupSubmit(dataObjectToFormData(data));
-      // console.log("data", dataObjectToFormData(data));
-      console.log("data", dataObjectToFormData(data));
       addComplexSubmit(dataObjectToFormData(data));
     });
   }
 
-  function onReset() {
+  const resetForm = useCallback(() => {
     form.reset();
     form.clearErrors();
-  }
+  }, [form]);
+
+  useEffect(() => {
+    if (complexAddFormState.success) {
+      resetForm();
+    }
+  }, [complexAddFormState.success, resetForm]);
 
   return (
     <form
       onSubmit={form.handleSubmit(onSubmit)}
-      onReset={onReset}
+      onReset={resetForm}
       className="space-y-8 @container"
     >
       <div className="flex flex-row justify-center">
@@ -113,6 +119,10 @@ export default function ResidentialComplexAddForm() {
           <p className="mt-2 text-sm text-red-500">
             {complexAddFormState.message}
           </p>
+        )}
+
+        {complexAddFormState.success && (
+          <p className="mt-2 text-sm text-green-500">ЖК успешно добавлен</p>
         )}
       </div>
     </form>
