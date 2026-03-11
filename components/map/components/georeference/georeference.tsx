@@ -37,7 +37,7 @@ export default function MapGeoreference() {
             },
             opacity: { duration: 0.15 },
           }}
-          className="georeference-container items-center justify-center flex flex-col gap-2"
+          className="left-side items-center justify-center flex flex-col gap-2"
         >
           {!imagePath ? <RefImageUpload /> : <GeoreferenceEdit />}
         </motion.div>

@@ -1,5 +1,5 @@
 "use server";
-import { complexSchema } from "@/components/residential-complex-add-form/schema";
+import { complexSchema } from "@/components/objects-creation/residential-complex-add-form/schema";
 import prisma from "@/lib/prisma";
 import z from "zod";
 
