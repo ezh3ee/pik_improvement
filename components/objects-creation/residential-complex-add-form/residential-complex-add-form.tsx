@@ -1,6 +1,6 @@
 "use client";
-import { ResidentialComplexFetched } from "@/app/(protected)/projects/adding/[id]/page";
 import { InputFieldError } from "@/components/errors/input-field";
+import { useComplexStore } from "@/components/map/state/complex-state";
 import {
   addResidentialComplexAction,
   complexState,
@@ -13,24 +13,31 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
+import { Spinner } from "@/components/ui/spinner";
 import { dataObjectToFormData } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { HousePlusIcon } from "lucide-react";
 import { useActionState, useCallback, useEffect, useTransition } from "react";
-import { Controller, useForm, useWatch } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
+
+type ResidentialComplexFetched = {
+  name: string;
+};
 
 export default function ResidentialComplexAddForm({
   complex,
 }: {
   complex?: ResidentialComplexFetched;
 }) {
-  console.log("complex ", complex);
+  const setStep = useComplexStore((state) => state.setStep);
+  const setComplexId = useComplexStore((state) => state.setComplexId);
 
   const initialState: complexState = {
-    message: null,
+    message: "",
     errors: {},
     success: false,
+    complexId: null,
   };
 
   const [complexAddFormState, addComplexSubmit] = useActionState(
@@ -58,29 +65,23 @@ export default function ResidentialComplexAddForm({
 
   const resetForm = useCallback(() => {
     reset();
-    // form.clearErrors();
 
     return () => {};
   }, [reset]);
 
   useEffect(() => {
-    if (complexAddFormState.success) {
-      resetForm();
+    if (complexAddFormState.success && complexAddFormState.complexId) {
+      setComplexId(complexAddFormState.complexId);
+      setStep("object-add");
     }
 
     return () => {};
-  }, [complexAddFormState.success, resetForm]);
-
-  const watchAllFields = useWatch({
-    control,
-  });
-
-  useEffect(() => {
-    console.log("Form data changed:", watchAllFields);
-    // Perform side effects here
-  }, [watchAllFields, control]);
-
-  // useEffect(() => {}, [form]);
+  }, [
+    complexAddFormState.complexId,
+    complexAddFormState.success,
+    setStep,
+    setComplexId,
+  ]);
 
   return (
     <div className="left-side pr-4">
@@ -89,9 +90,6 @@ export default function ResidentialComplexAddForm({
         onReset={resetForm}
         className="space-y-8 @container"
       >
-        {/* <div className="flex flex-row justify-center">
-          <PIKLogo />
-        </div> */}
         <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight text-center">
           Добавление ЖК
         </h3>
@@ -133,7 +131,7 @@ export default function ResidentialComplexAddForm({
                 variant="default"
                 disabled={!formState.errors || isPending}
               >
-                Добавить ЖК
+                {isPending ? <Spinner className="size-5" /> : "Добавить ЖК"}
               </Button>
             </div>
           </Field>

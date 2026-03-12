@@ -4,12 +4,15 @@ import { useSidebar } from "@/components/ui/sidebar";
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
+import { useComplexStore } from "../../state/complex-state";
 import "./style.scss";
 
 export default function MapList() {
   const { isMobile } = useSidebar();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [hydrated, setHydrated] = useState<boolean>(false);
+
+  const complexStep = useComplexStore((state) => state.step);
 
   useEffect(() => {
     /* Решение с локалсторейджем https://stackoverflow.com/questions/72869030/initializing-component-with-parameter-from-local-storage-in-react-nextjs */
@@ -35,7 +38,10 @@ export default function MapList() {
   };
 
   return (
-    <div className="map-list-container">
+    <div
+      className="map-list-container flex"
+      style={{ display: complexStep !== "none" ? "none" : "flex" }}
+    >
       {/* <div className="wrapper"> */}
       <AnimatePresence mode="wait">
         {isVisible && (
@@ -92,7 +98,8 @@ export default function MapList() {
         size="icon-sm"
         aria-label="Go Back"
         onClick={handleToggle}
-        className="arrow"
+        // className="arrow"
+        className={"arrow" + (!isVisible ? " closed" : "")}
       >
         {isVisible ? <ArrowLeftIcon /> : <ArrowRightIcon />}
       </Button>

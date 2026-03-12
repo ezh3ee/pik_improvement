@@ -7,8 +7,9 @@ export type complexState = {
   errors: {
     name?: string[];
   };
-  message: string | null;
+  message: string;
   success: boolean;
+  complexId: string | null;
 };
 
 export async function addResidentialComplexAction(
@@ -23,11 +24,12 @@ export async function addResidentialComplexAction(
       errors: z.flattenError(validatedFields.error).fieldErrors,
       message: "Ошибки при заполнении",
       success: false,
+      complexId: null,
     };
   }
 
   try {
-    await prisma.residentialComplex.create({
+    const complex = await prisma.residentialComplex.create({
       data: {
         name: validatedFields.data.name,
       },
@@ -37,6 +39,7 @@ export async function addResidentialComplexAction(
       errors: {},
       message: "ЖК успешно добавлена",
       success: true,
+      complexId: complex.id,
     };
   } catch (e) {
     console.error("Error adding residential complex ", e);

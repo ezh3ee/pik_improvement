@@ -24,7 +24,8 @@
   // color: #fff;
   // background: #000;
   // border-radius: 3px;
-  // &.closed {
-  //   transform: rotate(180deg);
-  // }
+  &.closed {
+    // transform: rotate(180deg);
+    right: -32px;
+  }
 }
