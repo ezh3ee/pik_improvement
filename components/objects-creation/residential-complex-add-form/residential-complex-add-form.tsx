@@ -1,10 +1,7 @@
 "use client";
 import { InputFieldError } from "@/components/errors/input-field";
-import { useComplexStore } from "@/components/map/state/complex-state";
-import {
-  addResidentialComplexAction,
-  complexState,
-} from "@/components/objects-creation/residential-complex-add-form/action";
+import { Step, useComplexStore } from "@/components/map/state/complex-state";
+import { addResidentialComplexAction } from "@/components/objects-creation/residential-complex-add-form/action";
 import { complexSchema } from "@/components/objects-creation/residential-complex-add-form/schema";
 import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
@@ -16,8 +13,9 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { dataObjectToFormData } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { HousePlusIcon } from "lucide-react";
-import { useActionState, useCallback, useEffect, useTransition } from "react";
+import { useCallback } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -33,19 +31,7 @@ export default function ResidentialComplexAddForm({
   const setStep = useComplexStore((state) => state.setStep);
   const setComplexId = useComplexStore((state) => state.setComplexId);
 
-  const initialState: complexState = {
-    message: "",
-    errors: {},
-    success: false,
-    complexId: null,
-  };
-
-  const [complexAddFormState, addComplexSubmit] = useActionState(
-    addResidentialComplexAction,
-    initialState,
-  );
-
-  const [isPending, startTransition] = useTransition();
+  const queryClient = useQueryClient();
 
   const { handleSubmit, formState, reset, control } = useForm<
     z.infer<typeof complexSchema>
@@ -57,34 +43,30 @@ export default function ResidentialComplexAddForm({
     mode: "onChange",
   });
 
+  const mutation = useMutation({
+    mutationFn: addResidentialComplexAction,
+    onSuccess: (newComplex) => {
+      queryClient.invalidateQueries({ queryKey: ["complexes"] });
+      // queryClient.invalidateQueries({ queryKey: ["complex", newComplex.id] });
+      queryClient.setQueryData(["complex", newComplex.id], newComplex);
+
+      setComplexId(newComplex.id);
+      setStep(Step.ObjectAdd);
+    },
+  });
+
   function onSubmit(data: z.infer<typeof complexSchema>) {
-    startTransition(() => {
-      addComplexSubmit(dataObjectToFormData(data));
-    });
+    mutation.mutate(dataObjectToFormData(data));
   }
 
   const resetForm = useCallback(() => {
     reset();
-
     return () => {};
   }, [reset]);
 
-  useEffect(() => {
-    if (complexAddFormState.success && complexAddFormState.complexId) {
-      setComplexId(complexAddFormState.complexId);
-      setStep("object-add");
-    }
-
-    return () => {};
-  }, [
-    complexAddFormState.complexId,
-    complexAddFormState.success,
-    setStep,
-    setComplexId,
-  ]);
-
   return (
-    <div className="left-side pr-4">
+    // <div className="left-side pr-4">
+    <div>
       <form
         onSubmit={handleSubmit(onSubmit)}
         onReset={resetForm}
@@ -129,21 +111,21 @@ export default function ResidentialComplexAddForm({
                 className="w-[20%]"
                 type="submit"
                 variant="default"
-                disabled={!formState.errors || isPending}
+                disabled={!formState.errors || mutation.isPending}
               >
-                {isPending ? <Spinner className="size-5" /> : "Добавить ЖК"}
+                {mutation.isPending ? (
+                  <Spinner className="size-5" />
+                ) : (
+                  "Добавить ЖК"
+                )}
               </Button>
             </div>
           </Field>
 
-          {complexAddFormState.message && !complexAddFormState.success && (
+          {mutation.isError && (
             <p className="mt-2 text-sm text-red-500">
-              {complexAddFormState.message}
+              {mutation.error.message}
             </p>
-          )}
-
-          {complexAddFormState.success && (
-            <p className="mt-2 text-sm text-green-500">ЖК успешно добавлен</p>
           )}
         </div>
       </form>

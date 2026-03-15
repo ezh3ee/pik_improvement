@@ -17,7 +17,8 @@ export default function MapGeoreference() {
           initial={{ opacity: 0, width: "0%" }}
           animate={{
             opacity: 1,
-            width: "50%",
+            // width: "50%",
+            width: "100%",
             transition: {
               width: { duration: 0.15 },
               opacity: { duration: 0.15, delay: 0.12 },
@@ -37,7 +38,8 @@ export default function MapGeoreference() {
             },
             opacity: { duration: 0.15 },
           }}
-          className="left-side items-center justify-center flex flex-col gap-2"
+          // className="left-side items-center justify-center flex flex-col gap-2"
+          className="h-full items-center justify-center flex flex-col gap-2"
         >
           {!imagePath ? <RefImageUpload /> : <GeoreferenceEdit />}
         </motion.div>
