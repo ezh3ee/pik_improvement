@@ -13,7 +13,7 @@ export default function MapLeftSide() {
 
   return (
     <div
-      className="left-side pr-4>"
+      className="left-side pr-4"
       style={{ display: isVisible ? "block" : "none" }}
     >
       <MapGeoreference />

@@ -2,14 +2,14 @@
 import { complexSchema } from "@/components/objects-creation/residential-complex-add-form/schema";
 import prisma from "@/lib/prisma";
 
-export type complexState = {
-  errors: {
-    name?: string[];
-  };
-  message: string;
-  success: boolean;
-  complexId: string | null;
-};
+// export type complexState = {
+//   errors: {
+//     name?: string[];
+//   };
+//   message: string;
+//   success: boolean;
+//   complexId: string | null;
+// };
 
 export async function addResidentialComplexAction(formData: FormData) {
   const rawFormData = Object.fromEntries(formData.entries());
