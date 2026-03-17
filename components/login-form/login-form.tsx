@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
-import { cn, dataObjectToFormData } from "@/lib/utils";
+import { cn, dataObjectToFormData } from "@/lib/client-utils";
 import Link from "next/link";
 import { useActionState, useState, useTransition } from "react";
 import "./login-form.scss";
