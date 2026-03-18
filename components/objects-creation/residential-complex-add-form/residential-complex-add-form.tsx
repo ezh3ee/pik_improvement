@@ -47,7 +47,6 @@ export default function ResidentialComplexAddForm({
     mutationFn: addResidentialComplexAction,
     onSuccess: (newComplex) => {
       queryClient.invalidateQueries({ queryKey: ["complexes"] });
-      // queryClient.invalidateQueries({ queryKey: ["complex", newComplex.id] });
       queryClient.setQueryData(["complex", newComplex.id], newComplex);
 
       setComplexId(newComplex.id);

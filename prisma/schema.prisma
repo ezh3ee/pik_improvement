@@ -106,16 +106,16 @@ model ResidentialComplex {
 }
 
 model SubObjectBase {
-  id          String        @id @default(uuid())
-  name        String
-  coordinates Float[]
-  geometry    Json
-  type        SubObjectType
+  id       String        @id @default(uuid())
+  name     String
+  // coordinates Float[]
+  geometry Json
+  type     SubObjectType
 
   residentialComplexId String
   complex              ResidentialComplex @relation(fields: [residentialComplexId], references: [id])
 
-  apartmentDetails Apartment?
+  apartmentDetails MKD?
   garageDetails    Garage?
   odhDetails       ODH?
 
@@ -123,12 +123,12 @@ model SubObjectBase {
 }
 
 enum SubObjectType {
-  APARTMENT
-  BOULEVARD
+  MKD
+  ODH
   GARAGE
 }
 
-model Apartment {
+model MKD {
   id              String        @id @default(uuid())
   address         String
   subObjectBaseId String        @unique

@@ -2,7 +2,11 @@
 
 import { InputFieldError } from "@/components/errors/input-field";
 import { addSubobjectAction } from "@/components/objects-creation/subobjects-add-form/action";
-import { subobjectSchema } from "@/components/objects-creation/subobjects-add-form/schema";
+import LoadingGeometryButton from "@/components/objects-creation/subobjects-add-form/buttons/loading-geometry-button";
+import {
+  SubobjectEnum,
+  subobjectSchema,
+} from "@/components/objects-creation/subobjects-add-form/schema";
 import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
 import {
@@ -10,6 +14,14 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
 import { dataObjectToFormData } from "@/lib/client-utils";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,7 +31,11 @@ import { useCallback } from "react";
 import { Controller, useForm } from "react-hook-form";
 import z from "zod";
 
-export default function SubobjectsAddForm() {
+export default function SubobjectsAddForm({
+  complexId,
+}: {
+  complexId: string;
+}) {
   const queryClient = useQueryClient();
 
   const { handleSubmit, formState, reset, control } = useForm<
@@ -53,6 +69,13 @@ export default function SubobjectsAddForm() {
     return () => {};
   }, [reset]);
 
+  const subobjectTypes = [
+    // { label: "Выберите тип объекта", value: "" },
+    { label: "МКД", value: SubobjectEnum.MKD },
+    { label: "ОДХ", value: SubobjectEnum.ODH },
+    { label: "Гараж", value: SubobjectEnum.GARAGE },
+  ];
+
   return (
     <div>
       <form
@@ -73,7 +96,7 @@ export default function SubobjectsAddForm() {
                 data-invalid={fieldState.invalid}
               >
                 <FieldLabel className="flex @5xl:flex w-auto!">
-                  Наименование
+                  Наименование <span className="text-red-500">*</span>
                 </FieldLabel>
 
                 <InputGroup>
@@ -93,6 +116,45 @@ export default function SubobjectsAddForm() {
               </Field>
             )}
           />
+          <Controller
+            name="type"
+            control={control}
+            render={({ field, fieldState }) => (
+              <Field className="col-span-12 @5xl:col-span-12 col-start-auto flex self-end flex-col gap-2 space-y-0 items-start">
+                <FieldLabel htmlFor="type">
+                  Тип объекта <span className="text-red-500">*</span>
+                </FieldLabel>
+                <Select
+                  name={field.name}
+                  value={field.value}
+                  onValueChange={field.onChange}
+                >
+                  {/* <SelectTrigger aria-invalid={fieldBellowSelectTouched}> */}
+                  <SelectTrigger aria-invalid={fieldState.invalid}>
+                    <SelectValue placeholder="Выберите тип объекта" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {subobjectTypes.map((item) => (
+                        <SelectItem key={item.value} value={item.value}>
+                          {item.label}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+
+                <InputFieldError fieldState={fieldState} />
+              </Field>
+            )}
+          />
+
+          <Field className="col-span-12 @5xl:col-span-12 col-start-auto flex self-end flex-col gap-2 space-y-0 items-start">
+            <div className="flex justify-start">
+              <LoadingGeometryButton />
+            </div>
+          </Field>
+
           <Field className="col-span-12 @5xl:col-span-12 col-start-auto flex self-end flex-col gap-2 space-y-0 items-start">
             <div className="flex justify-center">
               <Button

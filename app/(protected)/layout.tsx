@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
+import Error from "@/app/(protected)/error";
 import { UserProvider } from "@/app/providers/user-context";
 import { Breadcrumbs } from "@/components/breadcrumbs/breadcrumbs";
 import { AppSidebar } from "@/components/nav/app-sidebar";
@@ -18,9 +19,16 @@ export default async function ProtectedLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  let session;
+
+  try {
+    session = await auth.api.getSession({
+      headers: await headers(),
+    });
+  } catch (e) {
+    console.error(e);
+    return <Error />;
+  }
 
   if (!session) redirect("/login");
   if (!session.user.active) redirect("/pending");

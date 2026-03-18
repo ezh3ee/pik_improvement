@@ -34,10 +34,10 @@ export default function SubobjectsAdd() {
 
   return (
     <>
-      <h2 className="scroll-m-20 text-2xl font-semibold tracking-tight pt-2 pb-2">
-        {`Наименование: ${complex.name}`}
+      <h2 className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] scroll-m-20 text-2xl font-semibold tracking-tight mt-2 mb-2 text-center">
+        {`Наименование комплекса: ${complex.name}`}
       </h2>
-      <SubobjectsAddForm />
+      <SubobjectsAddForm complexId={complexId} />
     </>
   );
 }

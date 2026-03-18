@@ -1,16 +1,29 @@
-"use server";
+import {
+  PrismaClientKnownRequestError,
+  PrismaClientValidationError,
+} from "@prisma/client/runtime/client";
 
-import { Prisma } from "./generated/prisma/client";
+export function prismaKnownError(e: unknown) {
+  if (!(e instanceof PrismaClientValidationError))
+    throw new Error("Неизвестная ошибка");
 
-export async function prismaKnownError(e: unknown) {
-  if (!(e instanceof Prisma.PrismaClientKnownRequestError))
-    throw "Неизвестная ошибка";
+  if (e instanceof PrismaClientKnownRequestError) {
+    const error = QueryError.get(e.code);
 
-  const error = QueryError.get(e.code);
+    if (!error) throw new Error("Неизвестная ошибка");
 
-  if (!error) throw "Неизвестная ошибка";
-
-  throw new Error(error.message);
+    throw new Error(error.message);
+  } else if (e instanceof PrismaClientValidationError) {
+    console.error(
+      "Prisma Validation Error: Invalid input data provided ",
+      e.message,
+    );
+    throw new Error("Ошибка базы данных");
+  } else {
+    // Handle any other unexpected errors
+    console.error("An unexpected error occurred:", e);
+    throw new Error("Неизвестная ошибка");
+  }
 }
 
 export const QueryError = new Map<
@@ -21,94 +34,104 @@ export const QueryError = new Map<
     "P2000",
     {
       message:
-        "The provided value for the column is too long for the column's type",
+        "Предоставленное значение для колонки слишком длинное для данного типа колонки",
       httpStatus: 400,
     },
   ],
   [
     "P2001",
     {
-      message: "The record searched for in the where condition does not exist",
+      message: "Запрашиваемая запись в условии where не существует",
       httpStatus: 404,
     },
   ],
-  ["P2002", { message: "Unique constraint failed", httpStatus: 409 }],
-  ["P2003", { message: "Foreign key constraint failed", httpStatus: 409 }],
+  [
+    "P2002",
+    { message: "Нарушение уникальности (unique constraint)", httpStatus: 409 },
+  ],
+  ["P2003", { message: "Нарушение внешнего ключа", httpStatus: 409 }],
   [
     "P2004",
-    { message: "A constraint failed on the database", httpStatus: 400 },
+    { message: "Нарушение ограничения в базе данных", httpStatus: 400 },
   ],
   [
     "P2005",
     {
       message:
-        "The value stored in the database for the field is invalid for the field's type",
+        "Значение, сохраненное в базе данных для данного поля, недопустимо для его типа",
       httpStatus: 400,
     },
   ],
   [
     "P2006",
     {
-      message: "The provided value for the field is not valid",
+      message: "Предоставленное значение для поля является недопустимым",
       httpStatus: 400,
     },
   ],
-  ["P2007", { message: "Data validation error", httpStatus: 400 }],
-  ["P2008", { message: "Failed to parse the query", httpStatus: 400 }],
-  ["P2009", { message: "Failed to validate the query", httpStatus: 400 }],
-  ["P2010", { message: "Raw query failed", httpStatus: 500 }],
-  ["P2011", { message: "Null constraint violation", httpStatus: 400 }],
-  ["P2012", { message: "Missing a required value", httpStatus: 400 }],
-  ["P2013", { message: "Missing a required argument", httpStatus: 400 }],
+  ["P2007", { message: "Ошибка валидации данных", httpStatus: 400 }],
+  [
+    "P2008",
+    { message: "Не удалось разобрать запрос (parse error)", httpStatus: 400 },
+  ],
+  ["P2009", { message: "Не удалось проверить запрос", httpStatus: 400 }],
+  ["P2010", { message: "Ошибка при выполнении raw-запроса", httpStatus: 500 }],
+  ["P2011", { message: "Нарушение ограничения NOT NULL", httpStatus: 400 }],
+  ["P2012", { message: "Отсутствует обязательное значение", httpStatus: 400 }],
+  ["P2013", { message: "Отсутствует обязательный аргумент", httpStatus: 400 }],
   [
     "P2014",
     {
       message:
-        "The change you are trying to make would violate the required relation",
+        "Изменение, которое вы пытаетесь применить, нарушает обязательное отношение",
       httpStatus: 400,
     },
   ],
-  [
-    "P2015",
-    { message: "A related record could not be found", httpStatus: 404 },
-  ],
-  ["P2016", { message: "Query interpretation error", httpStatus: 400 }],
+  ["P2015", { message: "Связанная запись не найдена", httpStatus: 404 }],
+  ["P2016", { message: "Ошибка интерпретации запроса", httpStatus: 400 }],
   [
     "P2017",
     {
       message:
-        "The records for relation between the parent and child models are not connected",
+        "Записи для связи между родительской и дочерней моделями не соединены",
       httpStatus: 400,
     },
   ],
   [
     "P2018",
     {
-      message: "The required connected records were not found",
+      message: "Необходимые связанные записи не найдены",
       httpStatus: 404,
     },
   ],
-  ["P2019", { message: "Input error", httpStatus: 400 }],
-  ["P2020", { message: "Value out of range for the type", httpStatus: 400 }],
+  ["P2019", { message: "Ошибка ввода", httpStatus: 400 }],
+  [
+    "P2020",
+    {
+      message:
+        "Значение выходит за пределы допустимого диапазона для данного типа",
+      httpStatus: 400,
+    },
+  ],
   [
     "P2021",
     {
-      message: "The table does not exist in the current database",
+      message: "Таблица не существует в текущей базе данных",
       httpStatus: 404,
     },
   ],
   [
     "P2022",
     {
-      message: "The column does not exist in the current database",
+      message: "Колонка не существует в текущей базе данных",
       httpStatus: 404,
     },
   ],
-  ["P2023", { message: "Inconsistent column data", httpStatus: 400 }],
+  ["P2023", { message: "Несогласованность данных в колонке", httpStatus: 400 }],
   [
     "P2024",
     {
-      message: "Timed out fetching a new connection from the pool",
+      message: "Таймаут при получении нового соединения из пула",
       httpStatus: 500,
     },
   ],
@@ -116,7 +139,7 @@ export const QueryError = new Map<
     "P2025",
     {
       message:
-        "An operation failed because it depends on one or more records that were required but not found",
+        "Операция не выполнена, так как она зависит от одной или нескольких записей, которые были обязательны, но не найдены",
       httpStatus: 404,
     },
   ],
@@ -124,7 +147,7 @@ export const QueryError = new Map<
     "P2026",
     {
       message:
-        "The current database provider doesn't support a feature that the query used",
+        "Текущий провайдер базы данных не поддерживает функционал, используемый в запросе",
       httpStatus: 400,
     },
   ],
@@ -132,7 +155,7 @@ export const QueryError = new Map<
     "P2027",
     {
       message:
-        "Multiple errors occurred on the database during query execution",
+        "При выполнении запроса произошло несколько ошибок в базе данных",
       httpStatus: 500,
     },
   ],
