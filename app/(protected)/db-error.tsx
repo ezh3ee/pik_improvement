@@ -1,6 +1,6 @@
 "use client";
 
-export default function Error() {
+export default function DbError() {
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       <div className="text-center">

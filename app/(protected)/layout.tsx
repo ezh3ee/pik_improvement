@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-import Error from "@/app/(protected)/error";
+import DbError from "@/app/(protected)/db-error";
 import { UserProvider } from "@/app/providers/user-context";
 import { Breadcrumbs } from "@/components/breadcrumbs/breadcrumbs";
 import { AppSidebar } from "@/components/nav/app-sidebar";
@@ -27,7 +27,7 @@ export default async function ProtectedLayout({
     });
   } catch (e) {
     console.error(e);
-    return <Error />;
+    return <DbError />;
   }
 
   if (!session) redirect("/login");
