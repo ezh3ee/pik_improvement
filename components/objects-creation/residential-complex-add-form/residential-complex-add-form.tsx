@@ -1,6 +1,6 @@
 "use client";
 import { InputFieldError } from "@/components/errors/input-field";
-import { Step, useComplexStore } from "@/components/map/state/complex-state";
+import { Step, useComplexStore } from "@/components/map/state/complex-store";
 import { addResidentialComplexAction } from "@/components/objects-creation/residential-complex-add-form/action";
 import { complexSchema } from "@/components/objects-creation/residential-complex-add-form/schema";
 import { Button } from "@/components/ui/button";
@@ -64,7 +64,6 @@ export default function ResidentialComplexAddForm({
   }, [reset]);
 
   return (
-    // <div className="left-side pr-4">
     <div>
       <form
         onSubmit={handleSubmit(onSubmit)}

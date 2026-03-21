@@ -4,7 +4,7 @@ import { useSidebar } from "@/components/ui/sidebar";
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
-import { useComplexStore } from "../../state/complex-state";
+import { useComplexStore } from "../../state/complex-store";
 import "./style.scss";
 
 export default function MapList() {

@@ -1,4 +1,4 @@
-import { Step, useComplexStore } from "@/components/map/state/complex-state";
+import { Step, useComplexStore } from "@/components/map/state/complex-store";
 import ResidentialComplexAddForm from "@/components/objects-creation/residential-complex-add-form/residential-complex-add-form";
 import SubobjectsAdd from "@/components/objects-creation/subobjects-add-form/subobjects-add";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { Step, useComplexStore } from "@/components/map/state/complex-state";
+import { Step, useComplexStore } from "@/components/map/state/complex-store";
 import { useGeoreferenceStore } from "@/components/map/state/georeference-store";
 import { Button } from "@/components/ui/button";
 
@@ -25,7 +25,7 @@ export default function ComplexToggleBtn() {
       }}
       variant="outline"
     >
-      Добавить ЖК
+      Добавление ЖК
     </Button>
   ) : (
     <Button
@@ -38,7 +38,7 @@ export default function ComplexToggleBtn() {
       }}
       variant="outline"
     >
-      Карта
+      Назад к карте
     </Button>
   );
 }

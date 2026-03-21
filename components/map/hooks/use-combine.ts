@@ -13,6 +13,8 @@ export default function useCombine() {
 
   const сonvertToDb = useCallback(() => {
     if (!storedFeatures || storedFeatures.length === 0) return null;
+    if (storedFeatures.length === 1)
+      return storedFeatures[0].geometry as GeoJsonGeometry;
 
     const features = storedFeatures
       .map((feature) => {
@@ -36,14 +38,21 @@ export default function useCombine() {
       features: features,
     }).features[0].geometry;
 
-    return JSON.stringify(combined) as unknown as GeoJsonGeometry;
+    return combined as GeoJsonGeometry;
   }, [storedFeatures, format]);
 
-  const сonvertFromDb = useCallback((geojson: GeoJsonGeometry) => {
-    const flattened = turf.flatten(geojson);
+  const сonvertFromDb = useCallback(
+    (geojson: GeoJsonGeometry) => {
+      const flattened = turf.flatten(geojson);
 
-    console.log(flattened);
-  }, []);
+      return flattened.features.map((feature) => {
+        const f = format.readFeature(feature) as Feature<Geometry>;
+        f.setId(crypto.randomUUID());
+        return f;
+      });
+    },
+    [format],
+  );
 
   return { сonvertToDb, сonvertFromDb };
 }

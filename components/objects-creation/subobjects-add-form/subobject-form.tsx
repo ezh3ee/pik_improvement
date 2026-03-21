@@ -1,8 +1,9 @@
 "use client";
 
 import { InputFieldError } from "@/components/errors/input-field";
+import useCombine from "@/components/map/hooks/use-combine";
 import { addSubobjectAction } from "@/components/objects-creation/subobjects-add-form/action";
-import LoadingGeometryButton from "@/components/objects-creation/subobjects-add-form/buttons/loading-geometry-button";
+import UploadGeometryButton from "@/components/objects-creation/subobjects-add-form/buttons/upload-geometry-button";
 import {
   SubobjectEnum,
   subobjectSchema,
@@ -37,37 +38,58 @@ export default function SubobjectsAddForm({
   complexId: string;
 }) {
   const queryClient = useQueryClient();
+  const { сonvertToDb } = useCombine();
 
-  const { handleSubmit, formState, reset, control } = useForm<
-    z.infer<typeof subobjectSchema>
-  >({
+  const {
+    handleSubmit,
+    formState,
+    reset,
+    control,
+    setValue,
+    setError,
+    clearErrors,
+  } = useForm<z.infer<typeof subobjectSchema>>({
     resolver: zodResolver(subobjectSchema),
     defaultValues: {
       name: "",
+      complexId: complexId,
     },
     mode: "onChange",
   });
 
   const mutation = useMutation({
     mutationFn: addSubobjectAction,
-    // onSuccess: (newComplex) => {
-    //   queryClient.invalidateQueries({ queryKey: ["complexes"] });
-    //   // queryClient.invalidateQueries({ queryKey: ["complex", newComplex.id] });
-    //   queryClient.setQueryData(["complex", newComplex.id], newComplex);
+    onSuccess: (newObject) => {
+      queryClient.invalidateQueries({ queryKey: ["objects"] });
+      queryClient.setQueryData(["object", newObject.id], newObject);
 
-    //   setComplexId(newComplex.id);
-    //   setStep(Step.ObjectAdd);
-    // },
+      // ОБРАБОЬАТЬ ЛОГИКУ КОГДА ОБЪЕКТ ДОБАВЛЕН
+    },
   });
-
-  function onSubmit(data: z.infer<typeof subobjectSchema>) {
-    mutation.mutate(dataObjectToFormData(data));
-  }
 
   const resetForm = useCallback(() => {
     reset();
     return () => {};
   }, [reset]);
+
+  function onSubmit(data: z.infer<typeof subobjectSchema>) {
+    mutation.mutate(dataObjectToFormData(data));
+  }
+
+  function appendGeometry() {
+    const geometry = сonvertToDb();
+    if (geometry) {
+      console.log(geometry);
+      setValue("geometry", geometry);
+      clearErrors("geometry");
+    } else {
+      console.log("no geometry");
+      setError("geometry", {
+        type: "manual",
+        message: "Геометрия обязательна",
+      });
+    }
+  }
 
   const subobjectTypes = [
     // { label: "Выберите тип объекта", value: "" },
@@ -151,7 +173,17 @@ export default function SubobjectsAddForm({
 
           <Field className="col-span-12 @5xl:col-span-12 col-start-auto flex self-end flex-col gap-2 space-y-0 items-start">
             <div className="flex justify-start">
-              <LoadingGeometryButton />
+              <UploadGeometryButton isAdded={false} submit={appendGeometry} />
+              <Controller
+                name="geometry"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <div>
+                    {/* Состояние инпута геометрии: {field.value?.toString()} */}
+                    <InputFieldError fieldState={fieldState} />
+                  </div>
+                )}
+              />
             </div>
           </Field>
 
