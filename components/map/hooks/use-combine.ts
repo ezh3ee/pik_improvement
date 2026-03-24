@@ -11,7 +11,7 @@ export default function useCombine() {
   const storedFeatures = useDrawingStore((state) => state.storedFeatures);
   const format = useMemo(() => new GeoJSON(), []);
 
-  const сonvertToDb = useCallback(() => {
+  const convertToDb = useCallback(() => {
     if (!storedFeatures || storedFeatures.length === 0) return null;
     if (storedFeatures.length === 1)
       return storedFeatures[0].geometry as GeoJsonGeometry;
@@ -41,7 +41,7 @@ export default function useCombine() {
     return combined as GeoJsonGeometry;
   }, [storedFeatures, format]);
 
-  const сonvertFromDb = useCallback(
+  const convertFromDb = useCallback(
     (geojson: GeoJsonGeometry) => {
       const flattened = turf.flatten(geojson);
 
@@ -54,5 +54,5 @@ export default function useCombine() {
     [format],
   );
 
-  return { сonvertToDb, сonvertFromDb };
+  return { convertToDb, convertFromDb };
 }

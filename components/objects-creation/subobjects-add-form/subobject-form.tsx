@@ -28,7 +28,6 @@ import { dataObjectToFormData } from "@/lib/client-utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { HousePlusIcon } from "lucide-react";
-import { useCallback } from "react";
 import { Controller, useForm } from "react-hook-form";
 import z from "zod";
 
@@ -38,52 +37,59 @@ export default function SubobjectsAddForm({
   complexId: string;
 }) {
   const queryClient = useQueryClient();
-  const { сonvertToDb } = useCombine();
+  const { convertToDb } = useCombine();
 
   const {
     handleSubmit,
-    formState,
     reset,
     control,
     setValue,
     setError,
     clearErrors,
+    formState,
   } = useForm<z.infer<typeof subobjectSchema>>({
     resolver: zodResolver(subobjectSchema),
     defaultValues: {
       name: "",
       complexId: complexId,
+      type: "" as unknown as SubobjectEnum,
+      // geometry: null as unknown as GeoJsonGeometry,
     },
     mode: "onChange",
   });
 
+  // const resetForm = useCallback(() => {
+  //   reset();
+  //   return () => {};
+  // }, [reset]);
+
   const mutation = useMutation({
     mutationFn: addSubobjectAction,
-    onSuccess: (newObject) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["objects"] });
-      queryClient.setQueryData(["object", newObject.id], newObject);
+      // queryClient.setQueryData(["object", newObject.id], newObject);
+      // flushSync(() => {
+      //   reset();
+      // });
 
-      // ОБРАБОЬАТЬ ЛОГИКУ КОГДА ОБЪЕКТ ДОБАВЛЕН
+      reset();
     },
   });
-
-  const resetForm = useCallback(() => {
-    reset();
-    return () => {};
-  }, [reset]);
 
   function onSubmit(data: z.infer<typeof subobjectSchema>) {
     mutation.mutate(dataObjectToFormData(data));
   }
 
   function appendGeometry() {
-    const geometry = сonvertToDb();
+    const geometry = convertToDb();
     if (geometry) {
-      console.log(geometry);
-      setValue("geometry", geometry);
+      setValue("geometry", geometry, {
+        shouldDirty: true,
+        shouldValidate: true,
+        shouldTouch: true,
+      });
       clearErrors("geometry");
     } else {
-      console.log("no geometry");
       setError("geometry", {
         type: "manual",
         message: "Геометрия обязательна",
@@ -92,7 +98,6 @@ export default function SubobjectsAddForm({
   }
 
   const subobjectTypes = [
-    // { label: "Выберите тип объекта", value: "" },
     { label: "МКД", value: SubobjectEnum.MKD },
     { label: "ОДХ", value: SubobjectEnum.ODH },
     { label: "Гараж", value: SubobjectEnum.GARAGE },
@@ -102,7 +107,7 @@ export default function SubobjectsAddForm({
     <div>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        onReset={resetForm}
+        // onReset={resetForm}
         className="space-y-8 @container"
       >
         <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight text-center">
@@ -138,6 +143,7 @@ export default function SubobjectsAddForm({
               </Field>
             )}
           />
+
           <Controller
             name="type"
             control={control}
@@ -151,7 +157,6 @@ export default function SubobjectsAddForm({
                   value={field.value}
                   onValueChange={field.onChange}
                 >
-                  {/* <SelectTrigger aria-invalid={fieldBellowSelectTouched}> */}
                   <SelectTrigger aria-invalid={fieldState.invalid}>
                     <SelectValue placeholder="Выберите тип объекта" />
                   </SelectTrigger>
@@ -179,7 +184,6 @@ export default function SubobjectsAddForm({
                 control={control}
                 render={({ field, fieldState }) => (
                   <div>
-                    {/* Состояние инпута геометрии: {field.value?.toString()} */}
                     <InputFieldError fieldState={fieldState} />
                   </div>
                 )}
@@ -193,7 +197,8 @@ export default function SubobjectsAddForm({
                 className="w-[20%]"
                 type="submit"
                 variant="default"
-                disabled={!formState.errors || mutation.isPending}
+                disabled={mutation.isPending}
+                //   disabled={isPending}
               >
                 {mutation.isPending ? (
                   <Spinner className="size-5" />

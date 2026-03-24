@@ -13,7 +13,9 @@ export const subobjectSchema = z.object({
     .trim()
     .min(3, "Название объекта должно быть не менее 3-х символов"),
   type: z
-    .enum(SubobjectEnum, { error: "Ожидаемые значения: МКД, ОДХ или Гараж" })
+    .enum(SubobjectEnum, {
+      error: "Ожидаемые значения: МКД, ОДХ или Гараж",
+    })
     .nonoptional("Тип объекта не может быть пустым"),
   geometry: z.custom<GeoJsonGeometry>((val) => !!val, "Геометрия обязательна"),
   complexId: z.string(),

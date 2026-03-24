@@ -26,7 +26,7 @@ export default function SubobjectsAdd() {
   const objects = useQuery({
     queryKey: ["objects"],
     queryFn: () => fetchSubobjectsAction(complexId),
-    staleTime: 1000 * 60 * 1,
+    staleTime: 1000 * 60 * 2,
   });
 
   if (isLoading) return "Загрузка...";
@@ -45,8 +45,12 @@ export default function SubobjectsAdd() {
       <h2 className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] scroll-m-20 text-2xl font-semibold tracking-tight mt-2 mb-2 text-center">
         {`Наименование комплекса: ${complex.name}`}
       </h2>
-      {objects.isLoading && <div>Поиск сущетсвующих объектов...</div>}
-      {objects.data && <CollapsibleSubobjectList objects={objects.data} />}
+      {objects.isLoading && <div>Поиск сущестсвующих объектов...</div>}
+      {objects.data?.length ? (
+        <CollapsibleSubobjectList objects={objects.data} />
+      ) : (
+        "Нет существующих объектов"
+      )}
       <SubobjectsAddForm complexId={complexId} />
     </>
   );
