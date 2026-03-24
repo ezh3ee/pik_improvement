@@ -20,13 +20,12 @@ export default function SubobjectsAdd() {
     queryKey: ["complex", complexId],
     queryFn: () => fetchResidentialComplexAction(complexId),
     enabled: !!complexId,
-    staleTime: 1000 * 60 * 1,
+    // staleTime: 1000 * 60 * 1,
   });
 
   const objects = useQuery({
     queryKey: ["objects"],
     queryFn: () => fetchSubobjectsAction(complexId),
-    staleTime: 1000 * 60 * 2,
   });
 
   if (isLoading) return "Загрузка...";
@@ -40,16 +39,21 @@ export default function SubobjectsAdd() {
     );
   }
 
+  const titleStyle =
+    "relative rounded bg-muted px-[0.3rem] py-[0.2rem] scroll-m-20 text-2xl font-semibold tracking-tight mt-2 mb-2 text-center";
+
   return (
     <>
-      <h2 className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] scroll-m-20 text-2xl font-semibold tracking-tight mt-2 mb-2 text-center">
+      <h2 className={titleStyle}>
         {`Наименование комплекса: ${complex.name}`}
       </h2>
-      {objects.isLoading && <div>Поиск сущестсвующих объектов...</div>}
+      {objects.isLoading && (
+        <h2 className={titleStyle}>Поиск сущестсвующих объектов...</h2>
+      )}
       {objects.data?.length ? (
         <CollapsibleSubobjectList objects={objects.data} />
       ) : (
-        "Нет существующих объектов"
+        <h2 className={titleStyle}>Нет существующих объектов</h2>
       )}
       <SubobjectsAddForm complexId={complexId} />
     </>

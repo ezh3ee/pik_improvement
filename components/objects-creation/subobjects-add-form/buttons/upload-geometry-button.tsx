@@ -1,6 +1,7 @@
 import { useComplexStore } from "@/components/map/state/complex-store";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
+import { Check } from "lucide-react";
 
 export default function UploadGeometryButton({
   isAdded,
@@ -28,11 +29,13 @@ export default function UploadGeometryButton({
   }
 
   return (
-    <>
+    <div className="flex justify-start items-center gap-2">
       <Button variant="secondary" type="button" onClick={submitGeometry}>
         <span>{buttonContent}</span>
         <span>{isAddingGeometry && <Spinner data-icon="inline-start" />}</span>
       </Button>
-    </>
+
+      {isAdded && !isAddingGeometry ? <Check color="green" /> : null}
+    </div>
   );
 }

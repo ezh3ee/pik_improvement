@@ -27,6 +27,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { dataObjectToFormData } from "@/lib/client-utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Geometry as GeoJsonGeometry } from "geojson";
 import { HousePlusIcon } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 import z from "zod";
@@ -39,38 +40,22 @@ export default function SubobjectsAddForm({
   const queryClient = useQueryClient();
   const { convertToDb } = useCombine();
 
-  const {
-    handleSubmit,
-    reset,
-    control,
-    setValue,
-    setError,
-    clearErrors,
-    formState,
-  } = useForm<z.infer<typeof subobjectSchema>>({
-    resolver: zodResolver(subobjectSchema),
-    defaultValues: {
-      name: "",
-      complexId: complexId,
-      type: "" as unknown as SubobjectEnum,
-      // geometry: null as unknown as GeoJsonGeometry,
-    },
-    mode: "onChange",
-  });
-
-  // const resetForm = useCallback(() => {
-  //   reset();
-  //   return () => {};
-  // }, [reset]);
+  const { handleSubmit, reset, control, setValue, setError, clearErrors } =
+    useForm<z.infer<typeof subobjectSchema>>({
+      resolver: zodResolver(subobjectSchema),
+      defaultValues: {
+        name: "",
+        complexId: complexId,
+        type: "" as unknown as SubobjectEnum,
+        geometry: null as unknown as GeoJsonGeometry,
+      },
+      mode: "onChange",
+    });
 
   const mutation = useMutation({
     mutationFn: addSubobjectAction,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["objects"] });
-      // queryClient.setQueryData(["object", newObject.id], newObject);
-      // flushSync(() => {
-      //   reset();
-      // });
 
       reset();
     },
@@ -105,11 +90,7 @@ export default function SubobjectsAddForm({
 
   return (
     <div>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        // onReset={resetForm}
-        className="space-y-8 @container"
-      >
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 @container">
         <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight text-center">
           Добавление строительного объекта
         </h3>
@@ -177,18 +158,23 @@ export default function SubobjectsAddForm({
           />
 
           <Field className="col-span-12 @5xl:col-span-12 col-start-auto flex self-end flex-col gap-2 space-y-0 items-start">
-            <div className="flex justify-start">
-              <UploadGeometryButton isAdded={false} submit={appendGeometry} />
-              <Controller
-                name="geometry"
-                control={control}
-                render={({ field, fieldState }) => (
+            {/* <div className="flex justify-start"> */}
+            <Controller
+              name="geometry"
+              control={control}
+              render={({ field, fieldState }) => (
+                <>
+                  <UploadGeometryButton
+                    isAdded={field.value !== null}
+                    submit={appendGeometry}
+                  />
                   <div>
                     <InputFieldError fieldState={fieldState} />
                   </div>
-                )}
-              />
-            </div>
+                </>
+              )}
+            />
+            {/* </div> */}
           </Field>
 
           <Field className="col-span-12 @5xl:col-span-12 col-start-auto flex self-end flex-col gap-2 space-y-0 items-start">
