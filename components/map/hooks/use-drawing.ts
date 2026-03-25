@@ -28,7 +28,7 @@ export default function useDrawing({ map, isReady }: UseDrawingProps) {
   const addFeatureToStore = useDrawingStore((state) => state.addFeature);
   const storedFeatures = useDrawingStore((state) => state.storedFeatures);
 
-  const { сonvertToDb, сonvertFromDb } = useCombine();
+  const { convertToDb, convertFromDb } = useCombine();
 
   useEffect(() => {
     if (!map || !isReady) return;
