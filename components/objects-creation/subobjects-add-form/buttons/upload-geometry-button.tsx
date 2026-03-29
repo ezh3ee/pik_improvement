@@ -1,4 +1,5 @@
 import { useComplexStore } from "@/components/map/state/complex-store";
+import { useDrawingStore } from "@/components/map/state/drawing-store";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { Check } from "lucide-react";
@@ -6,16 +7,32 @@ import { Check } from "lucide-react";
 export default function UploadGeometryButton({
   isAdded,
   submit,
+  renderGeometry,
 }: {
   isAdded?: boolean;
   submit?: () => void;
+  renderGeometry?: () => void;
 }) {
   const toggleGeometry = useComplexStore((state) => state.toggleAddingGeometry);
   const isAddingGeometry = useComplexStore((state) => state.isAddingGeometry);
 
+  const toggleDrawing = useDrawingStore((state) => state.toggleDrawing);
+  const turnoffAllIntercations = useDrawingStore(
+    (state) => state.turnoffAllIntercations,
+  );
+  const isDrawing = useDrawingStore((state) => state.isDrawing);
+  const resetDrawingStore = useDrawingStore((state) => state.resetStore);
+
   function submitGeometry() {
+    if (!isDrawing) toggleDrawing();
     toggleGeometry();
-    if (isAddingGeometry) submit?.();
+    resetDrawingStore();
+
+    if (isAddingGeometry) {
+      submit?.();
+      turnoffAllIntercations();
+    }
+    if (isAdded && !isAddingGeometry) renderGeometry?.();
   }
 
   let buttonContent = "";

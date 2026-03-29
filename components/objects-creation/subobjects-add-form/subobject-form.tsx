@@ -2,6 +2,7 @@
 
 import { InputFieldError } from "@/components/errors/input-field";
 import useCombine from "@/components/map/hooks/use-combine";
+import useRenderGeometryFromDb from "@/components/map/hooks/use-render-geometry-from-db";
 import { addSubobjectAction } from "@/components/objects-creation/subobjects-add-form/action";
 import UploadGeometryButton from "@/components/objects-creation/subobjects-add-form/buttons/upload-geometry-button";
 import {
@@ -29,7 +30,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Geometry as GeoJsonGeometry } from "geojson";
 import { HousePlusIcon } from "lucide-react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import z from "zod";
 
 export default function SubobjectsAddForm({
@@ -39,6 +40,8 @@ export default function SubobjectsAddForm({
 }) {
   const queryClient = useQueryClient();
   const { convertToDb } = useCombine();
+
+  const renderGeometryFromDb = useRenderGeometryFromDb();
 
   const { handleSubmit, reset, control, setValue, setError, clearErrors } =
     useForm<z.infer<typeof subobjectSchema>>({
@@ -51,6 +54,11 @@ export default function SubobjectsAddForm({
       },
       mode: "onChange",
     });
+
+  const geometryValue = useWatch({
+    control,
+    name: "geometry",
+  });
 
   const mutation = useMutation({
     mutationFn: addSubobjectAction,
@@ -65,7 +73,11 @@ export default function SubobjectsAddForm({
     mutation.mutate(dataObjectToFormData(data));
   }
 
-  function appendGeometry() {
+  function renderGeometryOnMap() {
+    renderGeometryFromDb({ geojson: geometryValue });
+  }
+
+  function appendGeometryToForm() {
     const geometry = convertToDb();
     if (geometry) {
       setValue("geometry", geometry, {
@@ -75,10 +87,12 @@ export default function SubobjectsAddForm({
       });
       clearErrors("geometry");
     } else {
-      setError("geometry", {
-        type: "manual",
-        message: "Геометрия обязательна",
-      });
+      if (!geometryValue) {
+        setError("geometry", {
+          type: "manual",
+          message: "Геометрия обязательна",
+        });
+      }
     }
   }
 
@@ -104,7 +118,7 @@ export default function SubobjectsAddForm({
                 data-invalid={fieldState.invalid}
               >
                 <FieldLabel className="flex @5xl:flex w-auto!">
-                  Наименование <span className="text-red-500">*</span>
+                  Наименование объекта <span className="text-red-500">*</span>
                 </FieldLabel>
 
                 <InputGroup>
@@ -158,7 +172,6 @@ export default function SubobjectsAddForm({
           />
 
           <Field className="col-span-12 @5xl:col-span-12 col-start-auto flex self-end flex-col gap-2 space-y-0 items-start">
-            {/* <div className="flex justify-start"> */}
             <Controller
               name="geometry"
               control={control}
@@ -166,7 +179,8 @@ export default function SubobjectsAddForm({
                 <>
                   <UploadGeometryButton
                     isAdded={field.value !== null}
-                    submit={appendGeometry}
+                    submit={appendGeometryToForm}
+                    renderGeometry={renderGeometryOnMap}
                   />
                   <div>
                     <InputFieldError fieldState={fieldState} />
@@ -184,7 +198,6 @@ export default function SubobjectsAddForm({
                 type="submit"
                 variant="default"
                 disabled={mutation.isPending}
-                //   disabled={isPending}
               >
                 {mutation.isPending ? (
                   <Spinner className="size-5" />

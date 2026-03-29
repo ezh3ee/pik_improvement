@@ -56,9 +56,11 @@ export const useComplexStore = create<ComplexType>()(
         set(() => ({ objectDraft: draft }));
       },
       resetStore: async () => {
-        // set(() => ({
-        //   ...initialState,
-        // }));
+        set(() => ({
+          // ...initialState,
+          isAddingGeometry: false,
+          step: Step.ComplexAdd,
+        }));
         await useComplexStore.persist.clearStorage();
       },
       gotoFirstStep: () => {

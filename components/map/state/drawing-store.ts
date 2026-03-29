@@ -12,6 +12,7 @@ type DrawingStore = {
   toggleCutting: () => void;
   toggleModifying: () => void;
   toggleDifferenceMode: () => void;
+  turnoffAllIntercations: () => void;
   addFeature: (feature: GeoJSONFeature) => void;
   updateFeature: (feature: GeoJSONFeature) => void;
   resetStore: () => Promise<void>;
@@ -61,6 +62,13 @@ export const useDrawingStore = create<DrawingStore>()(
           isModifying: state.isModifying,
         }));
         await useDrawingStore.persist.clearStorage();
+      },
+      turnoffAllIntercations: async () => {
+        set((state) => ({
+          isDrawing: state.isDrawing,
+          isModifying: state.isModifying,
+          isCutting: state.isCutting,
+        }));
       },
     }),
     {

@@ -8,14 +8,18 @@ import { useCallback } from "react";
 export default function ComplexCreationControlButtons() {
   const gotoFirstStep = useComplexStore((state) => state.gotoFirstStep);
   const currentStep = useComplexStore((state) => state.step);
+  const resetStore = useComplexStore((state) => state.resetStore);
 
   const reset = useCallback(() => {
-    // сброс формы и инвалидация кэша объектов
+    // сброс формы и инвалидация кэша объектов и жк,
+    // также принудительное отключение режима рисования
+
     const queryClient = new QueryClient();
     queryClient.invalidateQueries({ queryKey: ["objects"] });
     queryClient.invalidateQueries({ queryKey: ["complexes"] });
-    gotoFirstStep();
-  }, [gotoFirstStep]);
+    // gotoFirstStep();
+    resetStore();
+  }, [resetStore]);
 
   return (
     <ButtonGroup className="flex justify-center">

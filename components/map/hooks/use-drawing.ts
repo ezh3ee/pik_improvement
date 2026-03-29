@@ -1,4 +1,5 @@
 import { ZIndexes } from "@/components/map/components/config/z-indexes";
+import useCombine from "@/components/map/hooks/use-combine";
 import useDifference from "@/components/map/hooks/use-difference";
 import { useDrawingStore } from "@/components/map/state/drawing-store";
 import { Feature, Map } from "ol";
@@ -10,7 +11,6 @@ import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { Fill, Stroke, Style } from "ol/style";
 import { useEffect, useRef } from "react";
-import useCombine from "./use-combine";
 
 type UseDrawingProps = {
   map: Map | null;
@@ -50,6 +50,8 @@ export default function useDrawing({ map, isReady }: UseDrawingProps) {
       }),
       zIndex: ZIndexes.Intercations,
     });
+
+    drawVector.set("name", "drawing-layer");
 
     const snap = new Snap({
       source: vectorSource,

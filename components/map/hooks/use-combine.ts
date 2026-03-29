@@ -2,7 +2,7 @@ import { useDrawingStore } from "@/components/map/state/drawing-store";
 import * as turf from "@turf/turf";
 import { Geometry as GeoJsonGeometry } from "geojson";
 import Feature from "ol/Feature";
-import GeoJSON from "ol/format/GeoJSON";
+import GeoJSON, { GeoJSONFeature } from "ol/format/GeoJSON";
 import { Polygon } from "ol/geom";
 import Geometry from "ol/geom/Geometry";
 import { useCallback, useMemo } from "react";
@@ -46,10 +46,19 @@ export default function useCombine() {
       const flattened = turf.flatten(geojson);
 
       return flattened.features.map((feature) => {
-        const f = format.readFeature(feature) as Feature<Geometry>;
-        f.setId(crypto.randomUUID());
-        return f;
+        return {
+          type: "Feature",
+          geometry: feature.geometry,
+          properties: feature.properties || {},
+          id: crypto.randomUUID(),
+        } as GeoJSONFeature;
       });
+
+      // return flattened.features.map((feature) => {
+      //   const f = format.readFeature(feature) as Feature<Geometry>;
+      //   f.setId(crypto.randomUUID());
+      //   return f;
+      // });
     },
     [format],
   );

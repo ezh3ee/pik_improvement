@@ -44,9 +44,7 @@ export default function SubobjectsAdd() {
 
   return (
     <>
-      <h2 className={titleStyle}>
-        {`Наименование комплекса: ${complex.name}`}
-      </h2>
+      <h2 className={titleStyle}>{`Наименование ЖК: ${complex.name}`}</h2>
       {objects.isLoading && (
         <h2 className={titleStyle}>Поиск сущестсвующих объектов...</h2>
       )}

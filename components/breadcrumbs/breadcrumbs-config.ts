@@ -22,8 +22,4 @@ export const BREADCRUMBS_CONFIG: Record<string, BreadcrumbsConfig> = {
     label: "Список",
     clickable: true,
   },
-  penis: {
-    label: "Пенис",
-    clickable: true,
-  },
 };
