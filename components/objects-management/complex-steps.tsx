@@ -1,6 +1,6 @@
 import { Step, useComplexStore } from "@/components/map/state/complex-store";
-import ResidentialComplexAddForm from "@/components/objects-creation/residential-complex-add-form/residential-complex-add-form";
-import SubobjectsAdd from "@/components/objects-creation/subobjects-add-form/subobjects-add";
+import ResidentialComplexAddForm from "@/components/objects-management/residential-complex-add-form/residential-complex-form";
+import SubobjectsAdd from "@/components/objects-management/subobjects-add-form/subobjects-add";
 
 export default function ComplexSteps() {
   const step = useComplexStore((state) => state.step);

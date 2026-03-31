@@ -65,9 +65,9 @@ export const useDrawingStore = create<DrawingStore>()(
       },
       turnoffAllIntercations: async () => {
         set((state) => ({
-          isDrawing: state.isDrawing,
-          isModifying: state.isModifying,
-          isCutting: state.isCutting,
+          isDrawing: false,
+          isModifying: false,
+          isCutting: false,
         }));
       },
     }),

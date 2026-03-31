@@ -1,10 +1,10 @@
 // import { fetchResidentialComplexAction } from "@/components/objects-creation/residential-complex-add-form/action";
 
 import { Step, useComplexStore } from "@/components/map/state/complex-store";
-import { fetchResidentialComplexAction } from "@/components/objects-creation/residential-complex-add-form/action";
-import { fetchSubobjectsAction } from "@/components/objects-creation/subobjects-add-form/action";
-import CollapsibleSubobjectList from "@/components/objects-creation/subobjects-add-form/collapsible-subobject-list";
-import SubobjectsAddForm from "@/components/objects-creation/subobjects-add-form/subobject-form";
+import { fetchResidentialComplexAction } from "@/components/objects-management/residential-complex-add-form/action";
+import { fetchSubobjectsAction } from "@/components/objects-management/subobjects-add-form/action";
+import CollapsibleSubobjectList from "@/components/objects-management/subobjects-add-form/collapsible-subobject-list";
+import SubobjectsAddForm from "@/components/objects-management/subobjects-add-form/subobject-form";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 

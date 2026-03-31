@@ -1,8 +1,8 @@
 "use client";
 import { InputFieldError } from "@/components/errors/input-field";
 import { Step, useComplexStore } from "@/components/map/state/complex-store";
-import { addResidentialComplexAction } from "@/components/objects-creation/residential-complex-add-form/action";
-import { complexSchema } from "@/components/objects-creation/residential-complex-add-form/schema";
+import { addResidentialComplexAction } from "@/components/objects-management/residential-complex-add-form/action";
+import { complexSchema } from "@/components/objects-management/residential-complex-add-form/schema";
 import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
 import {
@@ -23,7 +23,7 @@ type ResidentialComplexFetched = {
   name: string;
 };
 
-export default function ResidentialComplexAddForm({
+export default function ResidentialComplexForm({
   complex,
 }: {
   complex?: ResidentialComplexFetched;

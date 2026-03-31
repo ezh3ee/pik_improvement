@@ -3,7 +3,7 @@
 import MapGeoreference from "@/components/map/components/georeference/georeference";
 import { Step, useComplexStore } from "@/components/map/state/complex-store";
 import { useGeoreferenceStore } from "@/components/map/state/georeference-store";
-import ObjectsCreation from "@/components/objects-creation/objects-creation";
+import ObjectsCreation from "@/components/objects-management/objects-creation";
 
 export default function MapLeftSide() {
   const isGeoRefVisible = useGeoreferenceStore((state) => state.isVisible);
