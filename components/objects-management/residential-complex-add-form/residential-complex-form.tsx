@@ -47,7 +47,12 @@ export default function ResidentialComplexForm({
     mutationFn: addResidentialComplexAction,
     onSuccess: (newComplex) => {
       queryClient.invalidateQueries({ queryKey: ["complexes"] });
-      queryClient.setQueryData(["complex", newComplex.id], newComplex);
+      // queryClient.setQueryData(["complex", newComplex.id], newComplex);
+      queryClient.setQueryData(
+        ["complexes"],
+        (old: ResidentialComplexFetched[]) =>
+          old ? [...old, newComplex] : [newComplex],
+      );
 
       setComplexId(newComplex.id);
       setStep(Step.ObjectAdd);

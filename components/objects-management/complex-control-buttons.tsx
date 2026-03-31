@@ -1,11 +1,11 @@
 import { Step, useComplexStore } from "@/components/map/state/complex-store";
-import { Button } from "@/components/ui/button";
+import FormControlButton from "@/components/objects-management/subobjects-add-form/buttons/form-control-button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { QueryClient } from "@tanstack/react-query";
-import { RotateCcw } from "lucide-react";
+import { ArrowLeft, RotateCcw } from "lucide-react";
 import { useCallback } from "react";
 
-export default function ComplexCreationControlButtons() {
+export default function ComplexControlButtons() {
   const gotoFirstStep = useComplexStore((state) => state.gotoFirstStep);
   const currentStep = useComplexStore((state) => state.step);
   const resetStore = useComplexStore((state) => state.resetStore);
@@ -23,19 +23,16 @@ export default function ComplexCreationControlButtons() {
 
   return (
     <ButtonGroup className="flex justify-center">
-      <Button
-        variant="outline"
-        size="icon-lg"
-        onClick={reset}
-        style={{
-          display:
-            currentStep === Step.None || currentStep === Step.ComplexAdd
-              ? "none"
-              : "flex",
-        }}
-      >
-        <RotateCcw />
-      </Button>
+      {!(currentStep === Step.None || currentStep === Step.ComplexAdd) && (
+        <FormControlButton text="Сбросить" action={reset}>
+          <RotateCcw />
+        </FormControlButton>
+      )}
+      {currentStep === Step.ObjectAdd && (
+        <FormControlButton text="Назад" action={gotoFirstStep}>
+          <ArrowLeft />
+        </FormControlButton>
+      )}
     </ButtonGroup>
   );
 }

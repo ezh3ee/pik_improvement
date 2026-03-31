@@ -9,6 +9,7 @@ import {
   SubobjectEnum,
   subobjectSchema,
 } from "@/components/objects-management/subobjects-add-form/schema";
+import { mapSubobjectType } from "@/components/objects-management/subobjects-add-form/subobject-type-map";
 import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
 import {
@@ -97,9 +98,12 @@ export default function SubobjectsAddForm({
   }
 
   const subobjectTypes = [
-    { label: "МКД", value: SubobjectEnum.MKD },
-    { label: "ОДХ", value: SubobjectEnum.ODH },
-    { label: "Гараж", value: SubobjectEnum.GARAGE },
+    { label: mapSubobjectType(SubobjectEnum.MKD), value: SubobjectEnum.MKD },
+    { label: mapSubobjectType(SubobjectEnum.ODH), value: SubobjectEnum.ODH },
+    {
+      label: mapSubobjectType(SubobjectEnum.GARAGE),
+      value: SubobjectEnum.GARAGE,
+    },
   ];
 
   return (

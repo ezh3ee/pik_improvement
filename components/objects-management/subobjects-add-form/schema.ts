@@ -1,11 +1,6 @@
+import { SubobjectEnum } from "@/components/objects-management/subobjects-add-form/subobject-type-map";
 import { Geometry as GeoJsonGeometry } from "geojson";
 import { z } from "zod";
-
-export enum SubobjectEnum {
-  MKD = "MKD",
-  ODH = "ODH",
-  GARAGE = "GARAGE",
-}
 
 export const subobjectSchema = z.object({
   name: z
@@ -20,3 +15,4 @@ export const subobjectSchema = z.object({
   geometry: z.custom<GeoJsonGeometry>((val) => !!val, "Геометрия обязательна"),
   complexId: z.string(),
 });
+export { SubobjectEnum };

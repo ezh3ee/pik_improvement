@@ -1,5 +1,9 @@
+import {
+  mapSubobjectType,
+  SubobjectEnum,
+} from "@/components/objects-management/subobjects-add-form/subobject-type-map";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import {
   Collapsible,
   CollapsibleContent,
@@ -14,8 +18,9 @@ export default function CollapsibleSubobjectList({
   objects?: SubObjectBase[];
 }) {
   return (
-    <Card className="mx-auto w-full max-w-sm">
-      <CardContent>
+    <Card className="w-full max-w-sm">
+      <CardContent className="space-y-2">
+        <CardTitle>Найденные объекты</CardTitle>
         {objects?.map((object) => {
           return (
             <Collapsible
@@ -29,8 +34,11 @@ export default function CollapsibleSubobjectList({
                 </Button>
               </CollapsibleTrigger>
               <CollapsibleContent className="flex flex-col items-start gap-2 p-2.5 pt-0 text-sm">
-                <div>{object.type}</div>
-                <Button size="sm">Перейти к объекту</Button>
+                <div>{mapSubobjectType(object.type as SubobjectEnum)}</div>
+                <Button size="xs">Подробно</Button>
+                <Button size="xs" variant="outline">
+                  Редактировать
+                </Button>
               </CollapsibleContent>
             </Collapsible>
           );
