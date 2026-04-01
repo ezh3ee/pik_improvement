@@ -1,7 +1,10 @@
 "use client";
 import { InputFieldError } from "@/components/errors/input-field";
 import { Step, useComplexStore } from "@/components/map/state/complex-store";
-import { addResidentialComplexAction } from "@/components/objects-management/residential-complex-add-form/action";
+import {
+  addResidentialComplexAction,
+  fetchResidentialComplexAction,
+} from "@/components/objects-management/residential-complex-add-form/action";
 import { complexSchema } from "@/components/objects-management/residential-complex-add-form/schema";
 import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
@@ -13,7 +16,7 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { dataObjectToFormData } from "@/lib/client-utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { HousePlusIcon } from "lucide-react";
 import { useCallback } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -23,36 +26,45 @@ type ResidentialComplexFetched = {
   name: string;
 };
 
-export default function ResidentialComplexForm({
-  complex,
-}: {
-  complex?: ResidentialComplexFetched;
-}) {
+// export default function ResidentialComplexForm({complex}: {complex?: ResidentialComplexFetched;}) {
+export default function ResidentialComplexForm() {
   const setStep = useComplexStore((state) => state.setStep);
   const setComplexId = useComplexStore((state) => state.setComplexId);
-
+  const complexId = useComplexStore((state) => state.complexId);
   const queryClient = useQueryClient();
+
+  const complex = useQuery({
+    queryKey: ["complex", complexId],
+    queryFn: () => {
+      if (!complexId) return;
+      return fetchResidentialComplexAction(complexId);
+    },
+    enabled: !!complexId,
+    // staleTime: 1000 * 60 * 1,
+  });
 
   const { handleSubmit, formState, reset, control } = useForm<
     z.infer<typeof complexSchema>
   >({
     resolver: zodResolver(complexSchema),
     defaultValues: {
-      name: complex?.name || "",
+      name: complex?.data?.name || "",
     },
     mode: "onChange",
   });
 
   const mutation = useMutation({
-    mutationFn: addResidentialComplexAction,
+    mutationFn: ({ formData, id }: { formData: FormData; id?: string }) => {
+      return addResidentialComplexAction(formData);
+    },
     onSuccess: (newComplex) => {
       queryClient.invalidateQueries({ queryKey: ["complexes"] });
-      // queryClient.setQueryData(["complex", newComplex.id], newComplex);
-      queryClient.setQueryData(
-        ["complexes"],
-        (old: ResidentialComplexFetched[]) =>
-          old ? [...old, newComplex] : [newComplex],
-      );
+      queryClient.setQueryData(["complex", newComplex.id], newComplex);
+      // queryClient.setQueryData(
+      //   ["complexes"],
+      //   (old: ResidentialComplexFetched[]) =>
+      //     old ? [...old, newComplex] : [newComplex],
+      // );
 
       setComplexId(newComplex.id);
       setStep(Step.ObjectAdd);
@@ -60,7 +72,7 @@ export default function ResidentialComplexForm({
   });
 
   function onSubmit(data: z.infer<typeof complexSchema>) {
-    mutation.mutate(dataObjectToFormData(data));
+    mutation.mutate({ formData: dataObjectToFormData(data) });
   }
 
   const resetForm = useCallback(() => {

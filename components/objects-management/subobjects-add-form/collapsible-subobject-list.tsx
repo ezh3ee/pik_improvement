@@ -19,6 +19,7 @@ export default function CollapsibleSubobjectList({
 }) {
   return (
     <Card className="w-full max-w-sm">
+      {/* <CardContent className="space-y-2"> */}
       <CardContent className="space-y-2">
         <CardTitle>Найденные объекты</CardTitle>
         {objects?.map((object) => {

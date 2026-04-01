@@ -40,18 +40,20 @@ export default function SubobjectsAdd() {
   }
 
   const titleStyle =
-    "relative rounded bg-muted px-[0.3rem] py-[0.2rem] scroll-m-20 text-2xl font-semibold tracking-tight mt-2 mb-2 text-center";
+    "relative rounded bg-mutedpy-[0.2rem] scroll-m-20 text-xl font-semibold tracking-tight mt-2 mb-2";
+
+  const statusStyle = "text-xl text-muted-foreground mt-2 mb-2";
 
   return (
     <>
       <h4 className={titleStyle}>{`Наименование ЖК: ${complex.name}`}</h4>
 
       {objects.isLoading ? (
-        <h5 className={titleStyle}>Поиск существующих объектов...</h5>
+        <h5 className={statusStyle}>Поиск существующих объектов...</h5>
       ) : objects.data?.length ? (
         <CollapsibleSubobjectList objects={objects.data} />
       ) : (
-        <h5 className={titleStyle}>Нет существующих объектов</h5>
+        <h5 className={statusStyle}>Не найдено объектов в ЖК</h5>
       )}
 
       <SubobjectsAddForm complexId={complexId} />

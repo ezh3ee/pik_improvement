@@ -33,6 +33,34 @@ export async function addResidentialComplexAction(formData: FormData) {
   }
 }
 
+export async function updateResidentialComplexAction(
+  id: string,
+  formData: FormData,
+) {
+  const rawFormData = Object.fromEntries(formData.entries());
+  const validatedFields = complexSchema.safeParse(rawFormData);
+
+  if (!validatedFields.success) {
+    throw new Error("Ошибки валидации");
+  }
+
+  try {
+    const complex = await prisma.residentialComplex.update({
+      where: {
+        id,
+      },
+      data: {
+        name: validatedFields.data.name,
+      },
+    });
+
+    return complex;
+  } catch (e) {
+    console.error("Error updating residential complex ", e);
+    throw "Нельзя обновить ЖК";
+  }
+}
+
 export async function fetchResidentialComplexAction(id: string) {
   try {
     const complex = await prisma.residentialComplex.findUnique({

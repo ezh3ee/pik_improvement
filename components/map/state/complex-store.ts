@@ -22,6 +22,7 @@ type ComplexType = {
   setObjectDraft: (draft: FormData) => void;
   resetStore: () => Promise<void>;
   gotoFirstStep: () => void;
+  gotoPreviousStep: () => void;
 };
 
 const initialState = {
@@ -57,7 +58,7 @@ export const useComplexStore = create<ComplexType>()(
       },
       resetStore: async () => {
         set(() => ({
-          // ...initialState,
+          ...initialState,
           isAddingGeometry: false,
           step: Step.ComplexAdd,
         }));
@@ -65,6 +66,15 @@ export const useComplexStore = create<ComplexType>()(
       },
       gotoFirstStep: () => {
         set(() => ({ step: Step.ComplexAdd, complexId: null }));
+      },
+      gotoPreviousStep: () => {
+        set((state) => {
+          const entries = Object.entries(Step);
+          const current = entries.findIndex(
+            ([key]) => Step[key as keyof typeof Step] === state.step,
+          );
+          return { step: entries[current - 1][1] };
+        });
       },
     }),
     {
