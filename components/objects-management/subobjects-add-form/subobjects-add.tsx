@@ -44,15 +44,16 @@ export default function SubobjectsAdd() {
 
   return (
     <>
-      <h2 className={titleStyle}>{`Наименование ЖК: ${complex.name}`}</h2>
-      {objects.isLoading && (
-        <h2 className={titleStyle}>Поиск сущестсвующих объектов...</h2>
-      )}
-      {objects.data?.length ? (
+      <h4 className={titleStyle}>{`Наименование ЖК: ${complex.name}`}</h4>
+
+      {objects.isLoading ? (
+        <h5 className={titleStyle}>Поиск существующих объектов...</h5>
+      ) : objects.data?.length ? (
         <CollapsibleSubobjectList objects={objects.data} />
       ) : (
-        <h2 className={titleStyle}>Нет существующих объектов</h2>
+        <h5 className={titleStyle}>Нет существующих объектов</h5>
       )}
+
       <SubobjectsAddForm complexId={complexId} />
     </>
   );

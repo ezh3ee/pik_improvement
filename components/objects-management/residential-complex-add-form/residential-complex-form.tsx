@@ -75,9 +75,9 @@ export default function ResidentialComplexForm({
         onReset={resetForm}
         className="space-y-8 @container"
       >
-        <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight text-center">
+        {/* <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight text-center">
           Добавление ЖК
-        </h3>
+        </h3> */}
         <div className="grid grid-cols-12 gap-4">
           <Controller
             control={control}
