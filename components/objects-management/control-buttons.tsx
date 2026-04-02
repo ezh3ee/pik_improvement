@@ -1,5 +1,5 @@
 import { Step, useComplexStore } from "@/components/map/state/complex-store";
-import FormControlButton from "@/components/objects-management/subobjects-add-form/buttons/form-control-button";
+import FormControlButton from "@/components/objects-management/subobjects/buttons/form-control-button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { QueryClient } from "@tanstack/react-query";
 import { ArrowLeft, PanelLeftClose, RotateCcw } from "lucide-react";

@@ -1,5 +1,5 @@
 "use server";
-import { complexSchema } from "@/components/objects-management/residential-complex-add-form/schema";
+import { complexSchema } from "@/components/objects-management/complex/schema";
 import prisma from "@/lib/prisma";
 
 // export type complexState = {

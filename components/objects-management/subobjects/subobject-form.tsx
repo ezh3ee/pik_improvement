@@ -3,13 +3,13 @@
 import { InputFieldError } from "@/components/errors/input-field";
 import useCombine from "@/components/map/hooks/use-combine";
 import useRenderGeometryFromDb from "@/components/map/hooks/use-render-geometry-from-db";
-import { addSubobjectAction } from "@/components/objects-management/subobjects-add-form/action";
-import UploadGeometryButton from "@/components/objects-management/subobjects-add-form/buttons/upload-geometry-button";
+import { addSubobjectAction } from "@/components/objects-management/subobjects/action";
+import UploadGeometryButton from "@/components/objects-management/subobjects/buttons/upload-geometry-button";
 import {
   SubobjectEnum,
   subobjectSchema,
-} from "@/components/objects-management/subobjects-add-form/schema";
-import { mapSubobjectType } from "@/components/objects-management/subobjects-add-form/subobject-type-map";
+} from "@/components/objects-management/subobjects/schema";
+import { mapSubobjectType } from "@/components/objects-management/subobjects/subobject-type-map";
 import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
 import {

@@ -1,7 +1,7 @@
 import {
   mapSubobjectType,
   SubobjectEnum,
-} from "@/components/objects-management/subobjects-add-form/subobject-type-map";
+} from "@/components/objects-management/subobjects/subobject-type-map";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import {

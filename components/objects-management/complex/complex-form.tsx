@@ -4,8 +4,9 @@ import { Step, useComplexStore } from "@/components/map/state/complex-store";
 import {
   addResidentialComplexAction,
   fetchResidentialComplexAction,
-} from "@/components/objects-management/residential-complex-add-form/action";
-import { complexSchema } from "@/components/objects-management/residential-complex-add-form/schema";
+} from "@/components/objects-management/complex/action";
+import ComplexDetailed from "@/components/objects-management/complex/detailed";
+import { complexSchema } from "@/components/objects-management/complex/schema";
 import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
 import {
@@ -82,14 +83,12 @@ export default function ResidentialComplexForm() {
 
   return (
     <div>
+      <ComplexDetailed />
       <form
         onSubmit={handleSubmit(onSubmit)}
         onReset={resetForm}
         className="space-y-8 @container"
       >
-        {/* <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight text-center">
-          Добавление ЖК
-        </h3> */}
         <div className="grid grid-cols-12 gap-4">
           <Controller
             control={control}

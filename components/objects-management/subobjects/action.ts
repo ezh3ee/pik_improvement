@@ -1,6 +1,6 @@
 "use server";
 
-import { subobjectSchema } from "@/components/objects-management/subobjects-add-form/schema";
+import { subobjectSchema } from "@/components/objects-management/subobjects/schema";
 import prisma from "@/lib/prisma";
 import { prismaKnownError } from "@/lib/server-utils";
 

@@ -1,4 +1,4 @@
-import { SubobjectEnum } from "@/components/objects-management/subobjects-add-form/subobject-type-map";
+import { SubobjectEnum } from "@/components/objects-management/subobjects/subobject-type-map";
 import { Geometry as GeoJsonGeometry } from "geojson";
 import { z } from "zod";
 
