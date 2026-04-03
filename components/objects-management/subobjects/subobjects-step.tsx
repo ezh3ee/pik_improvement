@@ -8,7 +8,7 @@ import SubobjectsAddForm from "@/components/objects-management/subobjects/subobj
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 
-export default function SubobjectsAdd() {
+export default function SubobjectsStep() {
   const complexId = useComplexStore((state) => state.complexId) as string;
   const setStep = useComplexStore((state) => state.setStep);
 

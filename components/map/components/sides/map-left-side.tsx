@@ -4,6 +4,7 @@ import MapGeoreference from "@/components/map/components/georeference/georeferen
 import { Step, useComplexStore } from "@/components/map/state/complex-store";
 import { useGeoreferenceStore } from "@/components/map/state/georeference-store";
 import ObjectsCreation from "@/components/objects-management/creation";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function MapLeftSide() {
   const isGeoRefVisible = useGeoreferenceStore((state) => state.isVisible);
@@ -12,12 +13,16 @@ export default function MapLeftSide() {
   const isVisible = isGeoRefVisible || objectCreationStep !== Step.None;
 
   return (
-    <div
-      className="left-side pr-4"
-      style={{ display: isVisible ? "block" : "none" }}
-    >
-      <MapGeoreference />
-      {!isGeoRefVisible && <ObjectsCreation />}
-    </div>
+    isVisible && (
+      <div
+        className="left-side pr-4"
+        // style={{ display: isVisible ? "block" : "none" }}
+      >
+        <ScrollArea className="h-[86vh]">
+          <MapGeoreference />
+          {!isGeoRefVisible && <ObjectsCreation />}
+        </ScrollArea>
+      </div>
+    )
   );
 }

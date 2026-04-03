@@ -24,14 +24,17 @@ export default function CollapsibleSection({
             <Icon />
             <CollapsibleTrigger asChild>
               {/* <Button variant="ghost" className="group w-full"> */}
-              <Button variant="ghost" className="group flex flex-grow">
+              <Button
+                variant="ghost"
+                className="group flex flex-grow flex-shrink"
+              >
                 {title}
                 <ChevronDownIcon className="ml-auto group-data-[state=open]:rotate-180" />
               </Button>
             </CollapsibleTrigger>
           </div>
 
-          <CollapsibleContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4  p-2.5 ">
+          <CollapsibleContent className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4  p-2.5 ">
             {children}
           </CollapsibleContent>
         </Collapsible>

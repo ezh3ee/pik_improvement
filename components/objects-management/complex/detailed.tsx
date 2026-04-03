@@ -1,31 +1,52 @@
+import { fetchResidentialComplexAction } from "@/components/objects-management/complex/action";
 import CleanersPersonal from "@/components/objects-management/complex/cleaners-personal";
 import CollapsibleSection from "@/components/objects-management/complex/collapsible-section";
 import InfoItem from "@/components/objects-management/complex/info-item";
 import SeasonPersonal from "@/components/objects-management/complex/season-personal";
 import SeasonResources from "@/components/objects-management/complex/season-resources";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  ArchiveRestore,
   Building2,
   Car,
   ClipboardList,
+  Pencil,
   Ruler,
   Trees,
   Wrench,
 } from "lucide-react";
 
-export default function ComplexDetailed() {
+export default function ComplexDetailed({ complexId }: { complexId: string }) {
+  const queryClient = useQueryClient();
+
+  const complex = useQuery({
+    queryKey: ["complex", complexId],
+    queryFn: () => {
+      if (!complexId) return;
+      return fetchResidentialComplexAction(complexId);
+    },
+    enabled: !!complexId,
+    // staleTime: 1000 * 60 * 1,
+  });
+
   return (
-    <div className="border rounded-md p-4 mt-4 mb-4">
-      <header className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="border rounded-md p-4 mt-4 mb-4 group">
+      <header className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4 w-full relative">
         <div>
-          {/* <h1 className="text-xl font-bold tracking-tight text-zinc-900 dark:text-white mb-2"> */}
           <h1 className="text-xl font-semibold dark:text-white mb-2">
-            ЖК Ленинградский корпус
+            {complex?.data?.name}
           </h1>
+
           <div className="flex items-center gap-2 text-zinc-500 dark:text-zinc-400 bg-white dark:bg-zinc-900 px-3 py-1.5 rounded-full border border-zinc-200 dark:border-zinc-800 w-fit">
             <ClipboardList size={16} />
             <span className="text-sm font-medium">Подрядчик ИП Иванов</span>
           </div>
         </div>
+
+        <Pencil
+          className="absolute right-0 top-2 cursor-pointer text-zinc-500 hidden group-hover:block"
+          size={20}
+        />
       </header>
 
       {/* МКД */}
@@ -54,6 +75,12 @@ export default function ComplexDetailed() {
             subtitle="Кладовые/ОДС"
             icon={Wrench}
           />
+          <InfoItem
+            title="Количество лифтов"
+            value={2}
+            unit="шт"
+            icon={ArchiveRestore}
+          />
           <CleanersPersonal
             title="Штат уборщиков МКД"
             label="Постоянный состав"
@@ -79,7 +106,7 @@ export default function ComplexDetailed() {
 
         <CollapsibleSection title="Прилегающая территория" icon={Trees}>
           <InfoItem title="Общая площадь" value={1023} unit="м²" icon={Ruler} />
-          <InfoItem title="Ручная сборка" value={25} unit="м²" icon={Wrench} />
+          <InfoItem title="Ручная уборка" value={25} unit="м²" icon={Wrench} />
           <InfoItem
             title="Механическая уборка"
             value={43}

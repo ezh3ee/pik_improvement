@@ -12,10 +12,12 @@ type ComplexType = {
   complexId: string | null;
   isAddingGeometry: boolean;
   isGeometryAdded: boolean;
+  isComplexEditing: boolean;
   complexDraft: FormData | null;
   objectDraft: FormData | null;
   setStep: (step: Step) => void;
   setComplexId: (id: string) => void;
+  setComplexEditing: (value: boolean) => void;
   toggleAddingGeometry: () => void;
   setGeometryAdded: (value: boolean) => void;
   setComplexDraft: (draft: FormData) => void;
@@ -23,6 +25,7 @@ type ComplexType = {
   resetStore: () => Promise<void>;
   gotoFirstStep: () => void;
   gotoPreviousStep: () => void;
+  gotoNextStep: () => void;
 };
 
 const initialState = {
@@ -30,6 +33,7 @@ const initialState = {
   complexId: null,
   isAddingGeometry: false,
   isGeometryAdded: false,
+  isComplexEditing: false,
   complexDraft: null,
   objectDraft: null,
 };
@@ -43,6 +47,9 @@ export const useComplexStore = create<ComplexType>()(
       },
       setComplexId(id: string) {
         set(() => ({ complexId: id }));
+      },
+      setComplexEditing(value: boolean) {
+        set(() => ({ isComplexEditing: value }));
       },
       toggleAddingGeometry() {
         set((state) => ({ isAddingGeometry: !state.isAddingGeometry }));
@@ -74,6 +81,15 @@ export const useComplexStore = create<ComplexType>()(
             ([key]) => Step[key as keyof typeof Step] === state.step,
           );
           return { step: entries[current - 1][1] };
+        });
+      },
+      gotoNextStep: () => {
+        set((state) => {
+          const entries = Object.entries(Step);
+          const current = entries.findIndex(
+            ([key]) => Step[key as keyof typeof Step] === state.step,
+          );
+          return { step: entries[current + 1][1] };
         });
       },
     }),
