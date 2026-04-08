@@ -5,6 +5,7 @@ export enum Step {
   None = "none",
   ComplexAdd = "complex-add", // add new complex
   ObjectAdd = "object-add", // add new object
+  ObjectCard = "object-card",
 }
 
 type ComplexType = {
@@ -14,6 +15,7 @@ type ComplexType = {
   isGeometryAdded: boolean;
   isComplexEditing: boolean;
   objectIdToEdit: string | null;
+  objectIdToCard: string | null;
   complexDraft: FormData | null;
   objectDraft: FormData | null;
   setStep: (step: Step) => void;
@@ -24,6 +26,7 @@ type ComplexType = {
   setComplexDraft: (draft: FormData) => void;
   setObjectDraft: (draft: FormData) => void;
   setObjectIdToEdit: (id: string | null) => void;
+  setObjectIdToCard: (id: string | null) => void;
   resetStore: () => Promise<void>;
   gotoFirstStep: () => void;
   gotoPreviousStep: () => void;
@@ -39,6 +42,7 @@ const initialState = {
   complexDraft: null,
   objectDraft: null,
   objectIdToEdit: null,
+  objectIdToCard: null,
 };
 
 export const useComplexStore = create<ComplexType>()(
@@ -68,6 +72,9 @@ export const useComplexStore = create<ComplexType>()(
       },
       setObjectIdToEdit(id: string | null) {
         set(() => ({ objectIdToEdit: id }));
+      },
+      setObjectIdToCard(id: string | null) {
+        set(() => ({ objectIdToCard: id }));
       },
       resetStore: async () => {
         set(() => ({

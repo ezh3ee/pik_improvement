@@ -40,11 +40,6 @@ export default function ComplexDetailed({ complexId }: { complexId: string }) {
             <span className="text-sm font-medium">Подрядчик ИП Иванов</span>
           </div>
         </div>
-
-        {/* <Pencil
-          className="absolute right-0 top-2 cursor-pointer text-zinc-500 hidden group-hover:block"
-          size={20}
-        /> */}
       </header>
 
       {/* МКД */}

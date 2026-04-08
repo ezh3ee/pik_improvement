@@ -36,7 +36,9 @@ import { dataObjectToFormData } from "@/lib/client-utils";
 import { SubObjectType } from "@/lib/generated/prisma/enums";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Geometry as GeoJsonGeometry } from "geojson";
 import { HousePlusIcon } from "lucide-react";
+import { useEffect } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import z from "zod";
 
@@ -48,6 +50,7 @@ export default function SubobjectsForm({
   const complexId = useComplexStore((state) => state.complexId) as string;
   const objectIdToEdit = useComplexStore((state) => state.objectIdToEdit);
   const setObjectIdToEdit = useComplexStore((state) => state.setObjectIdToEdit);
+  const isAddingGeometry = useComplexStore((state) => state.isAddingGeometry);
 
   const queryClient = useQueryClient();
   const { convertToDb, convertFromDb } = useCombine();
@@ -57,7 +60,6 @@ export default function SubobjectsForm({
 
   const geometry =
     (object?.geometry && JSON.parse(object.geometry as string)) || null;
-  console.log("geometry", geometry);
 
   const {
     handleSubmit,
@@ -67,6 +69,7 @@ export default function SubobjectsForm({
     setError,
     clearErrors,
     getValues,
+    resetField,
   } = useForm<z.infer<typeof subobjectSchema>>({
     resolver: zodResolver(subobjectSchema),
     values: {
@@ -149,6 +152,15 @@ export default function SubobjectsForm({
       value: SubobjectEnum.GARAGE,
     },
   ];
+
+  useEffect(() => {
+    if (isAddingGeometry) {
+      console.log("reset field");
+      resetField("geometry", {
+        defaultValue: null as unknown as GeoJsonGeometry,
+      });
+    }
+  }, [isAddingGeometry, resetField]);
 
   // useEffect(() => {
   //   const values = {

@@ -21,10 +21,10 @@ export default function SubobjectsStep() {
     staleTime: 1000 * 60 * 5,
   });
 
-  if (isLoading) return "Загрузка...";
+  if (isLoading) return <span>Загрузка...</span>;
 
   if (isError || !complex) {
-    return setStep(Step.ComplexAdd);
+    return <>{setStep(Step.ComplexAdd)}</>;
   }
 
   const titleStyle =

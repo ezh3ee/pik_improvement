@@ -1,4 +1,4 @@
-import { useComplexStore } from "@/components/map/state/complex-store";
+import { Step, useComplexStore } from "@/components/map/state/complex-store";
 import { SubObjectFull } from "@/components/objects-management/subobjects/action";
 import {
   mapSubobjectType,
@@ -14,6 +14,8 @@ import { ChevronDownIcon } from "lucide-react";
 
 export default function CollapsibleItem({ object }: { object: SubObjectFull }) {
   const setObjectIdToEdit = useComplexStore((state) => state.setObjectIdToEdit);
+  const setObjectIdToCard = useComplexStore((state) => state.setObjectIdToCard);
+  const setStep = useComplexStore((state) => state.setStep);
 
   return (
     <Collapsible
@@ -28,7 +30,15 @@ export default function CollapsibleItem({ object }: { object: SubObjectFull }) {
       </CollapsibleTrigger>
       <CollapsibleContent className="flex flex-col items-start gap-2 p-2.5 pt-0 text-sm">
         <div>{mapSubobjectType(object.type as SubobjectEnum)}</div>
-        <Button size="xs">Подробно</Button>
+        <Button
+          size="xs"
+          onClick={() => (
+            setObjectIdToCard(object.id),
+            setStep(Step.ObjectCard)
+          )}
+        >
+          Подробно
+        </Button>
         <Button
           size="xs"
           variant="outline"

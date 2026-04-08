@@ -34,7 +34,7 @@ export default function CollapsibleSection({
             </CollapsibleTrigger>
           </div>
 
-          <CollapsibleContent className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4  p-2.5 ">
+          <CollapsibleContent className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4  p-2.5 ">
             {children}
           </CollapsibleContent>
         </Collapsible>

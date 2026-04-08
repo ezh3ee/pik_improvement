@@ -14,10 +14,7 @@ export default function MapLeftSide() {
 
   return (
     isVisible && (
-      <div
-        className="left-side pr-4"
-        // style={{ display: isVisible ? "block" : "none" }}
-      >
+      <div className="left-side pr-4">
         <ScrollArea className="h-[86vh]">
           <MapGeoreference />
           {!isGeoRefVisible && <ObjectsCreation />}
