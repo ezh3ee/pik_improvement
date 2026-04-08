@@ -95,9 +95,11 @@ export default function ResidentialComplexForm() {
     return () => {};
   }, [reset]);
 
+  if (!complexId) return null;
+
   return (
     <div>
-      <ComplexDetailed />
+      <ComplexDetailed complexId={complexId} />
       <form
         onSubmit={handleSubmit(onSubmit)}
         onReset={resetForm}
