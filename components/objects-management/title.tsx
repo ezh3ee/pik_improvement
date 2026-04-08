@@ -6,7 +6,8 @@ export default function StepTitle() {
 
   const title = {
     [Step.ComplexAdd]: complexId ? "Редактирование ЖК" : "Добавление ЖК",
-    [Step.ObjectAdd]: "Добавление объектов",
+    [Step.ObjectAdd]: "Объекты",
+    [Step.ObjectCard]: "Карточка объекта",
     [Step.None]: "",
   }[step];
 

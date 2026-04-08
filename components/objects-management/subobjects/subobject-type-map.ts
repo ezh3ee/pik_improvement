@@ -1,3 +1,5 @@
+import { SubObjectType } from "@/lib/generated/prisma/enums";
+
 export enum SubobjectEnum {
   MKD = "MKD",
   ODH = "ODH",
@@ -10,6 +12,6 @@ export const SUBOBJECT_TYPE_MAPPER: Record<string, string> = {
   GARAGE: "Гараж",
 };
 
-export function mapSubobjectType(type: SubobjectEnum) {
+export function mapSubobjectType(type: SubObjectType | SubobjectEnum) {
   return SUBOBJECT_TYPE_MAPPER[type];
 }

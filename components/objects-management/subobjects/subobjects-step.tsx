@@ -28,11 +28,11 @@ export default function SubobjectsStep() {
   }
 
   const titleStyle =
-    "relative rounded bg-mutedpy-[0.2rem] scroll-m-20 text-xl font-semibold tracking-tight mt-2 mb-2";
+    "relative rounded bg-mutedpy-[0.2rem] scroll-m-20 text-xl font-semibold tracking-tight mt-2 mb-2 border-b border-gray-200 pb-2";
 
   return (
     <>
-      <h4 className={titleStyle}>{`Наименование ЖК: ${complex.name}`}</h4>
+      <h4 className={titleStyle}>{`ЖК: ${complex.name}`}</h4>
 
       <CollapsibleList />
 

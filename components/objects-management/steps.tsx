@@ -1,7 +1,7 @@
 import { Step, useComplexStore } from "@/components/map/state/complex-store";
 import ComplexStep from "@/components/objects-management/complex/complex-step";
 import SubobjectsStep from "@/components/objects-management/subobjects/subobjects-step";
-import SubobjectDetailed from "./subobjects/detailed";
+import SubobjectDetailed from "./subobjects/detailed/detailed";
 
 export default function ComplexSteps() {
   const step = useComplexStore((state) => state.step);

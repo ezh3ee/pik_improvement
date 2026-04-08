@@ -25,7 +25,7 @@ export default function ComplexToggleBtn() {
       }}
       variant="outline"
     >
-      Добавление ЖК
+      Объекты
     </Button>
   ) : (
     <Button
