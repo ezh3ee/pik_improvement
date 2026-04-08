@@ -10,7 +10,6 @@ import {
   Building2,
   Car,
   ClipboardList,
-  Pencil,
   Ruler,
   Trees,
   Wrench,
@@ -20,9 +19,8 @@ export default function ComplexDetailed({ complexId }: { complexId: string }) {
   const queryClient = useQueryClient();
 
   const complex = useQuery({
-    queryKey: ["complex", complexId],
+    queryKey: ["complexes", complexId],
     queryFn: () => {
-      if (!complexId) return;
       return fetchResidentialComplexAction(complexId);
     },
     enabled: !!complexId,
@@ -30,7 +28,7 @@ export default function ComplexDetailed({ complexId }: { complexId: string }) {
   });
 
   return (
-    <div className="border rounded-md p-4 mt-4 mb-4 group">
+    <div className="border rounded-md p-4 mt-4 mb-4">
       <header className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4 w-full relative">
         <div>
           <h1 className="text-xl font-semibold dark:text-white mb-2">
@@ -43,10 +41,10 @@ export default function ComplexDetailed({ complexId }: { complexId: string }) {
           </div>
         </div>
 
-        <Pencil
+        {/* <Pencil
           className="absolute right-0 top-2 cursor-pointer text-zinc-500 hidden group-hover:block"
           size={20}
-        />
+        /> */}
       </header>
 
       {/* МКД */}

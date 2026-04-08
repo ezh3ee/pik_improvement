@@ -60,7 +60,8 @@ export default function useCombine() {
       //   return f;
       // });
     },
-    [format],
+    // [format],
+    [],
   );
 
   return { convertToDb, convertFromDb };

@@ -3,6 +3,7 @@ import { InputFieldError } from "@/components/errors/input-field";
 import { Step, useComplexStore } from "@/components/map/state/complex-store";
 import {
   addResidentialComplexAction,
+  fetchResidentialComplexAction,
   updateResidentialComplexAction,
 } from "@/components/objects-management/complex/action";
 import { complexSchema } from "@/components/objects-management/complex/schema";
@@ -14,31 +15,36 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { Spinner } from "@/components/ui/spinner";
+import { useClearFormFields } from "@/hooks/use-clear-form-fields";
 import { dataObjectToFormData } from "@/lib/client-utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { HousePlusIcon } from "lucide-react";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
-type ResidentialComplexFetched = {
-  id: string;
-  name: string;
-};
-
-export default function ComplexForm({
-  complex,
-  isEditing,
-}: {
-  complex?: ResidentialComplexFetched;
-  isEditing?: boolean;
-}) {
+export default function ComplexForm() {
   const setStep = useComplexStore((state) => state.setStep);
   const setComplexId = useComplexStore((state) => state.setComplexId);
   const queryClient = useQueryClient();
+  const complexId = useComplexStore((state) => state.complexId);
+  const isEditing = useComplexStore((state) => state.isComplexEditing);
+  const setComplexEditing = useComplexStore((state) => state.setComplexEditing);
 
-  const { handleSubmit, formState, reset, control } = useForm<
+  const clearFields = useClearFormFields();
+
+  const { data: complex } = useQuery({
+    queryKey: ["complexes", complexId],
+    queryFn: () => {
+      if (!complexId) return;
+      return fetchResidentialComplexAction(complexId);
+    },
+    enabled: !!complexId,
+    // staleTime: 1000 * 60 * 1,
+  });
+
+  const { handleSubmit, reset, control, getValues } = useForm<
     z.infer<typeof complexSchema>
   >({
     resolver: zodResolver(complexSchema),
@@ -63,8 +69,8 @@ export default function ComplexForm({
       }
     },
     onSuccess: (newComplex) => {
+      queryClient.setQueryData(["complexes", newComplex.id], newComplex);
       queryClient.invalidateQueries({ queryKey: ["complexes"] });
-      queryClient.setQueryData(["complex", newComplex.id], newComplex);
       // queryClient.setQueryData(
       //   ["complexes"],
       //   (old: ResidentialComplexFetched[]) =>
@@ -74,6 +80,8 @@ export default function ComplexForm({
       if (!isEditing) {
         setComplexId(newComplex.id);
         setStep(Step.ObjectAdd);
+      } else {
+        setComplexEditing(false);
       }
     },
   });
@@ -82,10 +90,21 @@ export default function ComplexForm({
     mutation.mutate({ formData: dataObjectToFormData(data), id: complex?.id });
   }
 
-  const resetForm = useCallback(() => {
-    reset();
+  const resetForm = useCallback(
+    (values?: object) => {
+      reset(values);
+      return () => {};
+    },
+    [reset],
+  );
+
+  useEffect(() => {
+    if (!complex) {
+      resetForm(clearFields(getValues()));
+    }
+
     return () => {};
-  }, [reset]);
+  }, [complex, resetForm, clearFields, getValues]);
 
   return (
     <div>
@@ -104,7 +123,7 @@ export default function ComplexForm({
                 data-invalid={fieldState.invalid}
               >
                 <FieldLabel className="flex @5xl:flex w-auto!">
-                  Наименование
+                  Наименование ЖК
                 </FieldLabel>
 
                 <InputGroup>
@@ -130,12 +149,14 @@ export default function ComplexForm({
                 className="w-[20%]"
                 type="submit"
                 variant="default"
-                disabled={!formState.errors || mutation.isPending}
+                disabled={mutation.isPending}
               >
                 {mutation.isPending ? (
                   <Spinner className="size-5" />
+                ) : isEditing ? (
+                  "Сохранить"
                 ) : (
-                  "Добавить ЖК"
+                  "Добавить"
                 )}
               </Button>
             </div>

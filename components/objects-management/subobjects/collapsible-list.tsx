@@ -1,49 +1,46 @@
-import {
-  mapSubobjectType,
-  SubobjectEnum,
-} from "@/components/objects-management/subobjects/subobject-type-map";
-import { Button } from "@/components/ui/button";
+import { useComplexStore } from "@/components/map/state/complex-store";
+import { fetchSubobjectsAction } from "@/components/objects-management/subobjects/action";
+import CollapsibleItem from "@/components/objects-management/subobjects/collapsible-item";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { SubObjectBase } from "@/lib/generated/prisma/client";
-import { ChevronDownIcon } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 
-export default function CollapsibleSubobjectList({
-  objects,
-}: {
-  objects?: SubObjectBase[];
-}) {
+export default function CollapsibleSubobjectList() {
+  const complexId = useComplexStore((state) => state.complexId) as string;
+
+  const {
+    data: objects,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["objects"],
+    queryFn: () => fetchSubobjectsAction(complexId),
+    enabled: !!complexId,
+    staleTime: 1000 * 60 * 5,
+  });
+
+  const statusStyle = "text-xl text-muted-foreground mt-2 mb-2";
+
+  if (isLoading)
+    return <span className={statusStyle}>Поиск существующих объектов...</span>;
+
+  if (objects?.length === 0)
+    return <span className={statusStyle}>Не найдено объектов в ЖК</span>;
+
+  if (isError)
+    return (
+      <span className={statusStyle}>
+        Ошибка загрузки объектов. Попробуйте повторить позже.
+      </span>
+    );
+
   return (
     <Card className="w-full max-w-sm">
       {/* <CardContent className="space-y-2"> */}
       <CardContent className="space-y-2">
         <CardTitle>Найденные объекты</CardTitle>
-        {objects?.map((object) => {
-          return (
-            <Collapsible
-              className="rounded-md data-[state=open]:bg-muted"
-              key={object.id}
-            >
-              <CollapsibleTrigger asChild>
-                <Button variant="ghost" className="group w-full">
-                  {object.name}
-                  <ChevronDownIcon className="ml-auto group-data-[state=open]:rotate-180" />
-                </Button>
-              </CollapsibleTrigger>
-              <CollapsibleContent className="flex flex-col items-start gap-2 p-2.5 pt-0 text-sm">
-                <div>{mapSubobjectType(object.type as SubobjectEnum)}</div>
-                <Button size="xs">Подробно</Button>
-                <Button size="xs" variant="outline">
-                  Редактировать
-                </Button>
-              </CollapsibleContent>
-            </Collapsible>
-          );
-        })}
+        {objects?.map((object) => (
+          <CollapsibleItem object={object} key={object.id} />
+        ))}
       </CardContent>
     </Card>
   );

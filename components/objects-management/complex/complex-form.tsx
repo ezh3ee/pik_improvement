@@ -71,7 +71,8 @@ export default function ResidentialComplexForm() {
     },
     onSuccess: (newComplex) => {
       queryClient.invalidateQueries({ queryKey: ["complexes"] });
-      queryClient.setQueryData(["complex", newComplex.id], newComplex);
+      // queryClient.setQueryData(["complex", newComplex.id], newComplex);
+      queryClient.setQueryData(["complexes", newComplex.id], newComplex);
       // queryClient.setQueryData(
       //   ["complexes"],
       //   (old: ResidentialComplexFetched[]) =>

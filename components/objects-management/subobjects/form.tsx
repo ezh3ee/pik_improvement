@@ -3,7 +3,12 @@
 import { InputFieldError } from "@/components/errors/input-field";
 import useCombine from "@/components/map/hooks/use-combine";
 import useRenderGeometryFromDb from "@/components/map/hooks/use-render-geometry-from-db";
-import { addSubobjectAction } from "@/components/objects-management/subobjects/action";
+import { useComplexStore } from "@/components/map/state/complex-store";
+import {
+  addSubobjectAction,
+  editSubobjectAction,
+  SubObjectFull,
+} from "@/components/objects-management/subobjects/action";
 import UploadGeometryButton from "@/components/objects-management/subobjects/buttons/upload-geometry-button";
 import {
   SubobjectEnum,
@@ -26,35 +31,57 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
+import { useClearFormFields } from "@/hooks/use-clear-form-fields";
 import { dataObjectToFormData } from "@/lib/client-utils";
+import { SubObjectType } from "@/lib/generated/prisma/enums";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Geometry as GeoJsonGeometry } from "geojson";
 import { HousePlusIcon } from "lucide-react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import z from "zod";
 
-export default function SubobjectsAddForm({
-  complexId,
+export default function SubobjectsForm({
+  object,
 }: {
-  complexId: string;
+  object?: SubObjectFull | null;
 }) {
+  const complexId = useComplexStore((state) => state.complexId) as string;
+  const objectIdToEdit = useComplexStore((state) => state.objectIdToEdit);
+  const setObjectIdToEdit = useComplexStore((state) => state.setObjectIdToEdit);
+
   const queryClient = useQueryClient();
-  const { convertToDb } = useCombine();
+  const { convertToDb, convertFromDb } = useCombine();
+  const clearFields = useClearFormFields();
 
   const renderGeometryFromDb = useRenderGeometryFromDb();
 
-  const { handleSubmit, reset, control, setValue, setError, clearErrors } =
-    useForm<z.infer<typeof subobjectSchema>>({
-      resolver: zodResolver(subobjectSchema),
-      defaultValues: {
-        name: "",
-        complexId: complexId,
-        type: "" as unknown as SubobjectEnum,
-        geometry: null as unknown as GeoJsonGeometry,
-      },
-      mode: "onChange",
-    });
+  const geometry =
+    (object?.geometry && JSON.parse(object.geometry as string)) || null;
+  console.log("geometry", geometry);
+
+  const {
+    handleSubmit,
+    reset,
+    control,
+    setValue,
+    setError,
+    clearErrors,
+    getValues,
+  } = useForm<z.infer<typeof subobjectSchema>>({
+    resolver: zodResolver(subobjectSchema),
+    values: {
+      name: object?.name || "",
+      complexId: complexId,
+      type: object?.type || ("" as unknown as SubObjectType),
+      geometry:
+        // (object?.geometry as unknown as GeoJsonGeometry) ||
+        // geometry || (null as unknown as GeoJsonGeometry),
+        geometry,
+    },
+    mode: "onChange",
+  });
+
+  console.log(getValues());
 
   const geometryValue = useWatch({
     control,
@@ -62,16 +89,33 @@ export default function SubobjectsAddForm({
   });
 
   const mutation = useMutation({
-    mutationFn: addSubobjectAction,
+    mutationFn: ({
+      formData,
+      id,
+    }: {
+      formData: FormData;
+      id?: string | null;
+    }) => {
+      if (id) {
+        return editSubobjectAction(id, formData);
+      } else {
+        return addSubobjectAction(formData);
+      }
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["objects"] });
+
+      if (objectIdToEdit) setObjectIdToEdit(null);
 
       reset();
     },
   });
 
   function onSubmit(data: z.infer<typeof subobjectSchema>) {
-    mutation.mutate(dataObjectToFormData(data));
+    mutation.mutate({
+      formData: dataObjectToFormData(data),
+      id: object?.id,
+    });
   }
 
   function renderGeometryOnMap() {
@@ -106,12 +150,28 @@ export default function SubobjectsAddForm({
     },
   ];
 
+  // useEffect(() => {
+  //   const values = {
+  //     ...clearFields(getValues()),
+  //     complexId: complexId,
+  //     geometry: null as unknown as GeoJsonGeometry,
+  //   };
+
+  //   if (!object) {
+  //     reset(values);
+  //     // reset({
+  //     //   name: "",
+  //     //   type: "" as unknown as SubobjectEnum,
+  //     //   geometry: null as unknown as GeoJsonGeometry,
+  //     // });
+  //   }
+
+  //   return () => {};
+  // }, [clearFields, getValues, object, reset, complexId]);
+
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 @container">
-        {/* <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight text-center">
-          Добавление строительного объекта
-        </h3> */}
         <div className="grid grid-cols-12 gap-4">
           <Controller
             control={control}
@@ -205,10 +265,26 @@ export default function SubobjectsAddForm({
               >
                 {mutation.isPending ? (
                   <Spinner className="size-5" />
+                ) : objectIdToEdit ? (
+                  "Редактировать"
                 ) : (
-                  "Добавить объект"
+                  "Добавить"
                 )}
               </Button>
+              {objectIdToEdit && (
+                <Button
+                  className="w-[20%]"
+                  variant="outline"
+                  disabled={mutation.isPending}
+                  onClick={() => (setObjectIdToEdit(null), reset())}
+                >
+                  {mutation.isPending ? (
+                    <Spinner className="size-5" />
+                  ) : (
+                    "Отменить"
+                  )}
+                </Button>
+              )}
             </div>
           </Field>
 

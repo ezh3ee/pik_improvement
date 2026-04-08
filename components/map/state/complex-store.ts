@@ -13,6 +13,7 @@ type ComplexType = {
   isAddingGeometry: boolean;
   isGeometryAdded: boolean;
   isComplexEditing: boolean;
+  objectIdToEdit: string | null;
   complexDraft: FormData | null;
   objectDraft: FormData | null;
   setStep: (step: Step) => void;
@@ -22,6 +23,7 @@ type ComplexType = {
   setGeometryAdded: (value: boolean) => void;
   setComplexDraft: (draft: FormData) => void;
   setObjectDraft: (draft: FormData) => void;
+  setObjectIdToEdit: (id: string | null) => void;
   resetStore: () => Promise<void>;
   gotoFirstStep: () => void;
   gotoPreviousStep: () => void;
@@ -36,6 +38,7 @@ const initialState = {
   isComplexEditing: false,
   complexDraft: null,
   objectDraft: null,
+  objectIdToEdit: null,
 };
 
 export const useComplexStore = create<ComplexType>()(
@@ -62,6 +65,9 @@ export const useComplexStore = create<ComplexType>()(
       },
       setObjectDraft(draft: FormData) {
         set(() => ({ objectDraft: draft }));
+      },
+      setObjectIdToEdit(id: string | null) {
+        set(() => ({ objectIdToEdit: id }));
       },
       resetStore: async () => {
         set(() => ({

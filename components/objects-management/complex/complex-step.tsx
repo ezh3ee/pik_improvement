@@ -12,10 +12,11 @@ export default function ComplexStep() {
   const isComplexEditing = useComplexStore((state) => state.isComplexEditing);
 
   const isFormVisible = !complexId || isComplexEditing;
+  const isCardVisible = complexId && !isComplexEditing;
 
   return (
     <div>
-      {complexId && <ComplexDetailed complexId={complexId} />}
+      {isCardVisible && <ComplexDetailed complexId={complexId} />}
       {isFormVisible && <ComplexForm />}
     </div>
   );
