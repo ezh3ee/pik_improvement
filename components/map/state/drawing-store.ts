@@ -6,11 +6,13 @@ type DrawingStore = {
   isDrawing: boolean;
   isCutting: boolean;
   isModifying: boolean;
+  isViewing: boolean;
   differenceMode: boolean;
   storedFeatures: GeoJSONFeature[] | [];
   toggleDrawing: () => void;
   toggleCutting: () => void;
   toggleModifying: () => void;
+  toggleViewing: () => void;
   toggleDifferenceMode: () => void;
   turnoffAllIntercations: () => void;
   addFeature: (feature: GeoJSONFeature) => void;
@@ -22,6 +24,7 @@ const initialMode = {
   isDrawing: false,
   isCutting: false,
   isModifying: false,
+  isViewing: false,
   differenceMode: false,
 };
 
@@ -29,6 +32,7 @@ const initialState = {
   isDrawing: false,
   isCutting: false,
   isModifying: false,
+  isViewing: false,
   differenceMode: false,
   storedFeatures: [],
 };
@@ -43,6 +47,8 @@ export const useDrawingStore = create<DrawingStore>()(
         set((state) => ({ ...initialMode, isCutting: !state.isCutting })),
       toggleModifying: () =>
         set((state) => ({ ...initialMode, isModifying: !state.isModifying })),
+      toggleViewing: () =>
+        set((state) => ({ ...initialMode, isViewing: !state.isViewing })),
       toggleDifferenceMode: () =>
         set((state) => ({ differenceMode: !state.differenceMode })),
       addFeature: (feature) =>
@@ -64,10 +70,11 @@ export const useDrawingStore = create<DrawingStore>()(
         await useDrawingStore.persist.clearStorage();
       },
       turnoffAllIntercations: async () => {
-        set((state) => ({
+        set(() => ({
           isDrawing: false,
           isModifying: false,
           isCutting: false,
+          isViewing: false,
         }));
       },
     }),

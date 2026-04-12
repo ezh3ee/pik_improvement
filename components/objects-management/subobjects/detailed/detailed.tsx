@@ -1,4 +1,6 @@
+import useRenderGeometryFromDb from "@/components/map/hooks/use-render-geometry-from-db";
 import { useComplexStore } from "@/components/map/state/complex-store";
+import { useDrawingStore } from "@/components/map/state/drawing-store";
 import { fetchSubobject } from "@/components/objects-management/subobjects/action";
 import AddressBlock from "@/components/objects-management/subobjects/detailed/address-block";
 import MkdBlock from "@/components/objects-management/subobjects/detailed/mkd-block";
@@ -7,9 +9,18 @@ import SummerBlock from "@/components/objects-management/subobjects/detailed/sum
 import TerritoryBlock from "@/components/objects-management/subobjects/detailed/territory-block";
 import WinterBlock from "@/components/objects-management/subobjects/detailed/winter-block";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 
 export default function SubobjectDetailed() {
   const objectIdToCard = useComplexStore((state) => state.objectIdToCard);
+
+  const resetDrawingStore = useDrawingStore((state) => state.resetStore);
+  const toggleViewing = useDrawingStore((state) => state.toggleViewing);
+  const turnoffAllIntercations = useDrawingStore(
+    (state) => state.turnoffAllIntercations,
+  );
+
+  const renderGeometryFromDb = useRenderGeometryFromDb();
 
   const {
     data: object,
@@ -24,6 +35,23 @@ export default function SubobjectDetailed() {
     enabled: !!objectIdToCard,
     staleTime: 1000 * 60 * 5,
   });
+
+  useEffect(() => {
+    if (typeof object?.geometry !== "string" || !object) return;
+    renderGeometryFromDb({ geojson: JSON.parse(object.geometry) });
+    toggleViewing();
+
+    return () => {
+      resetDrawingStore();
+      turnoffAllIntercations();
+    };
+  }, [
+    object,
+    renderGeometryFromDb,
+    resetDrawingStore,
+    toggleViewing,
+    turnoffAllIntercations,
+  ]);
 
   if (isLoading) return <span>Загрузка объекта...</span>;
   if (isError || !object) return <span>Ошибка загрузки объекта</span>;

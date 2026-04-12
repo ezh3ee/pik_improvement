@@ -1,6 +1,7 @@
 import { ZIndexes } from "@/components/map/components/config/z-indexes";
+import useRenderFromStored from "@/components/map/hooks/use-render-from-stored";
 import { useDrawingStore } from "@/components/map/state/drawing-store";
-import { Feature, Map } from "ol";
+import { Map } from "ol";
 import { singleClick } from "ol/events/condition";
 import GeoJSON, { GeoJSONFeature } from "ol/format/GeoJSON";
 import { Geometry, MultiPoint, SimpleGeometry } from "ol/geom";
@@ -26,6 +27,8 @@ export default function useModifying({ map, isReady }: UseDrawingProps) {
 
   const storedFeatures = useDrawingStore((state) => state.storedFeatures);
   const updateFeature = useDrawingStore((state) => state.updateFeature);
+
+  const renderFromStored = useRenderFromStored();
 
   useEffect(() => {
     if (!map || !isReady) return;
@@ -121,11 +124,12 @@ export default function useModifying({ map, isReady }: UseDrawingProps) {
       // traceSource: baseVector.getSource(),
     });
 
-    storedFeatures.forEach((feature) => {
-      const f = format.readFeature(feature) as Feature<Geometry>;
-      f.setId(feature.id);
-      vectorSource.addFeature(f);
-    });
+    // storedFeatures.forEach((feature) => {
+    //   const f = format.readFeature(feature) as Feature<Geometry>;
+    //   f.setId(feature.id);
+    //   vectorSource.addFeature(f);
+    // });
+    renderFromStored({ vectorSource });
 
     const modifyHandler = (event: ModifyEvent) => {
       const feature = event.features?.item(0);

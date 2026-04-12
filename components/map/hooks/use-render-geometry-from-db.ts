@@ -14,42 +14,11 @@ export default function useRenderGeometryFromDb() {
     ({ geojson }: { geojson: GeoJsonGeometry }) => {
       if (!isReady || !geojson || !map) return;
 
-      // const format = new GeoJSON();
-
       const collection = convertFromDb(geojson);
 
       collection.forEach((feature) => {
         addFeatureToStore(feature);
       });
-
-      // const vectorLayer = map
-      //   .getLayers()
-      //   .getArray()
-      //   .find((layer) => {
-      //     if (
-      //       layer instanceof VectorLayer &&
-      //       layer.get("name") === "drawing-layer"
-      //     ) {
-      //       return layer;
-      //     }
-      //   });
-
-      // if (vectorLayer instanceof VectorLayer && vectorLayer) {
-      //   const collection = convertFromDb(geojson as unknown as GeoJsonGeometry);
-
-      //   const vectorSource = vectorLayer.getSource();
-      //   collection.forEach((feature) => {
-      //     const f = format.readFeature(feature) as Feature<Geometry>;
-      //     f.setId(crypto.randomUUID());
-      //     vectorSource.addFeature(f);
-      //   });
-
-      //   addFeatureToStore({
-      //     type: "Feature",
-      //     geometry: geojson,
-      //     properties: {},
-      //   } as GeoJSONFeature);
-      // }
     },
     [map, isReady, addFeatureToStore, convertFromDb],
   );

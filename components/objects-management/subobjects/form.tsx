@@ -84,8 +84,6 @@ export default function SubobjectsForm({
     mode: "onChange",
   });
 
-  console.log(getValues());
-
   const geometryValue = useWatch({
     control,
     name: "geometry",
@@ -155,7 +153,6 @@ export default function SubobjectsForm({
 
   useEffect(() => {
     if (isAddingGeometry) {
-      console.log("reset field");
       resetField("geometry", {
         defaultValue: null as unknown as GeoJsonGeometry,
       });

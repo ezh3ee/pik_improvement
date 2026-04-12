@@ -1,6 +1,7 @@
 import { ZIndexes } from "@/components/map/components/config/z-indexes";
 import useCombine from "@/components/map/hooks/use-combine";
 import useDifference from "@/components/map/hooks/use-difference";
+import useRenderFromStored from "@/components/map/hooks/use-render-from-stored";
 import { useDrawingStore } from "@/components/map/state/drawing-store";
 import { Feature, Map } from "ol";
 import GeoJSON, { GeoJSONFeature } from "ol/format/GeoJSON";
@@ -29,6 +30,7 @@ export default function useDrawing({ map, isReady }: UseDrawingProps) {
   const storedFeatures = useDrawingStore((state) => state.storedFeatures);
 
   const { convertToDb, convertFromDb } = useCombine();
+  const renderFromStored = useRenderFromStored();
 
   useEffect(() => {
     if (!map || !isReady) return;
@@ -69,14 +71,7 @@ export default function useDrawing({ map, isReady }: UseDrawingProps) {
       snapTolerance: 5,
     });
 
-    if (storedFeatures && storedFeatures.length > 0) {
-      // console.log(сonvertFromDb(geojsonMock as unknown as GeoJsonGeometry));
-      storedFeatures.forEach((feature) => {
-        const f = format.readFeature(feature) as Feature<Geometry>;
-        f.setId(feature.id);
-        vectorSource.addFeature(f);
-      });
-    }
+    renderFromStored({ vectorSource });
 
     const drawEndHandler = (event: DrawEvent) => {
       const justDrawnFeature = difference(

@@ -1,10 +1,10 @@
 import { ZIndexes } from "@/components/map/components/config/z-indexes";
+import useRenderFromStored from "@/components/map/hooks/use-render-from-stored";
 import { useDrawingStore } from "@/components/map/state/drawing-store";
 import DrawHoleTurf from "@/lib/map/draw-hole";
-import { Feature, Map } from "ol";
+import { Map } from "ol";
 import { pointerMove } from "ol/events/condition";
 import GeoJSON, { GeoJSONFeature } from "ol/format/GeoJSON";
-import { Geometry } from "ol/geom";
 import { DrawEvent } from "ol/interaction/Draw";
 import Select from "ol/interaction/Select";
 import VectorLayer from "ol/layer/Vector";
@@ -23,6 +23,8 @@ export default function useDrawHole({ map, isReady }: UseDrawHoleProps) {
 
   const storedFeatures = useDrawingStore((state) => state.storedFeatures);
   const updateFeature = useDrawingStore((state) => state.updateFeature);
+
+  const renderFromStored = useRenderFromStored();
 
   useEffect(() => {
     if (!map || !isReady || storedFeatures.length === 0) return;
@@ -45,11 +47,12 @@ export default function useDrawHole({ map, isReady }: UseDrawHoleProps) {
       zIndex: ZIndexes.Intercations,
     });
 
-    storedFeatures.forEach((feature) => {
-      const f = format.readFeature(feature) as Feature<Geometry>;
-      f.setId(feature.id);
-      vectorSource.addFeature(f);
-    });
+    // storedFeatures.forEach((feature) => {
+    //   const f = format.readFeature(feature) as Feature<Geometry>;
+    //   f.setId(feature.id);
+    //   vectorSource.addFeature(f);
+    // });
+    renderFromStored({ vectorSource });
 
     const drawhole = new DrawHoleTurf({
       layers: [drawVector],
