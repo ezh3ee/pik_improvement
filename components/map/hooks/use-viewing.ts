@@ -15,7 +15,7 @@ type UseDrawingProps = {
   isReady: boolean;
 };
 
-export default function useDrawing({ map, isReady }: UseDrawingProps) {
+export default function useViewing({ map, isReady }: UseDrawingProps) {
   const drawVectorRef = useRef<VectorLayer>(null);
   const snapRef = useRef<Snap>(null);
   const drawRef = useRef<Draw>(null);

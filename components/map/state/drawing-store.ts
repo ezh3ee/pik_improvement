@@ -9,6 +9,7 @@ type DrawingStore = {
   isViewing: boolean;
   differenceMode: boolean;
   storedFeatures: GeoJSONFeature[] | [];
+  extent: number[] | [];
   toggleDrawing: () => void;
   toggleCutting: () => void;
   toggleModifying: () => void;
@@ -16,6 +17,8 @@ type DrawingStore = {
   toggleDifferenceMode: () => void;
   turnoffAllIntercations: () => void;
   addFeature: (feature: GeoJSONFeature) => void;
+  addExtent: (extent: number[]) => void;
+  clearExtent: () => void;
   updateFeature: (feature: GeoJSONFeature) => void;
   resetStore: () => Promise<void>;
 };
@@ -35,6 +38,7 @@ const initialState = {
   isViewing: false,
   differenceMode: false,
   storedFeatures: [],
+  extent: [],
 };
 
 export const useDrawingStore = create<DrawingStore>()(
@@ -54,6 +58,14 @@ export const useDrawingStore = create<DrawingStore>()(
       addFeature: (feature) =>
         set((state) => ({
           storedFeatures: [...state.storedFeatures, feature],
+        })),
+      addExtent: (extent) =>
+        set(() => ({
+          extent: extent,
+        })),
+      clearExtent: () =>
+        set(() => ({
+          extent: [],
         })),
       updateFeature: (feature) =>
         set((state) => ({

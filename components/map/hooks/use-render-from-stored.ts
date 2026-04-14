@@ -18,6 +18,9 @@ export default function useRenderFromStored() {
           f.setId(feature.id);
           vectorSource.addFeature(f);
         });
+
+        // const extent = vectorSource.getFeatures()[0].getGeometry()?.getExtent();
+        // if (extent) addExtent(extent);
       }
     },
     [storedFeatures],

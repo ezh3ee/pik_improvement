@@ -1,3 +1,4 @@
+import useFitView from "@/components/map/hooks/use-fit-view";
 import useRenderGeometryFromDb from "@/components/map/hooks/use-render-geometry-from-db";
 import { useComplexStore } from "@/components/map/state/complex-store";
 import { useDrawingStore } from "@/components/map/state/drawing-store";
@@ -19,8 +20,10 @@ export default function SubobjectDetailed() {
   const turnoffAllIntercations = useDrawingStore(
     (state) => state.turnoffAllIntercations,
   );
+  const extent = useDrawingStore((state) => state.extent);
 
   const renderGeometryFromDb = useRenderGeometryFromDb();
+  const fitView = useFitView();
 
   const {
     data: object,
@@ -41,6 +44,10 @@ export default function SubobjectDetailed() {
     renderGeometryFromDb({ geojson: JSON.parse(object.geometry) });
     toggleViewing();
 
+    requestAnimationFrame(() => {
+      fitView();
+    });
+
     return () => {
       resetDrawingStore();
       turnoffAllIntercations();
@@ -51,6 +58,8 @@ export default function SubobjectDetailed() {
     resetDrawingStore,
     toggleViewing,
     turnoffAllIntercations,
+    fitView,
+    extent,
   ]);
 
   if (isLoading) return <span>Загрузка объекта...</span>;
