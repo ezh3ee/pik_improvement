@@ -2,7 +2,7 @@
 
 import { InputFieldError } from "@/components/errors/input-field";
 import useCombine from "@/components/map/hooks/use-combine";
-import useRenderGeometryFromDb from "@/components/map/hooks/use-render-geometry-from-db";
+import useRenderGeometryFromDb from "@/components/map/hooks/use-convert-geometry-from-db";
 import { useComplexStore } from "@/components/map/state/complex-store";
 import {
   addSubobjectAction,

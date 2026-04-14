@@ -1,5 +1,5 @@
+import useConvertGeometryFromDb from "@/components/map/hooks/use-convert-geometry-from-db";
 import useFitView from "@/components/map/hooks/use-fit-view";
-import useRenderGeometryFromDb from "@/components/map/hooks/use-render-geometry-from-db";
 import { useComplexStore } from "@/components/map/state/complex-store";
 import { useDrawingStore } from "@/components/map/state/drawing-store";
 import { fetchSubobject } from "@/components/objects-management/subobjects/action";
@@ -22,7 +22,7 @@ export default function SubobjectDetailed() {
   );
   const extent = useDrawingStore((state) => state.extent);
 
-  const renderGeometryFromDb = useRenderGeometryFromDb();
+  const convertGeometryFromDb = useConvertGeometryFromDb();
   const fitView = useFitView();
 
   const {
@@ -41,20 +41,23 @@ export default function SubobjectDetailed() {
 
   useEffect(() => {
     if (typeof object?.geometry !== "string" || !object) return;
-    renderGeometryFromDb({ geojson: JSON.parse(object.geometry) });
+    const extent = convertGeometryFromDb({
+      geojson: JSON.parse(object.geometry),
+    });
     toggleViewing();
 
-    requestAnimationFrame(() => {
-      fitView();
+    const reqAnimationId = requestAnimationFrame(() => {
+      fitView({ externalExtent: extent });
     });
 
     return () => {
       resetDrawingStore();
       turnoffAllIntercations();
+      cancelAnimationFrame(reqAnimationId);
     };
   }, [
     object,
-    renderGeometryFromDb,
+    convertGeometryFromDb,
     resetDrawingStore,
     toggleViewing,
     turnoffAllIntercations,
