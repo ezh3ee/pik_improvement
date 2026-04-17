@@ -5,6 +5,7 @@ import {
   Step as ComplexStep,
   useComplexStore,
 } from "@/components/map/state/complex-store";
+import { useGeoreferenceStore } from "@/components/map/state/georeference-store";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -20,6 +21,10 @@ import { Fragment } from "react/jsx-runtime";
 export function Breadcrumbs() {
   const currentObjectStep = useComplexStore((state) => state.step);
   const setComplexStep = useComplexStore((state) => state.setStep);
+  const isGeorefVisible = useGeoreferenceStore((state) => state.isVisible);
+  const toggleGeoRefVisibility = useGeoreferenceStore(
+    (state) => state.toggleVisible,
+  );
 
   let segments = useSelectedLayoutSegments();
   segments = [...segments];
@@ -40,7 +45,10 @@ export function Breadcrumbs() {
               BREADCRUMBS_CONFIG[segment]?.onClick(e, {
                 segment,
                 url,
-                action: () => setComplexStep(ComplexStep.None),
+                action: () => {
+                  setComplexStep(ComplexStep.None);
+                  if (isGeorefVisible) toggleGeoRefVisibility();
+                },
               });
             }
           };

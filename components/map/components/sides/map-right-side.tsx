@@ -1,4 +1,5 @@
 import DrawingInteractions from "@/components/map/components/controls/drawing-interactions";
+import GeocoderInput from "@/components/map/components/controls/geocoder/geocoder-input";
 import MainControls from "@/components/map/components/controls/main-controls";
 import MainIntercations from "@/components/map/components/controls/main-intercations";
 import MapList from "@/components/map/components/map-list/map-list";
@@ -21,6 +22,7 @@ export default function MapRightSide() {
       <SatteliteLayer />
       <CadasterTileLayer />
       {/* controls */}
+      <GeocoderInput />
       <MainControls />
       {/* interactions */}
       <MainIntercations />
