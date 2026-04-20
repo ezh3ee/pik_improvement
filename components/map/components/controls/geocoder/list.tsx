@@ -5,20 +5,25 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 export default function GeocoderList({
   addresses,
+  onSelect,
 }: {
   addresses: GeocoderResponseDto;
+  onSelect: () => void;
 }) {
   const centerViewByCoords = useCenterViewByCoords();
 
   return (
     <div className="flex w-[250px] max-w-md flex-col">
       <ScrollArea className="flex max-h-40 flex-col">
-        {addresses.results.map((item) => (
+        {addresses.results.map((item, i) => (
           <Item
             variant="outline"
             className="bg-white cursor-pointer"
-            key={`${item.lat}-${item.lon}`}
-            onClick={() => centerViewByCoords(item.lon, item.lat)}
+            key={`${item.lat}-${item.lon}_${i}`}
+            onClick={() => {
+              centerViewByCoords(item.lon, item.lat);
+              onSelect();
+            }}
           >
             <ItemContent>
               <ItemTitle>{item.address}</ItemTitle>

@@ -25,6 +25,10 @@ export default function GeocoderInput() {
     retry: false,
   });
 
+  const onSelect = () => {
+    setAddress("");
+  };
+
   return (
     <div className="absolute top-2 left-12">
       <Field orientation="horizontal">
@@ -34,6 +38,7 @@ export default function GeocoderInput() {
             placeholder="Поиск по адресу..."
             className="bg-white"
             type="search"
+            value={address}
             onChange={(event) => setAddress(event.target.value)}
           />
         </ButtonGroup>
@@ -43,6 +48,7 @@ export default function GeocoderInput() {
           addresses={addresses}
           isError={isError}
           isLoading={isFetching}
+          onSelect={onSelect}
         />
       )}
     </div>

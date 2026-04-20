@@ -8,14 +8,17 @@ export default function GeocoderListContainer({
   addresses,
   isError,
   isLoading,
+  onSelect,
 }: {
   addresses: GeocoderResponseDto | undefined;
   isError: boolean;
   isLoading: boolean;
+  onSelect: () => void;
 }) {
   return (
     <AnimatePresence mode="wait">
       <motion.div
+        layout
         initial={{ opacity: 0, width: "0%", maxWidth: "250px" }}
         animate={{
           opacity: 1,
@@ -40,11 +43,10 @@ export default function GeocoderListContainer({
           },
           opacity: { duration: 0.15 },
         }}
-        // className="left-side items-center justify-center flex flex-col gap-2"
         className="h-full items-center justify-center flex flex-col gap-2"
       >
         {addresses && addresses.results.length > 0 && !isLoading && (
-          <GeocoderList addresses={addresses} />
+          <GeocoderList addresses={addresses} onSelect={onSelect} />
         )}
         {(isError || !addresses?.results.length) && !isLoading && (
           <GeocoderListError
