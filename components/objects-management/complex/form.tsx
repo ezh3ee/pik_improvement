@@ -9,17 +9,12 @@ import {
 import { complexSchema } from "@/components/objects-management/complex/schema";
 import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-} from "@/components/ui/input-group";
+import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
 import { Spinner } from "@/components/ui/spinner";
 import { useClearFormFields } from "@/hooks/use-clear-form-fields";
 import { dataObjectToFormData } from "@/lib/client-utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { HousePlusIcon } from "lucide-react";
 import { useCallback, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -134,9 +129,9 @@ export default function ComplexForm() {
                     className=""
                     {...field}
                   />
-                  <InputGroupAddon align="inline-start">
+                  {/* <InputGroupAddon align="inline-start">
                     <HousePlusIcon className="size-4" strokeWidth={2} />
-                  </InputGroupAddon>
+                  </InputGroupAddon> */}
                 </InputGroup>
 
                 <InputFieldError fieldState={fieldState} />

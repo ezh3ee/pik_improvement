@@ -20,7 +20,7 @@ export async function addResidentialComplexAction(formData: FormData) {
   }
 
   try {
-    const complex = await prisma.residentialComplex.create({
+    const complex = await prisma.complex.create({
       data: {
         name: validatedFields.data.name,
       },
@@ -45,7 +45,7 @@ export async function updateResidentialComplexAction(
   }
 
   try {
-    const complex = await prisma.residentialComplex.update({
+    const complex = await prisma.complex.update({
       where: {
         id,
       },
@@ -63,7 +63,7 @@ export async function updateResidentialComplexAction(
 
 export async function fetchResidentialComplexAction(id: string) {
   try {
-    const complex = await prisma.residentialComplex.findUnique({
+    const complex = await prisma.complex.findUnique({
       where: {
         id,
       },

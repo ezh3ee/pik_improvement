@@ -10,18 +10,14 @@ import {
   SubObjectFull,
 } from "@/components/objects-management/subobjects/action";
 import UploadGeometryButton from "@/components/objects-management/subobjects/buttons/upload-geometry-button";
+import { subobjectSchema } from "@/components/objects-management/subobjects/schema";
 import {
+  mapSubobjectType,
   SubobjectEnum,
-  subobjectSchema,
-} from "@/components/objects-management/subobjects/schema";
-import { mapSubobjectType } from "@/components/objects-management/subobjects/subobject-type-map";
+} from "@/components/objects-management/subobjects/subobject-type-map";
 import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-} from "@/components/ui/input-group";
+import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
 import {
   Select,
   SelectContent,
@@ -31,13 +27,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
-import { useClearFormFields } from "@/hooks/use-clear-form-fields";
 import { dataObjectToFormData } from "@/lib/client-utils";
 import { SubObjectType } from "@/lib/generated/prisma/enums";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Geometry as GeoJsonGeometry } from "geojson";
-import { HousePlusIcon } from "lucide-react";
 import { useEffect } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import z from "zod";
@@ -53,8 +47,7 @@ export default function SubobjectsForm({
   const isAddingGeometry = useComplexStore((state) => state.isAddingGeometry);
 
   const queryClient = useQueryClient();
-  const { convertToDb, convertFromDb } = useCombine();
-  const clearFields = useClearFormFields();
+  const { convertToDb } = useCombine();
 
   const renderGeometryFromDb = useRenderGeometryFromDb();
 
@@ -68,7 +61,6 @@ export default function SubobjectsForm({
     setValue,
     setError,
     clearErrors,
-    getValues,
     resetField,
   } = useForm<z.infer<typeof subobjectSchema>>({
     resolver: zodResolver(subobjectSchema),
@@ -76,6 +68,9 @@ export default function SubobjectsForm({
       name: object?.name || "",
       complexId: complexId,
       type: object?.type || ("" as unknown as SubObjectType),
+      buildAddress: object?.buildAddress || "",
+      postAddress: object?.postAddress || "",
+      payer: object?.payer || "",
       geometry:
         // (object?.geometry as unknown as GeoJsonGeometry) ||
         // geometry || (null as unknown as GeoJsonGeometry),
@@ -202,9 +197,100 @@ export default function SubobjectsForm({
                     className=""
                     {...field}
                   />
-                  <InputGroupAddon align="inline-start">
+                  {/* <InputGroupAddon align="inline-start">
                     <HousePlusIcon className="size-4" strokeWidth={2} />
-                  </InputGroupAddon>
+                  </InputGroupAddon> */}
+                </InputGroup>
+
+                <InputFieldError fieldState={fieldState} />
+              </Field>
+            )}
+          />
+
+          <Controller
+            control={control}
+            name="buildAddress"
+            render={({ field, fieldState }) => (
+              <Field
+                className="col-span-12 col-start-auto @5xl:col-start-auto flex self-end flex-col gap-2 space-y-0 items-start"
+                data-invalid={fieldState.invalid}
+              >
+                <FieldLabel className="flex @5xl:flex w-auto!">
+                  Строительный адрес <span className="text-red-500">*</span>
+                </FieldLabel>
+
+                <InputGroup>
+                  <InputGroupInput
+                    key="text-input-0"
+                    placeholder=""
+                    type="text"
+                    className=""
+                    {...field}
+                  />
+                  {/* <InputGroupAddon align="inline-start">
+                    <HousePlusIcon className="size-4" strokeWidth={2} />
+                  </InputGroupAddon> */}
+                </InputGroup>
+
+                <InputFieldError fieldState={fieldState} />
+              </Field>
+            )}
+          />
+
+          <Controller
+            control={control}
+            name="postAddress"
+            render={({ field, fieldState }) => (
+              <Field
+                className="col-span-12 col-start-auto @5xl:col-start-auto flex self-end flex-col gap-2 space-y-0 items-start"
+                data-invalid={fieldState.invalid}
+              >
+                <FieldLabel className="flex @5xl:flex w-auto!">
+                  Почтовый адрес <span className="text-red-500">*</span>
+                </FieldLabel>
+
+                <InputGroup>
+                  <InputGroupInput
+                    key="text-input-0"
+                    placeholder=""
+                    type="text"
+                    className=""
+                    {...field}
+                  />
+                  {/* <InputGroupAddon align="inline-start">
+                    <HousePlusIcon className="size-4" strokeWidth={2} />
+                  </InputGroupAddon> */}
+                </InputGroup>
+
+                <InputFieldError fieldState={fieldState} />
+              </Field>
+            )}
+          />
+
+          <Controller
+            control={control}
+            name="payer"
+            render={({ field, fieldState }) => (
+              <Field
+                className="col-span-12 col-start-auto @5xl:col-start-auto flex self-end flex-col gap-2 space-y-0 items-start"
+                data-invalid={fieldState.invalid}
+              >
+                <FieldLabel className="flex @5xl:flex w-auto!">
+                  Наименование плательщика{" "}
+                  <span className="text-red-500">*</span>
+                </FieldLabel>
+
+                <InputGroup>
+                  <InputGroupInput
+                    key="text-input-0"
+                    placeholder=""
+                    type="text"
+                    className=""
+                    {...field}
+                  />
+                  {/* <InputGroupAddon align="inline-start">
+                    <HousePlusIcon className="size-4" strokeWidth={2} />
+                  </InputGroupAddon> */}
                 </InputGroup>
 
                 <InputFieldError fieldState={fieldState} />

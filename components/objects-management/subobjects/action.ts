@@ -32,7 +32,10 @@ export async function addSubobjectAction(formData: FormData) {
           typeof validatedFields.data.geometry === "string"
             ? validatedFields.data.geometry
             : JSON.stringify(validatedFields.data.geometry),
-        residentialComplexId: validatedFields.data.complexId,
+        complexId: validatedFields.data.complexId,
+        buildAddress: validatedFields.data.buildAddress,
+        postAddress: validatedFields.data.postAddress,
+        payer: validatedFields.data.payer,
       },
     });
 
@@ -80,7 +83,7 @@ export async function fetchSubobjectsAction(complexId: string) {
   try {
     const subobjects = await prisma.subObjectBase.findMany({
       where: {
-        residentialComplexId: complexId,
+        complexId: complexId,
       },
       include: subObjectInclude,
     });

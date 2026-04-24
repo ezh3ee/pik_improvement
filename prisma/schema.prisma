@@ -97,29 +97,32 @@ model Verification {
 /**
  */
 
-model ResidentialComplex {
+model Complex {
   id         String          @id @default(uuid())
   name       String
   subObjects SubObjectBase[]
 
-  @@map("residential_complex")
+  // @@map("residential_complex")
 }
 
 model SubObjectBase {
-  id       String        @id @default(uuid())
-  name     String
+  id           String        @id @default(uuid())
+  name         String
   // coordinates Float[]
-  geometry Json
-  type     SubObjectType
+  geometry     Json
+  type         SubObjectType
+  buildAddress String
+  postAddress  String
+  payer        String
 
-  residentialComplexId String
-  complex              ResidentialComplex @relation(fields: [residentialComplexId], references: [id])
+  complexId String
+  complex   Complex @relation(fields: [complexId], references: [id])
 
   apartmentDetails MKD?
   garageDetails    Garage?
   odhDetails       ODH?
 
-  @@index([residentialComplexId])
+  @@index([complexId])
 }
 
 enum SubObjectType {
@@ -129,22 +132,119 @@ enum SubObjectType {
 }
 
 model MKD {
+  // main
+
   id              String        @id @default(uuid())
-  address         String
+  // address         String
   subObjectBaseId String        @unique
   subObjectBase   SubObjectBase @relation(fields: [subObjectBaseId], references: [id])
+
+  // char-s
+  buildingFootprintArea Float? //Площадь застройки дома	
+  sectionsCount         Int? // Кол-во секций	
+  floorsCount           Int? // Кол-во этажей
+  elevatorsCount        Int? // Кол-во лифтов
+  garbageChamberCount   Int? // Кол-во мусорокамер
+  commonAreaFloor1      Float? // МОП 1 этажа
+  commonAreaFloor2Plus  Float? // МОП выше 2 этажа
+  commonAreaStorage     Float? // МОП Кладовых
+  technicalRoomsArea    Float? // Площадь тех. помещений
+  odsArea               Float? // Площадь ОДС
+  garbageChamberArea    Float? // Площадь мусорокамер
+  cleaningStaffCount    Int? // Кол-во сотрудников (Уборщик МОП)
+  cleaningFrequency     String? // Периодичность уборки МОП
+
+  // parking
+  parking Parking?
+
+  // territory
+  territory MKDTerritory?
+}
+
+// MKD RElated
+model MKDTerritory {
+  id    String @id @default(uuid())
+  mkdId String @unique
+  mkd   MKD    @relation(fields: [mkdId], references: [id])
+
+  totalArea                Float? // Общая площадь
+  manualCleaningArea       Float? // Ручная уборка
+  greeningArea             Float? // Площадь озеленения
+  mechanizedCleaningArea   Float? // Механизированная уборка
+  cleaningStaffCountSummer Int? // Кол-во сотрудников - Летний период
+  equipmentCountSummer     Int? // Кол-во техники - Летний период
+  cleaningStaffCountWinter Int? // Кол-во сотрудников - Зимний период
+  equipmentCountWinter     Int? // Кол-во техники - Зимний период
+}
+
+// mkd related
+model Parking {
+  id    String @id @default(uuid())
+  mkdId String @unique
+  mkd   MKD    @relation(fields: [mkdId], references: [id])
+
+  parkingSpacesCount        Int? // Кол-во машиномест
+  floorsCount               Int? // Кол-во этажей (подземных)
+  elevatorHallStaircaseArea Float? // Уборочная площадь лифтового холла + лестничная клетка
+  parkingSpacesCleaningArea Float? // Уборочная площадь машиномест
+  drivewaysRampArea         Float? // Уборочная площадь проездов + рамп
+  technicalRoomsArea        Float? // Площадь тех. помещений
+  cleaningStaffCountSummer  Int? // Кол-во сотрудников - Летний период
+  cleaningStaffCountWinter  Int? // Кол-во сотрудников - Зимний период
+  cleaningFrequencySummer   String? // Периодичность уборки - Летний период
+  cleaningFrequencyWinter   String? // Периодичность уборки - Зимний период
 }
 
 model Garage {
   id              String        @id @default(uuid())
-  address         String
+  // address         String
   subObjectBaseId String        @unique
   subObjectBase   SubObjectBase @relation(fields: [subObjectBaseId], references: [id])
+
+  parkingSpacesCount        Int? // Кол-во машиномест
+  floorsCount               Int? // Кол-во этажей
+  elevatorHallStaircaseArea Float? // Уборочная площадь лифтового холла + лестничная клетка
+  parkingSpacesCleaningArea Float? // Уборочная площадь машиномест
+  drivewaysRampArea         Float? // Уборочная площадь проездов + рамп
+  technicalRoomsArea        Float? // Площадь тех. помещений
+  elevatorsCount            Int? // Кол-во лифтов
+  cleaningStaffCountSummer  Int? // Кол-во сотрудников - Летний период
+  cleaningStaffCountWinter  Int? // Кол-во сотрудников - Зимний период
+  cleaningFrequencySummer   String? // Периодичность уборки МОП - Летний период
+  cleaningFrequencyWinter   String? // Периодичность уборки МОП - Зимний период
+
+  // Прилегающая территория гаража
+  territory GarageTerritory?
+}
+
+// garage related
+model GarageTerritory {
+  id       String @id @default(uuid())
+  garageId String @unique
+  garage   Garage @relation(fields: [garageId], references: [id])
+
+  totalArea                Float? // Общая площадь
+  manualCleaningArea       Float? // Ручная уборка
+  greeningArea             Float? // Площадь озеленения
+  mechanizedCleaningArea   Float? // Механизированная уборка
+  cleaningStaffCountSummer Int? // Кол-во сотрудников - Летний период
+  equipmentCountSummer     Int? // Кол-во техники - Летний период
+  cleaningStaffCountWinter Int? // Кол-во сотрудников - Зимний период
+  equipmentCountWinter     Int? // Кол-во техники - Зимний период
 }
 
 model ODH {
   id              String        @id @default(uuid())
-  address         String
+  // address         String
   subObjectBaseId String        @unique
   subObjectBase   SubObjectBase @relation(fields: [subObjectBaseId], references: [id])
+
+  totalArea                Float? // Общая площадь
+  manualCleaningArea       Float? // Ручная уборка
+  greeningArea             Float? // Площадь озеленения
+  mechanizedCleaningArea   Float? // Механизированная уборка
+  cleaningStaffCountSummer Int? // Кол-во сотрудников - Летний период
+  equipmentCountSummer     Int? // Кол-во техники - Летний период
+  cleaningStaffCountWinter Int? // Кол-во сотрудников - Зимний период
+  equipmentCountWinter     Int? // Кол-во техники - Зимний период
 }
