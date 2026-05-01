@@ -2,7 +2,7 @@
 
 import { useComplexStore } from "@/components/map/state/complex-store";
 import { fetchSubobject } from "@/components/objects-management/subobjects/action";
-import SubobjectsForm from "@/components/objects-management/subobjects/form";
+import SubobjectsMainForm from "@/components/objects-management/subobjects/form/main-form";
 import { useQuery } from "@tanstack/react-query";
 
 export default function SubobjectsFormContainer() {
@@ -30,5 +30,5 @@ export default function SubobjectsFormContainer() {
   if (isError)
     return <span className={statusStyle}>Ошибка загрузки объекта</span>;
 
-  return <SubobjectsForm object={object} />;
+  return <SubobjectsMainForm object={object} />;
 }

@@ -1,5 +1,8 @@
 import { Step, useComplexStore } from "@/components/map/state/complex-store";
-import { SubObjectFull } from "@/components/objects-management/subobjects/action";
+import {
+  deleteSubobjectAction,
+  SubObjectFull,
+} from "@/components/objects-management/subobjects/action";
 import {
   mapSubobjectType,
   SubobjectEnum,
@@ -10,12 +13,25 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ChevronDownIcon } from "lucide-react";
 
 export default function CollapsibleItem({ object }: { object: SubObjectFull }) {
   const setObjectIdToEdit = useComplexStore((state) => state.setObjectIdToEdit);
   const setObjectIdToCard = useComplexStore((state) => state.setObjectIdToCard);
   const setStep = useComplexStore((state) => state.setStep);
+  const objectIdToEdit = useComplexStore((state) => state.objectIdToEdit);
+
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: ({ id }: { id: string }) => deleteSubobjectAction(id),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["objects"] });
+
+      if (objectIdToEdit && variables.id === objectIdToEdit)
+        setObjectIdToEdit(null);
+    },
+  });
 
   return (
     <Collapsible
@@ -45,6 +61,14 @@ export default function CollapsibleItem({ object }: { object: SubObjectFull }) {
           onClick={() => setObjectIdToEdit(object.id)}
         >
           Редактировать
+        </Button>
+        <Button
+          size="xs"
+          variant="destructive"
+          // onClick={() => deleteSubobjectAction(object.id)}
+          onClick={() => mutation.mutate({ id: object.id })}
+        >
+          Удалить
         </Button>
       </CollapsibleContent>
     </Collapsible>

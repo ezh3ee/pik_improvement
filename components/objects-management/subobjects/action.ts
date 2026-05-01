@@ -1,12 +1,12 @@
 "use server";
 
-import { subobjectSchema } from "@/components/objects-management/subobjects/schema";
-import { Prisma } from "@/lib/generated/prisma/client";
+import { fullSubObjectSchema } from "@/components/objects-management/subobjects/schema";
+import { Prisma, SubObjectType } from "@/lib/generated/prisma/client";
 import prisma from "@/lib/prisma";
 import { prismaKnownError } from "@/lib/server-utils";
 
 const subObjectInclude = {
-  apartmentDetails: true,
+  mkdDetails: true,
   garageDetails: true,
   odhDetails: true,
 } satisfies Prisma.SubObjectBaseInclude;
@@ -17,25 +17,40 @@ export type SubObjectFull = Prisma.SubObjectBaseGetPayload<{
 
 export async function addSubobjectAction(formData: FormData) {
   const rawFormData = Object.fromEntries(formData.entries());
-  const validatedFields = subobjectSchema.safeParse(rawFormData);
+  const validatedFields = fullSubObjectSchema.safeParse(rawFormData);
 
   if (!validatedFields.success) {
-    throw new Error("Ошибки валидации");
+    throw new Error(validatedFields.error.issues[0].message);
   }
+
+  const {
+    type,
+    name,
+    geometry,
+    complexId,
+    buildAddress,
+    postAddress,
+    payer,
+    ...rest
+  } = validatedFields.data;
 
   try {
     const subobject = await prisma.subObjectBase.create({
       data: {
-        name: validatedFields.data.name,
-        type: validatedFields.data.type,
+        name,
+        type,
         geometry:
-          typeof validatedFields.data.geometry === "string"
-            ? validatedFields.data.geometry
-            : JSON.stringify(validatedFields.data.geometry),
-        complexId: validatedFields.data.complexId,
-        buildAddress: validatedFields.data.buildAddress,
-        postAddress: validatedFields.data.postAddress,
-        payer: validatedFields.data.payer,
+          typeof geometry === "string" ? geometry : JSON.stringify(geometry),
+        complexId,
+        buildAddress,
+        postAddress,
+        payer,
+
+        ...(type === "MKD" && {
+          mkdDetails: {
+            create: { ...rest, parking: undefined, territory: undefined },
+          },
+        }),
       },
     });
 
@@ -50,26 +65,73 @@ export async function addSubobjectAction(formData: FormData) {
 
 export async function editSubobjectAction(id: string, formData: FormData) {
   const rawFormData = Object.fromEntries(formData.entries());
-  const validatedFields = subobjectSchema.safeParse(rawFormData);
+  const validatedFields = fullSubObjectSchema.safeParse(rawFormData);
 
   if (!validatedFields.success) {
-    throw new Error("Ошибки валидации");
+    throw new Error(validatedFields.error.issues[0].message);
   }
 
+  const {
+    type,
+    name,
+    geometry,
+    buildAddress,
+    postAddress,
+    payer,
+    complexId,
+    ...rest
+  } = validatedFields.data;
+
   try {
-    const subobject = await prisma.subObjectBase.update({
-      where: {
-        id: id,
-      },
-      data: {
-        name: validatedFields.data.name,
-        type: validatedFields.data.type,
-        geometry:
-          typeof validatedFields.data.geometry === "string"
-            ? validatedFields.data.geometry
-            : JSON.stringify(validatedFields.data.geometry),
-      },
+    const subobject = await prisma.$transaction(async (tx) => {
+      const current = await tx.subObjectBase.findUniqueOrThrow({
+        where: { id },
+        select: { type: true },
+      });
+
+      if (type !== current.type) {
+        await Promise.all([
+          tx.mKD.deleteMany({ where: { subObjectBaseId: id } }),
+          tx.garage.deleteMany({ where: { subObjectBaseId: id } }),
+          tx.oDH.deleteMany({ where: { subObjectBaseId: id } }),
+        ]);
+      }
+
+      await prisma.subObjectBase.update({
+        where: {
+          id: id,
+        },
+        data: {
+          name,
+          type,
+          geometry:
+            typeof geometry === "string" ? geometry : JSON.stringify(geometry),
+          buildAddress,
+          postAddress,
+          payer,
+        },
+      });
+
+      if (type === SubObjectType.MKD) {
+        await tx.mKD.upsert({
+          where: {
+            subObjectBaseId: id,
+          },
+          create: {
+            ...rest,
+            subObjectBaseId: id,
+            parking: undefined,
+            territory: undefined,
+          },
+          update: { ...rest, parking: undefined, territory: undefined },
+        });
+      }
+
+      return await tx.subObjectBase.findUniqueOrThrow({
+        where: { id },
+      });
     });
+
     return subobject;
   } catch (e) {
     console.error("Error editing subobject ", e);
@@ -112,5 +174,18 @@ export async function fetchSubobject(id: string) {
     prismaKnownError(e);
 
     throw "Объект не найден"; // TODO: add error handling
+  }
+}
+
+export async function deleteSubobjectAction(id: string) {
+  try {
+    return await prisma.subObjectBase.delete({
+      where: { id },
+    });
+  } catch (e) {
+    console.error("Error deleting subobject ", e);
+    prismaKnownError(e);
+
+    throw "Нельзя удалить объект"; // TODO: add error handling
   }
 }

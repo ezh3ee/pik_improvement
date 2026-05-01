@@ -75,3 +75,14 @@ export async function fetchResidentialComplexAction(id: string) {
     throw "ЖК не найден"; // TODO: add error handling
   }
 }
+
+export async function deleteResidentialComplexAction(id: string) {
+  try {
+    return await prisma.complex.delete({
+      where: { id },
+    });
+  } catch (e) {
+    console.error("Error deleting residential complex ", e);
+    throw "Нельзя удалить ЖК"; // TODO: add error handling
+  }
+}

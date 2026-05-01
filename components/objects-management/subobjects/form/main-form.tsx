@@ -10,7 +10,10 @@ import {
   SubObjectFull,
 } from "@/components/objects-management/subobjects/action";
 import UploadGeometryButton from "@/components/objects-management/subobjects/buttons/upload-geometry-button";
-import { subobjectSchema } from "@/components/objects-management/subobjects/schema";
+import {
+  fullSubObjectSchema,
+  subobjectSchema,
+} from "@/components/objects-management/subobjects/schema";
 import {
   mapSubobjectType,
   SubobjectEnum,
@@ -35,8 +38,9 @@ import { Geometry as GeoJsonGeometry } from "geojson";
 import { useEffect } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import z from "zod";
+import MkdForm from "./mkd-form";
 
-export default function SubobjectsForm({
+export default function SubobjectsMainForm({
   object,
 }: {
   object?: SubObjectFull | null;
@@ -62,8 +66,8 @@ export default function SubobjectsForm({
     setError,
     clearErrors,
     resetField,
-  } = useForm<z.infer<typeof subobjectSchema>>({
-    resolver: zodResolver(subobjectSchema),
+  } = useForm<z.infer<typeof fullSubObjectSchema>>({
+    resolver: zodResolver(fullSubObjectSchema),
     values: {
       name: object?.name || "",
       complexId: complexId,
@@ -71,6 +75,7 @@ export default function SubobjectsForm({
       buildAddress: object?.buildAddress || "",
       postAddress: object?.postAddress || "",
       payer: object?.payer || "",
+      buildingFootprintArea: object?.mkdDetails?.buildingFootprintArea || 1,
       geometry:
         // (object?.geometry as unknown as GeoJsonGeometry) ||
         // geometry || (null as unknown as GeoJsonGeometry),
@@ -82,6 +87,11 @@ export default function SubobjectsForm({
   const geometryValue = useWatch({
     control,
     name: "geometry",
+  });
+
+  const typeValue = useWatch({
+    control,
+    name: "type",
   });
 
   const mutation = useMutation({
@@ -154,25 +164,6 @@ export default function SubobjectsForm({
     }
   }, [isAddingGeometry, resetField]);
 
-  // useEffect(() => {
-  //   const values = {
-  //     ...clearFields(getValues()),
-  //     complexId: complexId,
-  //     geometry: null as unknown as GeoJsonGeometry,
-  //   };
-
-  //   if (!object) {
-  //     reset(values);
-  //     // reset({
-  //     //   name: "",
-  //     //   type: "" as unknown as SubobjectEnum,
-  //     //   geometry: null as unknown as GeoJsonGeometry,
-  //     // });
-  //   }
-
-  //   return () => {};
-  // }, [clearFields, getValues, object, reset, complexId]);
-
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 @container">
@@ -197,9 +188,6 @@ export default function SubobjectsForm({
                     className=""
                     {...field}
                   />
-                  {/* <InputGroupAddon align="inline-start">
-                    <HousePlusIcon className="size-4" strokeWidth={2} />
-                  </InputGroupAddon> */}
                 </InputGroup>
 
                 <InputFieldError fieldState={fieldState} />
@@ -227,9 +215,6 @@ export default function SubobjectsForm({
                     className=""
                     {...field}
                   />
-                  {/* <InputGroupAddon align="inline-start">
-                    <HousePlusIcon className="size-4" strokeWidth={2} />
-                  </InputGroupAddon> */}
                 </InputGroup>
 
                 <InputFieldError fieldState={fieldState} />
@@ -257,9 +242,6 @@ export default function SubobjectsForm({
                     className=""
                     {...field}
                   />
-                  {/* <InputGroupAddon align="inline-start">
-                    <HousePlusIcon className="size-4" strokeWidth={2} />
-                  </InputGroupAddon> */}
                 </InputGroup>
 
                 <InputFieldError fieldState={fieldState} />
@@ -288,9 +270,6 @@ export default function SubobjectsForm({
                     className=""
                     {...field}
                   />
-                  {/* <InputGroupAddon align="inline-start">
-                    <HousePlusIcon className="size-4" strokeWidth={2} />
-                  </InputGroupAddon> */}
                 </InputGroup>
 
                 <InputFieldError fieldState={fieldState} />
@@ -347,8 +326,9 @@ export default function SubobjectsForm({
                 </>
               )}
             />
-            {/* </div> */}
           </Field>
+
+          {typeValue === SubObjectType.MKD && <MkdForm control={control} />}
 
           <Field className="col-span-12 @5xl:col-span-12 col-start-auto flex self-end flex-col gap-2 space-y-0 items-start">
             <div className="flex justify-center">

@@ -3,7 +3,7 @@
 import { Step, useComplexStore } from "@/components/map/state/complex-store";
 import { fetchResidentialComplexAction } from "@/components/objects-management/complex/action";
 import CollapsibleList from "@/components/objects-management/subobjects/collapsible-list";
-import SubobjectsAddForm from "@/components/objects-management/subobjects/form-container";
+import SubobjectsAddForm from "@/components/objects-management/subobjects/form/form-container";
 import { useQuery } from "@tanstack/react-query";
 
 export default function SubobjectsStep() {

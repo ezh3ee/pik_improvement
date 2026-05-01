@@ -75,8 +75,12 @@ const parkingSchema = z.object({
 // MKD schema
 const mkdSchema = z.object({
   type: z.literal("MKD"),
-  buildingFootprintArea: z
-    .number({ error: "Площадь застройки должна быть числом" })
+  buildingFootprintArea: z.coerce
+    .number<number>({ error: "Площадь застройки должна быть числом" })
+    .int()
+    .refine((val) => val !== 0, {
+      message: "Значение площади застройки должно быть больше нуля",
+    })
     .optional(),
   sectionsCount: z
     .number({ error: "Кол-во секций должно быть числом" })

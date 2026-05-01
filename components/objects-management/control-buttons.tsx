@@ -1,19 +1,26 @@
 import { Step, useComplexStore } from "@/components/map/state/complex-store";
 import FormControlButton from "@/components/objects-management/subobjects/buttons/form-control-button";
 import { ButtonGroup } from "@/components/ui/button-group";
-import { QueryClient } from "@tanstack/react-query";
+import {
+  QueryClient,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import {
   ArrowLeft,
   ArrowRight,
   PanelLeftClose,
   Pencil,
   RotateCcw,
+  Trash,
 } from "lucide-react";
 import { useCallback } from "react";
+import { deleteResidentialComplexAction } from "./complex/action";
 
 export default function ComplexControlButtons() {
   const gotoPreviousStep = useComplexStore((state) => state.gotoPreviousStep);
   const gotoNextStep = useComplexStore((state) => state.gotoNextStep);
+  const gotoFirstStep = useComplexStore((state) => state.gotoFirstStep);
   const currentStep = useComplexStore((state) => state.step);
   const resetStore = useComplexStore((state) => state.resetStore);
   const complexId = useComplexStore((state) => state.complexId);
@@ -30,6 +37,15 @@ export default function ComplexControlButtons() {
     // gotoFirstStep();
     resetStore();
   }, [resetStore]);
+
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: ({ id }: { id: string }) => deleteResidentialComplexAction(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["complexes"] });
+      gotoFirstStep();
+    },
+  });
 
   return (
     <ButtonGroup className="flex justify-center">
@@ -52,6 +68,16 @@ export default function ComplexControlButtons() {
           action={() => setComplexEditing(true)}
         >
           <Pencil />
+        </FormControlButton>
+      )}
+
+      {currentStep === Step.ComplexAdd && complexId && (
+        <FormControlButton
+          text="Удалить ЖК"
+          action={() => mutation.mutate({ id: complexId })}
+          variant="destructive"
+        >
+          <Trash />
         </FormControlButton>
       )}
 
