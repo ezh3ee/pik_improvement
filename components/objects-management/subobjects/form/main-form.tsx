@@ -10,10 +10,7 @@ import {
   SubObjectFull,
 } from "@/components/objects-management/subobjects/action";
 import UploadGeometryButton from "@/components/objects-management/subobjects/buttons/upload-geometry-button";
-import {
-  fullSubObjectSchema,
-  subobjectSchema,
-} from "@/components/objects-management/subobjects/schema";
+import { fullSubObjectSchema } from "@/components/objects-management/subobjects/schema";
 import {
   mapSubobjectType,
   SubobjectEnum,
@@ -30,7 +27,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
-import { dataObjectToFormData } from "@/lib/client-utils";
 import { SubObjectType } from "@/lib/generated/prisma/enums";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -76,6 +72,11 @@ export default function SubobjectsMainForm({
       postAddress: object?.postAddress || "",
       payer: object?.payer || "",
       buildingFootprintArea: object?.mkdDetails?.buildingFootprintArea || 1,
+      parking: {
+        parkingSpacesCount:
+          object?.mkdDetails?.parking?.parkingSpacesCount || 1,
+      },
+      territory: { totalArea: object?.mkdDetails?.territory?.totalArea || 1 },
       geometry:
         // (object?.geometry as unknown as GeoJsonGeometry) ||
         // geometry || (null as unknown as GeoJsonGeometry),
@@ -96,16 +97,18 @@ export default function SubobjectsMainForm({
 
   const mutation = useMutation({
     mutationFn: ({
-      formData,
+      data,
       id,
     }: {
-      formData: FormData;
+      // formData: FormData;
+      data: z.infer<typeof fullSubObjectSchema>;
       id?: string | null;
     }) => {
       if (id) {
-        return editSubobjectAction(id, formData);
+        // return editSubobjectAction(id, formData);
+        return editSubobjectAction(id, data);
       } else {
-        return addSubobjectAction(formData);
+        return addSubobjectAction(data);
       }
     },
     onSuccess: () => {
@@ -117,9 +120,10 @@ export default function SubobjectsMainForm({
     },
   });
 
-  function onSubmit(data: z.infer<typeof subobjectSchema>) {
+  function onSubmit(data: z.infer<typeof fullSubObjectSchema>) {
     mutation.mutate({
-      formData: dataObjectToFormData(data),
+      // formData: dataObjectToFormData(data),
+      data,
       id: object?.id,
     });
   }

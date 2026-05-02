@@ -11,31 +11,87 @@ export default function MkdForm({
   control: Control<z.infer<typeof fullSubObjectSchema>>;
 }) {
   return (
-    <Controller
-      control={control}
-      name="buildingFootprintArea"
-      render={({ field, fieldState }) => (
-        <Field
-          className="col-span-12 col-start-auto @5xl:col-start-auto flex self-end flex-col gap-2 space-y-0 items-start"
-          data-invalid={fieldState.invalid}
-        >
-          <FieldLabel className="flex @5xl:flex w-auto!">
-            Площадь застройки <span className="text-red-500">*</span>
-          </FieldLabel>
+    <>
+      <Controller
+        control={control}
+        name="buildingFootprintArea"
+        render={({ field, fieldState }) => (
+          <Field
+            className="col-span-12 col-start-auto @5xl:col-start-auto flex self-end flex-col gap-2 space-y-0 items-start"
+            data-invalid={fieldState.invalid}
+          >
+            <FieldLabel className="flex @5xl:flex w-auto!">
+              Площадь застройки <span className="text-red-500">*</span>
+            </FieldLabel>
 
-          <InputGroup>
-            <InputGroupInput
-              key="text-input-0"
-              placeholder=""
-              type="number"
-              className=""
-              {...field}
-            />
-          </InputGroup>
+            <InputGroup>
+              <InputGroupInput
+                key="text-input-0"
+                placeholder=""
+                type="number"
+                className=""
+                {...field}
+              />
+            </InputGroup>
 
-          <InputFieldError fieldState={fieldState} />
-        </Field>
-      )}
-    />
+            <InputFieldError fieldState={fieldState} />
+          </Field>
+        )}
+      />
+
+      <Controller
+        control={control}
+        name="territory.totalArea"
+        render={({ field, fieldState }) => (
+          <Field
+            className="col-span-12 col-start-auto @5xl:col-start-auto flex self-end flex-col gap-2 space-y-0 items-start"
+            data-invalid={fieldState.invalid}
+          >
+            <FieldLabel className="flex @5xl:flex w-auto!">
+              Общая площадь <span className="text-red-500">*</span>
+            </FieldLabel>
+
+            <InputGroup>
+              <InputGroupInput
+                key="text-input-0"
+                placeholder=""
+                type="number"
+                className=""
+                {...field}
+              />
+            </InputGroup>
+
+            <InputFieldError fieldState={fieldState} />
+          </Field>
+        )}
+      />
+
+      <Controller
+        control={control}
+        name="parking.parkingSpacesCount"
+        render={({ field, fieldState }) => (
+          <Field
+            className="col-span-12 col-start-auto @5xl:col-start-auto flex self-end flex-col gap-2 space-y-0 items-start"
+            data-invalid={fieldState.invalid}
+          >
+            <FieldLabel className="flex @5xl:flex w-auto!">
+              Кол-во машиномест <span className="text-red-500">*</span>
+            </FieldLabel>
+
+            <InputGroup>
+              <InputGroupInput
+                key="text-input-0"
+                placeholder=""
+                type="number"
+                className=""
+                {...field}
+              />
+            </InputGroup>
+
+            <InputFieldError fieldState={fieldState} />
+          </Field>
+        )}
+      />
+    </>
   );
 }

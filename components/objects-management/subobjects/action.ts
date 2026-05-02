@@ -1,12 +1,21 @@
 "use server";
 
-import { fullSubObjectSchema } from "@/components/objects-management/subobjects/schema";
+import {
+  fullSubObjectSchema,
+  mkdSchema,
+} from "@/components/objects-management/subobjects/schema";
 import { Prisma, SubObjectType } from "@/lib/generated/prisma/client";
 import prisma from "@/lib/prisma";
 import { prismaKnownError } from "@/lib/server-utils";
+import z from "zod";
 
 const subObjectInclude = {
-  mkdDetails: true,
+  mkdDetails: {
+    include: {
+      parking: true,
+      territory: true,
+    },
+  },
   garageDetails: true,
   odhDetails: true,
 } satisfies Prisma.SubObjectBaseInclude;
@@ -15,9 +24,13 @@ export type SubObjectFull = Prisma.SubObjectBaseGetPayload<{
   include: typeof subObjectInclude;
 }>;
 
-export async function addSubobjectAction(formData: FormData) {
-  const rawFormData = Object.fromEntries(formData.entries());
-  const validatedFields = fullSubObjectSchema.safeParse(rawFormData);
+// export async function addSubobjectAction(formData: FormData) {
+export async function addSubobjectAction(
+  data: z.infer<typeof fullSubObjectSchema>,
+) {
+  // const rawFormData = Object.fromEntries(formData.entries());
+  // const validatedFields = fullSubObjectSchema.safeParse(rawFormData);
+  const validatedFields = fullSubObjectSchema.safeParse(data);
 
   if (!validatedFields.success) {
     throw new Error(validatedFields.error.issues[0].message);
@@ -33,6 +46,10 @@ export async function addSubobjectAction(formData: FormData) {
     payer,
     ...rest
   } = validatedFields.data;
+
+  const { territory, parking, ...mkdDetails } = rest as z.infer<
+    typeof mkdSchema
+  >;
 
   try {
     const subobject = await prisma.subObjectBase.create({
@@ -48,7 +65,12 @@ export async function addSubobjectAction(formData: FormData) {
 
         ...(type === "MKD" && {
           mkdDetails: {
-            create: { ...rest, parking: undefined, territory: undefined },
+            create: {
+              ...mkdDetails,
+              parking: { create: parking },
+              territory: { create: territory },
+            },
+            // create: { ...rest },
           },
         }),
       },
@@ -63,9 +85,14 @@ export async function addSubobjectAction(formData: FormData) {
   }
 }
 
-export async function editSubobjectAction(id: string, formData: FormData) {
-  const rawFormData = Object.fromEntries(formData.entries());
-  const validatedFields = fullSubObjectSchema.safeParse(rawFormData);
+// export async function editSubobjectAction(id: string, formData: FormData) {
+export async function editSubobjectAction(
+  id: string,
+  data: z.infer<typeof fullSubObjectSchema>,
+) {
+  // const rawFormData = Object.fromEntries(formData.entries());
+  // const validatedFields = fullSubObjectSchema.safeParse(rawFormData);
+  const validatedFields = fullSubObjectSchema.safeParse(data);
 
   if (!validatedFields.success) {
     throw new Error(validatedFields.error.issues[0].message);
@@ -81,6 +108,10 @@ export async function editSubobjectAction(id: string, formData: FormData) {
     complexId,
     ...rest
   } = validatedFields.data;
+
+  const { territory, parking, ...mkdDetails } = rest as z.infer<
+    typeof mkdSchema
+  >;
 
   try {
     const subobject = await prisma.$transaction(async (tx) => {
@@ -118,12 +149,16 @@ export async function editSubobjectAction(id: string, formData: FormData) {
             subObjectBaseId: id,
           },
           create: {
-            ...rest,
+            ...mkdDetails,
             subObjectBaseId: id,
-            parking: undefined,
-            territory: undefined,
+            parking: { create: parking },
+            territory: { create: territory },
           },
-          update: { ...rest, parking: undefined, territory: undefined },
+          update: {
+            ...mkdDetails,
+            parking: { update: parking },
+            territory: { update: territory },
+          },
         });
       }
 

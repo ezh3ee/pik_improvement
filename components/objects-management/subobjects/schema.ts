@@ -4,9 +4,13 @@ import { z } from "zod";
 
 // MKDTerritory schema
 const mkdTerritorySchema = z.object({
-  totalArea: z.number({ error: "Общая площадь должна быть числом" }).optional(),
-  manualCleaningArea: z
-    .number({ error: "Площадь ручной уборки должна быть числом" })
+  totalArea: z.coerce
+    .number<number>({ error: "Общая площадь должна быть числом" })
+    .int()
+    .optional(),
+  manualCleaningArea: z.coerce
+    .number<number>({ error: "Площадь ручной уборки должна быть числом" })
+    .int()
     .optional(),
   greeningArea: z
     .number({ error: "Площадь озеленения должна быть числом" })
@@ -34,8 +38,8 @@ const mkdTerritorySchema = z.object({
 
 // Parking schema
 const parkingSchema = z.object({
-  parkingSpacesCount: z
-    .number({ error: "Кол-во машиномест должно быть числом" })
+  parkingSpacesCount: z.coerce
+    .number<number>({ error: "Кол-во машиномест должно быть числом" })
     .int()
     .optional(),
   floorsCount: z
@@ -73,7 +77,7 @@ const parkingSchema = z.object({
 });
 
 // MKD schema
-const mkdSchema = z.object({
+export const mkdSchema = z.object({
   type: z.literal("MKD"),
   buildingFootprintArea: z.coerce
     .number<number>({ error: "Площадь застройки должна быть числом" })
