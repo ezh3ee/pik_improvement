@@ -10,6 +10,9 @@ import {
   SubObjectFull,
 } from "@/components/objects-management/subobjects/action";
 import UploadGeometryButton from "@/components/objects-management/subobjects/buttons/upload-geometry-button";
+import GarageForm from "@/components/objects-management/subobjects/form/garage-form";
+import MkdForm from "@/components/objects-management/subobjects/form/mkd-form";
+import OdhForm from "@/components/objects-management/subobjects/form/odh-form";
 import { fullSubObjectSchema } from "@/components/objects-management/subobjects/schema";
 import {
   mapSubobjectType,
@@ -34,7 +37,6 @@ import { Geometry as GeoJsonGeometry } from "geojson";
 import { useEffect } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import z from "zod";
-import MkdForm from "./mkd-form";
 
 export default function SubobjectsMainForm({
   object,
@@ -54,6 +56,43 @@ export default function SubobjectsMainForm({
   const geometry =
     (object?.geometry && JSON.parse(object.geometry as string)) || null;
 
+  const mainFormFields = {
+    name: object?.name || "",
+    complexId: complexId,
+    type: object?.type || ("" as unknown as SubObjectType),
+    buildAddress: object?.buildAddress || "",
+    postAddress: object?.postAddress || "",
+    payer: object?.payer || "",
+    geometry: geometry,
+  };
+
+  const mkdFields = {
+    buildingFootprintArea: object?.mkdDetails?.buildingFootprintArea || 1,
+    mkdParking: {
+      parkingSpacesCount: object?.mkdDetails?.parking?.parkingSpacesCount || 1,
+    },
+    mkdTerritory: { totalArea: object?.mkdDetails?.territory?.totalArea || 1 },
+  };
+
+  const garageFields = {
+    parkingSpacesCount: object?.garageDetails?.parkingSpacesCount || 1,
+    floorsCount: object?.garageDetails?.floorsCount || 1,
+    garageTerritory: {
+      totalArea: object?.garageDetails?.territory?.totalArea || 1,
+    },
+  };
+
+  const odhFields = {
+    totalArea: object?.odhDetails?.totalArea || 1,
+    manualCleaningArea: object?.odhDetails?.manualCleaningArea || 1,
+    greeningArea: object?.odhDetails?.greeningArea || 1,
+    mechanizedCleaningArea: object?.odhDetails?.mechanizedCleaningArea || 1,
+    cleaningStaffCountSummer: object?.odhDetails?.cleaningStaffCountSummer || 1,
+    equipmentCountSummer: object?.odhDetails?.equipmentCountSummer || 1,
+    cleaningStaffCountWinter: object?.odhDetails?.cleaningStaffCountWinter || 1,
+    equipmentCountWinter: object?.odhDetails?.equipmentCountWinter || 1,
+  };
+
   const {
     handleSubmit,
     reset,
@@ -65,22 +104,10 @@ export default function SubobjectsMainForm({
   } = useForm<z.infer<typeof fullSubObjectSchema>>({
     resolver: zodResolver(fullSubObjectSchema),
     values: {
-      name: object?.name || "",
-      complexId: complexId,
-      type: object?.type || ("" as unknown as SubObjectType),
-      buildAddress: object?.buildAddress || "",
-      postAddress: object?.postAddress || "",
-      payer: object?.payer || "",
-      buildingFootprintArea: object?.mkdDetails?.buildingFootprintArea || 1,
-      parking: {
-        parkingSpacesCount:
-          object?.mkdDetails?.parking?.parkingSpacesCount || 1,
-      },
-      territory: { totalArea: object?.mkdDetails?.territory?.totalArea || 1 },
-      geometry:
-        // (object?.geometry as unknown as GeoJsonGeometry) ||
-        // geometry || (null as unknown as GeoJsonGeometry),
-        geometry,
+      ...mainFormFields,
+      ...mkdFields,
+      ...garageFields,
+      ...odhFields,
     },
     mode: "onChange",
   });
@@ -105,7 +132,6 @@ export default function SubobjectsMainForm({
       id?: string | null;
     }) => {
       if (id) {
-        // return editSubobjectAction(id, formData);
         return editSubobjectAction(id, data);
       } else {
         return addSubobjectAction(data);
@@ -122,7 +148,6 @@ export default function SubobjectsMainForm({
 
   function onSubmit(data: z.infer<typeof fullSubObjectSchema>) {
     mutation.mutate({
-      // formData: dataObjectToFormData(data),
       data,
       id: object?.id,
     });
@@ -333,6 +358,10 @@ export default function SubobjectsMainForm({
           </Field>
 
           {typeValue === SubObjectType.MKD && <MkdForm control={control} />}
+          {typeValue === SubObjectType.GARAGE && (
+            <GarageForm control={control} />
+          )}
+          {typeValue === SubObjectType.ODH && <OdhForm control={control} />}
 
           <Field className="col-span-12 @5xl:col-span-12 col-start-auto flex self-end flex-col gap-2 space-y-0 items-start">
             <div className="flex justify-center">

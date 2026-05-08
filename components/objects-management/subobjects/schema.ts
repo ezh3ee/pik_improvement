@@ -12,26 +12,28 @@ const mkdTerritorySchema = z.object({
     .number<number>({ error: "Площадь ручной уборки должна быть числом" })
     .int()
     .optional(),
-  greeningArea: z
-    .number({ error: "Площадь озеленения должна быть числом" })
+  greeningArea: z.coerce
+    .number<number>({ error: "Площадь озеленения должна быть числом" })
     .optional(),
-  mechanizedCleaningArea: z
-    .number({ error: "Площадь механизированной уборки должна быть числом" })
+  mechanizedCleaningArea: z.coerce
+    .number<number>({
+      error: "Площадь механизированной уборки должна быть числом",
+    })
     .optional(),
-  cleaningStaffCountSummer: z
-    .number({ error: "Кол-во сотрудников (лето) должно быть числом" })
+  cleaningStaffCountSummer: z.coerce
+    .number<number>({ error: "Кол-во сотрудников (лето) должно быть числом" })
     .int()
     .optional(),
-  equipmentCountSummer: z
-    .number({ error: "Кол-во техники (лето) должно быть числом" })
+  equipmentCountSummer: z.coerce
+    .number<number>({ error: "Кол-во техники (лето) должно быть числом" })
     .int()
     .optional(),
-  cleaningStaffCountWinter: z
-    .number({ error: "Кол-во сотрудников (зима) должно быть числом" })
+  cleaningStaffCountWinter: z.coerce
+    .number<number>({ error: "Кол-во сотрудников (зима) должно быть числом" })
     .int()
     .optional(),
-  equipmentCountWinter: z
-    .number({ error: "Кол-во техники (зима) должно быть числом" })
+  equipmentCountWinter: z.coerce
+    .number<number>({ error: "Кол-во техники (зима) должно быть числом" })
     .int()
     .optional(),
 });
@@ -42,30 +44,34 @@ const parkingSchema = z.object({
     .number<number>({ error: "Кол-во машиномест должно быть числом" })
     .int()
     .optional(),
-  floorsCount: z
-    .number({ error: "Кол-во этажей должно быть числом" })
+  floorsCount: z.coerce
+    .number<number>({ error: "Кол-во этажей должно быть числом" })
     .int()
     .optional(),
-  elevatorHallStaircaseArea: z
-    .number({
+  elevatorHallStaircaseArea: z.coerce
+    .number<number>({
       error: "Площадь лифтового холла + лестничной клетки должна быть числом",
     })
     .optional(),
-  parkingSpacesCleaningArea: z
-    .number({ error: "Уборочная площадь машиномест должна быть числом" })
+  parkingSpacesCleaningArea: z.coerce
+    .number<number>({
+      error: "Уборочная площадь машиномест должна быть числом",
+    })
     .optional(),
-  drivewaysRampArea: z
-    .number({ error: "Уборочная площадь проездов + рамп должна быть числом" })
+  drivewaysRampArea: z.coerce
+    .number<number>({
+      error: "Уборочная площадь проездов + рамп должна быть числом",
+    })
     .optional(),
-  technicalRoomsArea: z
-    .number({ error: "Площадь тех. помещений должна быть числом" })
+  technicalRoomsArea: z.coerce
+    .number<number>({ error: "Площадь тех. помещений должна быть числом" })
     .optional(),
-  cleaningStaffCountSummer: z
-    .number({ error: "Кол-во сотрудников (лето) должно быть числом" })
+  cleaningStaffCountSummer: z.coerce
+    .number<number>({ error: "Кол-во сотрудников (лето) должно быть числом" })
     .int()
     .optional(),
-  cleaningStaffCountWinter: z
-    .number({ error: "Кол-во сотрудников (зима) должно быть числом" })
+  cleaningStaffCountWinter: z.coerce
+    .number<number>({ error: "Кол-во сотрудников (зима) должно быть числом" })
     .int()
     .optional(),
   cleaningFrequencySummer: z
@@ -90,84 +96,91 @@ export const mkdSchema = z.object({
     .number({ error: "Кол-во секций должно быть числом" })
     .int()
     .optional(),
-  floorsCount: z
-    .number({ error: "Кол-во этажей должно быть числом" })
+  floorsCount: z.coerce
+    .number<number>({ error: "Кол-во этажей должно быть числом" })
     .int()
     .optional(),
-  elevatorsCount: z
-    .number({ error: "Кол-во лифтов должно быть числом" })
+  elevatorsCount: z.coerce
+    .number<number>({ error: "Кол-во лифтов должно быть числом" })
     .int()
     .optional(),
-  garbageChamberCount: z
-    .number({ error: "Кол-во мусорокамер должно быть числом" })
+  garbageChamberCount: z.coerce
+    .number<number>({ error: "Кол-во мусорокамер должно быть числом" })
     .int()
     .optional(),
-  commonAreaFloor1: z
-    .number({ error: "МОП 1 этажа должна быть числом" })
+  commonAreaFloor1: z.coerce
+    .number<number>({ error: "МОП 1 этажа должна быть числом" })
     .optional(),
-  commonAreaFloor2Plus: z
-    .number({ error: "МОП выше 2 этажа должна быть числом" })
+  commonAreaFloor2Plus: z.coerce
+    .number<number>({ error: "МОП выше 2 этажа должна быть числом" })
     .optional(),
-  commonAreaStorage: z
-    .number({ error: "МОП кладовых должна быть числом" })
+  commonAreaStorage: z.coerce
+    .number<number>({ error: "МОП кладовых должна быть числом" })
     .optional(),
-  technicalRoomsArea: z
-    .number({ error: "Площадь тех. помещений должна быть числом" })
+  technicalRoomsArea: z.coerce
+    .number<number>({ error: "Площадь тех. помещений должна быть числом" })
     .optional(),
-  odsArea: z.number({ error: "Площадь ОДС должна быть числом" }).optional(),
-  garbageChamberArea: z
-    .number({ error: "Площадь мусорокамер должна быть числом" })
+  odsArea: z.coerce
+    .number<number>({ error: "Площадь ОДС должна быть числом" })
     .optional(),
-  cleaningStaffCount: z
-    .number({ error: "Кол-во сотрудников должно быть числом" })
+  garbageChamberArea: z.coerce
+    .number<number>({ error: "Площадь мусорокамер должна быть числом" })
+    .optional(),
+  cleaningStaffCount: z.coerce
+    .number<number>({ error: "Кол-во сотрудников должно быть числом" })
     .int()
     .optional(),
   cleaningFrequency: z
     .string({ error: "Периодичность уборки должна быть строкой" })
     .optional(),
-  parking: parkingSchema.optional(),
-  territory: mkdTerritorySchema.optional(),
+  mkdParking: parkingSchema.optional(),
+  mkdTerritory: mkdTerritorySchema.optional(),
 });
 
 // GarageTerritory schema
 const garageTerritorySchema = z.object({
-  totalArea: z.number({ error: "Общая площадь должна быть числом" }).optional(),
-  manualCleaningArea: z
-    .number({ error: "Площадь ручной уборки должна быть числом" })
-    .optional(),
-  greeningArea: z
-    .number({ error: "Площадь озеленения должна быть числом" })
-    .optional(),
-  mechanizedCleaningArea: z
-    .number({ error: "Площадь механизированной уборки должна быть числом" })
-    .optional(),
-  cleaningStaffCountSummer: z
-    .number({ error: "Кол-во сотрудников (лето) должно быть числом" })
+  totalArea: z.coerce
+    .number<number>({ error: "Общая площадь должна быть числом" })
     .int()
     .optional(),
-  equipmentCountSummer: z
-    .number({ error: "Кол-во техники (лето) должно быть числом" })
+  manualCleaningArea: z.coerce
+    .number<number>({ error: "Площадь ручной уборки должна быть числом" })
+    .optional(),
+  greeningArea: z.coerce
+    .number<number>({ error: "Площадь озеленения должна быть числом" })
+    .optional(),
+  mechanizedCleaningArea: z.coerce
+    .number<number>({
+      error: "Площадь механизированной уборки должна быть числом",
+    })
+    .optional(),
+  cleaningStaffCountSummer: z.coerce
+    .number<number>({ error: "Кол-во сотрудников (лето) должно быть числом" })
     .int()
     .optional(),
-  cleaningStaffCountWinter: z
-    .number({ error: "Кол-во сотрудников (зима) должно быть числом" })
+  equipmentCountSummer: z.coerce
+    .number<number>({ error: "Кол-во техники (лето) должно быть числом" })
     .int()
     .optional(),
-  equipmentCountWinter: z
-    .number({ error: "Кол-во техники (зима) должно быть числом" })
+  cleaningStaffCountWinter: z.coerce
+    .number<number>({ error: "Кол-во сотрудников (зима) должно быть числом" })
+    .int()
+    .optional(),
+  equipmentCountWinter: z.coerce
+    .number<number>({ error: "Кол-во техники (зима) должно быть числом" })
     .int()
     .optional(),
 });
 
 // Garage schema
-const garageSchema = z.object({
+export const garageSchema = z.object({
   type: z.literal("GARAGE"),
-  parkingSpacesCount: z
-    .number({ error: "Кол-во машиномест должно быть числом" })
+  parkingSpacesCount: z.coerce
+    .number<number>({ error: "Кол-во машиномест должно быть числом" })
     .int()
     .optional(),
-  floorsCount: z
-    .number({ error: "Кол-во этажей должно быть числом" })
+  floorsCount: z.coerce
+    .number<number>({ error: "Кол-во этажей должно быть числом" })
     .int()
     .optional(),
   elevatorHallStaircaseArea: z
@@ -202,36 +215,40 @@ const garageSchema = z.object({
   cleaningFrequencyWinter: z
     .string({ error: "Периодичность уборки (зима) должна быть строкой" })
     .optional(),
-  territory: garageTerritorySchema.optional(),
+  garageTerritory: garageTerritorySchema.optional(),
 });
 
 // ODH schema
-const odhSchema = z.object({
+export const odhSchema = z.object({
   type: z.literal("ODH"),
-  totalArea: z.number({ error: "Общая площадь должна быть числом" }).optional(),
-  manualCleaningArea: z
-    .number({ error: "Площадь ручной уборки должна быть числом" })
+  totalArea: z.coerce
+    .number<number>({ error: "Общая площадь должна быть числом" })
     .optional(),
-  greeningArea: z
-    .number({ error: "Площадь озеленения должна быть числом" })
+  manualCleaningArea: z.coerce
+    .number<number>({ error: "Площадь ручной уборки должна быть числом" })
     .optional(),
-  mechanizedCleaningArea: z
-    .number({ error: "Площадь механизированной уборки должна быть числом" })
+  greeningArea: z.coerce
+    .number<number>({ error: "Площадь озеленения должна быть числом" })
     .optional(),
-  cleaningStaffCountSummer: z
-    .number({ error: "Кол-во сотрудников (лето) должно быть числом" })
+  mechanizedCleaningArea: z.coerce
+    .number<number>({
+      error: "Площадь механизированной уборки должна быть числом",
+    })
+    .optional(),
+  cleaningStaffCountSummer: z.coerce
+    .number<number>({ error: "Кол-во сотрудников (лето) должно быть числом" })
     .int()
     .optional(),
-  equipmentCountSummer: z
-    .number({ error: "Кол-во техники (лето) должно быть числом" })
+  equipmentCountSummer: z.coerce
+    .number<number>({ error: "Кол-во техники (лето) должно быть числом" })
     .int()
     .optional(),
-  cleaningStaffCountWinter: z
-    .number({ error: "Кол-во сотрудников (зима) должно быть числом" })
+  cleaningStaffCountWinter: z.coerce
+    .number<number>({ error: "Кол-во сотрудников (зима) должно быть числом" })
     .int()
     .optional(),
-  equipmentCountWinter: z
-    .number({ error: "Кол-во техники (зима) должно быть числом" })
+  equipmentCountWinter: z.coerce
+    .number<number>({ error: "Кол-во техники (зима) должно быть числом" })
     .int()
     .optional(),
 });

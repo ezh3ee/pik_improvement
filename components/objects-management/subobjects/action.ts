@@ -2,7 +2,9 @@
 
 import {
   fullSubObjectSchema,
+  garageSchema,
   mkdSchema,
+  odhSchema,
 } from "@/components/objects-management/subobjects/schema";
 import { Prisma, SubObjectType } from "@/lib/generated/prisma/client";
 import prisma from "@/lib/prisma";
@@ -16,7 +18,11 @@ const subObjectInclude = {
       territory: true,
     },
   },
-  garageDetails: true,
+  garageDetails: {
+    include: {
+      territory: true,
+    },
+  },
   odhDetails: true,
 } satisfies Prisma.SubObjectBaseInclude;
 
@@ -24,12 +30,9 @@ export type SubObjectFull = Prisma.SubObjectBaseGetPayload<{
   include: typeof subObjectInclude;
 }>;
 
-// export async function addSubobjectAction(formData: FormData) {
 export async function addSubobjectAction(
   data: z.infer<typeof fullSubObjectSchema>,
 ) {
-  // const rawFormData = Object.fromEntries(formData.entries());
-  // const validatedFields = fullSubObjectSchema.safeParse(rawFormData);
   const validatedFields = fullSubObjectSchema.safeParse(data);
 
   if (!validatedFields.success) {
@@ -47,9 +50,17 @@ export async function addSubobjectAction(
     ...rest
   } = validatedFields.data;
 
-  const { territory, parking, ...mkdDetails } = rest as z.infer<
+  const { mkdTerritory, mkdParking, ...mkdDetails } = rest as z.infer<
     typeof mkdSchema
   >;
+
+  const { garageTerritory, ...garageDetails } = rest as z.infer<
+    typeof garageSchema
+  >;
+
+  const { ...odhDetails } = rest as z.infer<typeof odhSchema>;
+
+  console.log("mkdTerritory ", mkdTerritory, "mkdParking ", mkdParking);
 
   try {
     const subobject = await prisma.subObjectBase.create({
@@ -67,10 +78,26 @@ export async function addSubobjectAction(
           mkdDetails: {
             create: {
               ...mkdDetails,
-              parking: { create: parking },
-              territory: { create: territory },
+              parking: { create: mkdParking },
+              territory: { create: mkdTerritory },
             },
-            // create: { ...rest },
+          },
+        }),
+
+        ...(type === "GARAGE" && {
+          garageDetails: {
+            create: {
+              ...garageDetails,
+              territory: { create: garageTerritory },
+            },
+          },
+        }),
+
+        ...(type === "ODH" && {
+          odhDetails: {
+            create: {
+              ...odhDetails,
+            },
           },
         }),
       },
@@ -85,13 +112,10 @@ export async function addSubobjectAction(
   }
 }
 
-// export async function editSubobjectAction(id: string, formData: FormData) {
 export async function editSubobjectAction(
   id: string,
   data: z.infer<typeof fullSubObjectSchema>,
 ) {
-  // const rawFormData = Object.fromEntries(formData.entries());
-  // const validatedFields = fullSubObjectSchema.safeParse(rawFormData);
   const validatedFields = fullSubObjectSchema.safeParse(data);
 
   if (!validatedFields.success) {
@@ -109,9 +133,15 @@ export async function editSubobjectAction(
     ...rest
   } = validatedFields.data;
 
-  const { territory, parking, ...mkdDetails } = rest as z.infer<
+  const { mkdTerritory, mkdParking, ...mkdDetails } = rest as z.infer<
     typeof mkdSchema
   >;
+
+  const { garageTerritory, ...garageDetails } = rest as z.infer<
+    typeof garageSchema
+  >;
+
+  const { ...odhDetails } = rest as z.infer<typeof odhSchema>;
 
   try {
     const subobject = await prisma.$transaction(async (tx) => {
@@ -143,6 +173,8 @@ export async function editSubobjectAction(
         },
       });
 
+      /** UPSERTS ADDITIONAL FIELDS DETAILS */
+
       if (type === SubObjectType.MKD) {
         await tx.mKD.upsert({
           where: {
@@ -151,13 +183,41 @@ export async function editSubobjectAction(
           create: {
             ...mkdDetails,
             subObjectBaseId: id,
-            parking: { create: parking },
-            territory: { create: territory },
+            parking: { create: mkdParking },
+            territory: { create: mkdTerritory },
           },
           update: {
             ...mkdDetails,
-            parking: { update: parking },
-            territory: { update: territory },
+            parking: { update: mkdParking },
+            territory: { update: mkdTerritory },
+          },
+        });
+      } else if (type === SubObjectType.GARAGE) {
+        await tx.garage.upsert({
+          where: {
+            subObjectBaseId: id,
+          },
+          create: {
+            ...garageDetails,
+            subObjectBaseId: id,
+            territory: { create: garageTerritory },
+          },
+          update: {
+            ...garageDetails,
+            territory: { update: garageTerritory },
+          },
+        });
+      } else if (type === SubObjectType.ODH) {
+        await tx.oDH.upsert({
+          where: {
+            subObjectBaseId: id,
+          },
+          create: {
+            ...odhDetails,
+            subObjectBaseId: id,
+          },
+          update: {
+            ...odhDetails,
           },
         });
       }

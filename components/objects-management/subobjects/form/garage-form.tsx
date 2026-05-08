@@ -5,7 +5,7 @@ import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
 import { Control, Controller } from "react-hook-form";
 import z from "zod";
 
-export default function MkdForm({
+export default function GarageForm({
   control,
 }: {
   control: Control<z.infer<typeof fullSubObjectSchema>>;
@@ -14,61 +14,7 @@ export default function MkdForm({
     <>
       <Controller
         control={control}
-        name="buildingFootprintArea"
-        render={({ field, fieldState }) => (
-          <Field
-            className="col-span-12 col-start-auto @5xl:col-start-auto flex self-end flex-col gap-2 space-y-0 items-start"
-            data-invalid={fieldState.invalid}
-          >
-            <FieldLabel className="flex @5xl:flex w-auto!">
-              Площадь застройки <span className="text-red-500">*</span>
-            </FieldLabel>
-
-            <InputGroup>
-              <InputGroupInput
-                key="text-input-0"
-                placeholder=""
-                type="number"
-                className=""
-                {...field}
-              />
-            </InputGroup>
-
-            <InputFieldError fieldState={fieldState} />
-          </Field>
-        )}
-      />
-
-      <Controller
-        control={control}
-        name="mkdTerritory.totalArea"
-        render={({ field, fieldState }) => (
-          <Field
-            className="col-span-12 col-start-auto @5xl:col-start-auto flex self-end flex-col gap-2 space-y-0 items-start"
-            data-invalid={fieldState.invalid}
-          >
-            <FieldLabel className="flex @5xl:flex w-auto!">
-              Общая площадь <span className="text-red-500">*</span>
-            </FieldLabel>
-
-            <InputGroup>
-              <InputGroupInput
-                key="text-input-0"
-                placeholder=""
-                type="number"
-                className=""
-                {...field}
-              />
-            </InputGroup>
-
-            <InputFieldError fieldState={fieldState} />
-          </Field>
-        )}
-      />
-
-      <Controller
-        control={control}
-        name="mkdParking.parkingSpacesCount"
+        name="parkingSpacesCount"
         render={({ field, fieldState }) => (
           <Field
             className="col-span-12 col-start-auto @5xl:col-start-auto flex self-end flex-col gap-2 space-y-0 items-start"
@@ -76,6 +22,60 @@ export default function MkdForm({
           >
             <FieldLabel className="flex @5xl:flex w-auto!">
               Кол-во машиномест <span className="text-red-500">*</span>
+            </FieldLabel>
+
+            <InputGroup>
+              <InputGroupInput
+                key="text-input-0"
+                placeholder=""
+                type="number"
+                className=""
+                {...field}
+              />
+            </InputGroup>
+
+            <InputFieldError fieldState={fieldState} />
+          </Field>
+        )}
+      />
+
+      <Controller
+        control={control}
+        name="floorsCount"
+        render={({ field, fieldState }) => (
+          <Field
+            className="col-span-12 col-start-auto @5xl:col-start-auto flex self-end flex-col gap-2 space-y-0 items-start"
+            data-invalid={fieldState.invalid}
+          >
+            <FieldLabel className="flex @5xl:flex w-auto!">
+              Кол-во этажей <span className="text-red-500">*</span>
+            </FieldLabel>
+
+            <InputGroup>
+              <InputGroupInput
+                key="text-input-0"
+                placeholder=""
+                type="number"
+                className=""
+                {...field}
+              />
+            </InputGroup>
+
+            <InputFieldError fieldState={fieldState} />
+          </Field>
+        )}
+      />
+
+      <Controller
+        control={control}
+        name="garageTerritory.totalArea"
+        render={({ field, fieldState }) => (
+          <Field
+            className="col-span-12 col-start-auto @5xl:col-start-auto flex self-end flex-col gap-2 space-y-0 items-start"
+            data-invalid={fieldState.invalid}
+          >
+            <FieldLabel className="flex @5xl:flex w-auto!">
+              Общая площадь <span className="text-red-500">*</span>
             </FieldLabel>
 
             <InputGroup>
