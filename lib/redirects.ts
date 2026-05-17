@@ -8,6 +8,6 @@ export async function redirectToDashboard() {
   });
 
   if (session) {
-    return redirect("/projects/map");
+    return redirect("/complexes/map");
   }
 }

@@ -13,8 +13,8 @@ export type BreadcrumbsConfig = {
 };
 
 export const BREADCRUMBS_CONFIG: Record<string, BreadcrumbsConfig> = {
-  projects: {
-    label: "Проекты",
+  complexes: {
+    label: "ЖК",
     clickable: false,
     clickableWhen: ({ segments }) =>
       segments[0] === "settings" || segments[2] === "objects",
@@ -33,8 +33,12 @@ export const BREADCRUMBS_CONFIG: Record<string, BreadcrumbsConfig> = {
   },
   list: {
     label: "Список",
-    clickable: true,
+    clickable: false,
   },
+  // complexes: {
+  //   label: "ЖК",
+  //   clickable: false,
+  // },
   objects: {
     label: "Объекты",
     clickable: false,

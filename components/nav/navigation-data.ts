@@ -1,16 +1,16 @@
 export const navigation = {
   navMain: [
     {
-      title: "Проекты",
+      title: "ЖК",
       url: "#",
       items: [
         {
           title: "Карта",
-          url: "/projects/map",
+          url: "/complexes/map",
         },
         {
           title: "Список",
-          url: "/projects/list",
+          url: "/complexes/list",
         },
       ],
     },
