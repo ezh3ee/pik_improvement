@@ -3,7 +3,6 @@
 import MapLeftSide from "@/components/map/components/sides/map-left-side";
 // import MapRightSide from "@/components/map/components/sides/map-right-side";
 import dynamic from "next/dynamic";
-// @ts-expect-error scss error
 import "./style.scss";
 
 const MapRightSide = dynamic(
