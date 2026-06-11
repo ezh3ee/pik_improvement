@@ -76,30 +76,6 @@ export async function fetchResidentialComplexAction(id: string) {
   }
 }
 
-export async function fetchResidentialComplexesAction() {
-  try {
-    const complexes = await prisma.complex.findMany({
-      take: 10,
-      include: {
-        subObjects: {
-          include: {
-            garageDetails: true,
-            mkdDetails: true,
-            odhDetails: true,
-          },
-        },
-      },
-    });
-
-    console.log("fetch");
-
-    return complexes;
-  } catch (e) {
-    console.error("Error fetching residential complexes ", e);
-    throw "ЖК не найдены";
-  }
-}
-
 export async function deleteResidentialComplexAction(id: string) {
   try {
     return await prisma.complex.delete({

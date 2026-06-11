@@ -17,7 +17,7 @@ export type signinFormState = {
 
 export async function signinAction(
   state: signinFormState,
-  formData: FormData
+  formData: FormData,
 ): Promise<signinFormState> {
   const rawFormData = Object.fromEntries(formData.entries());
   const validatedFields = SigninSchema.safeParse(rawFormData);
@@ -44,6 +44,14 @@ export async function signinAction(
       return {
         errors: {},
         message: getAuthErrorMessage(error),
+        success: false,
+      };
+    } else {
+      console.log("UNKNOWN ERROR ");
+
+      return {
+        errors: {},
+        message: "Неизвестная ошибка",
         success: false,
       };
     }

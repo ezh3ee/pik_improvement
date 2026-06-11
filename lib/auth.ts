@@ -6,6 +6,13 @@ import { admin } from "better-auth/plugins/admin";
 import { username } from "better-auth/plugins/username";
 
 export const auth = betterAuth({
+  session: {
+    cookieCache: {
+      enabled: true,
+      maxAge: 5 * 60, // Cache duration in seconds (e.g., 5 minutes)
+      refreshCache: true, // Enables automatic renewal
+    },
+  },
   database: prismaAdapter(prisma, {
     provider: "postgresql", // or "mysql", "postgresql", ...etc
   }),

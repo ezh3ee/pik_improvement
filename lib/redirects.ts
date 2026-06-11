@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth";
+import { START_DASHBOARD_URL } from "@/lib/redirect-urls";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -8,6 +9,6 @@ export async function redirectToDashboard() {
   });
 
   if (session) {
-    return redirect("/complexes/map");
+    return redirect(START_DASHBOARD_URL);
   }
 }
